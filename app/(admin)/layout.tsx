@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { Header, BottomNav } from "../../components/layout";
+import { Header, BottomNav } from "../components/layout";
 
 export default function AdminLayout({
   children,
