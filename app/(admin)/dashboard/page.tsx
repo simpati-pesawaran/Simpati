@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent } from "@/app/components/ui";
+import { Card } from "../../components/ui";
 import {
   CalendarCheckIcon,
   UsersIcon,

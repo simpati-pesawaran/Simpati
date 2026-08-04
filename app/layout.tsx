@@ -1,6 +1,6 @@
 "use client";
 
-import { Providers } from "@/app/providers";
+import { Providers } from "./providers";
 
 export default function RootLayout({
   children,

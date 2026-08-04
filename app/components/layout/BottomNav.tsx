@@ -10,7 +10,7 @@ import {
   InboxIcon,
   UserIcon,
 } from "@heroicons/react/24/outline";
-import { cn } from "@/app/lib/utils";
+import { cn } from "../../lib/utils";
 
 const navItems = [
   {
