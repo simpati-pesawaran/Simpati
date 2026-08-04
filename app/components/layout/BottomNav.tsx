@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  CalendarCheckIcon,
+  CalendarDaysIcon,
   UsersIcon,
   CalendarIcon,
   PhotoIcon,
@@ -16,7 +16,7 @@ const navItems = [
   {
     name: "Kegiatan",
     href: "/kegiatan",
-    icon: CalendarCheckIcon,
+    icon: CalendarDaysIcon,
   },
   {
     name: "Audensi",
