@@ -5,6 +5,8 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
+const SUPERADMIN_EMAIL = "siagapesarawan@gmail.com";
+
 export default function LoginPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -23,22 +25,46 @@ export default function LoginPage() {
     try {
       const res = await fetch("/api/auth/profile");
       const data = await res.json();
+
+      // Check if superadmin
+      const isSuperadmin = session?.user?.email?.toLowerCase() === SUPERADMIN_EMAIL.toLowerCase();
+
       if (data.exists) {
-        if (data.profile.status === "approved") router.push("/dashboard");
-        else if (data.profile.status === "pending") router.push("/login/pending");
-        else if (data.profile.status === "rejected") router.push("/login/rejected");
+        // Profile exists - check status
+        if (data.profile.status === "approved") {
+          router.push("/dashboard");
+        } else if (data.profile.status === "pending") {
+          router.push("/login/pending");
+        } else if (data.profile.status === "rejected") {
+          router.push("/login/rejected");
+        }
+      } else if (isSuperadmin) {
+        // Superadmin - profile should be auto-created, redirect to dashboard
+        router.push("/dashboard");
       } else {
+        // New user - show name form
         setFormData((prev) => ({ ...prev, name: session?.user?.name || "" }));
         setStep("name");
       }
     } catch {
-      setStep("name");
+      // If API fails, try to proceed
+      const isSuperadmin = session?.user?.email?.toLowerCase() === SUPERADMIN_EMAIL.toLowerCase();
+      if (isSuperadmin) {
+        router.push("/dashboard");
+      } else {
+        setStep("name");
+      }
     }
   };
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
-    await signIn("google", { callbackUrl: "/login" });
+    try {
+      await signIn("google", { callbackUrl: "/login" });
+    } catch (err) {
+      console.error("Sign in error:", err);
+      setIsLoading(false);
+    }
   };
 
   const handleNameSubmit = (e: React.FormEvent) => {
@@ -75,8 +101,14 @@ export default function LoginPage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-dvh flex items-center justify-center bg-gradient-to-br from-[#1e3a5f] via-[#2563eb] to-[#7c3aed]">
-        <div className="w-10 h-10 border-3 border-white/30 border-t-white rounded-full animate-spin" />
+      <div className="min-h-dvh flex flex-col bg-gradient-to-br from-[#1e3a5f] via-[#2563eb] to-[#7c3aed] overflow-x-hidden" style={{ paddingTop: "env(safe-area-inset-top)" }}>
+        <main className="flex-1 flex flex-col items-center justify-center px-6 py-8">
+          {/* Loading Spinner */}
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-white/70 text-sm">Memuat...</p>
+          </div>
+        </main>
       </div>
     );
   }
@@ -107,7 +139,7 @@ export default function LoginPage() {
               <button
                 onClick={handleGoogleSignIn}
                 disabled={isLoading}
-                className="w-full h-11 bg-white border border-gray-200 rounded-xl font-medium text-sm flex items-center justify-center gap-3 text-gray-700 hover:bg-gray-50 active:scale-[0.98] transition-all shadow-sm"
+                className="w-full h-11 bg-white border border-gray-200 rounded-xl font-medium text-sm flex items-center justify-center gap-3 text-gray-700 hover:bg-gray-50 active:scale-[0.98] transition-all shadow-sm disabled:opacity-50"
               >
                 {isLoading ? (
                   <div className="w-5 h-5 border-2 border-gray-300 border-t-indigo-600 rounded-full animate-spin" />

@@ -12,7 +12,7 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       authorization: {
         params: {
-          prompt: "consent",
+          prompt: "select_account",
           access_type: "offline",
           response_type: "code",
         },
@@ -22,7 +22,52 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     async signIn({ user, account, profile }) {
-      // Allow sign in
+      // Superadmin auto-approve: Create profile if not exists
+      if (user.email?.toLowerCase() === SUPERADMIN_EMAIL.toLowerCase()) {
+        try {
+          // Check if profile exists
+          const { data: existingProfile } = await supabaseAdmin
+            .from('profiles')
+            .select('id, status')
+            .eq('email', user.email)
+            .single();
+
+          if (!existingProfile) {
+            // Create superadmin profile with approved status
+            const { error: insertError } = await supabaseAdmin
+              .from('profiles')
+              .insert({
+                email: user.email,
+                name: user.name || 'Superadmin',
+                division: 'IT Administration',
+                role: 'superadmin',
+                status: 'approved',
+                approved_at: new Date().toISOString(),
+                approved_by: user.email,
+              });
+
+            if (insertError) {
+              console.error("Error creating superadmin profile:", insertError);
+            }
+          } else if (existingProfile.status !== 'approved') {
+            // Re-approve if rejected
+            await supabaseAdmin
+              .from('profiles')
+              .update({
+                status: 'approved',
+                approved_at: new Date().toISOString(),
+                approved_by: user.email,
+                rejected_by: null,
+                rejected_at: null,
+                rejection_reason: null,
+              })
+              .eq('email', user.email);
+          }
+        } catch (error) {
+          console.error("Error in superadmin signIn:", error);
+        }
+      }
+
       return true;
     },
 
@@ -35,7 +80,6 @@ export const authOptions: NextAuthOptions = {
     },
 
     async session({ session, token }) {
-      // Add user info to session
       if (session.user) {
         session.user.email = token.email as string;
         session.user.name = token.name as string;
