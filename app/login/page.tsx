@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function LoginPage() {
   const { data: session, status } = useSession();
@@ -115,56 +116,60 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      {/* Header Background - Navy Gradient */}
-      <div className="bg-gradient-to-br from-[#1e3a5f] via-[#1e3a5f] to-[#2d5a8a] px-6 pt-12 pb-20 relative overflow-hidden">
+      {/* Header Background - NEW Blue-Purple Gradient */}
+      <div className="px-6 pt-12 pb-24 relative overflow-hidden"
+        style={{ background: 'linear-gradient(135deg, #9333ea 0%, #7c3aed 50%, #3b82f6 100%)' }}>
         {/* Decorative Elements */}
-        <div className="absolute -top-20 -right-20 w-72 h-72 bg-white/5 rounded-full blur-3xl" />
-        <div className="absolute -bottom-32 -left-16 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
+        <div className="absolute -top-24 -right-24 w-80 h-80 bg-white/5 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -left-20 w-72 h-72 bg-white/5 rounded-full blur-3xl" />
+        <div className="absolute top-32 left-6 w-3 h-3 bg-white/30 rounded-full animate-float" />
+        <div className="absolute bottom-40 left-12 w-4 h-4 bg-white/20 rounded-full animate-float" style={{ animationDelay: '1s' }} />
 
         {/* Logo & Branding */}
         <div className="relative z-10 flex flex-col items-center">
-          <div className="w-28 h-28 bg-white rounded-[2rem] shadow-2xl flex items-center justify-center mb-8 animate-fadeIn">
-            <span className="text-[#1e3a5f] font-black text-5xl tracking-tight">S</span>
+          <div className="w-28 h-28 rounded-[2rem] flex items-center justify-center mb-8 animate-fadeInUp"
+            style={{ background: 'rgba(255, 255, 255, 0.95)', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
+            <Image src="/logo/logo.svg" alt="SIMPATI" width={80} height={80} className="w-20 h-20" priority />
           </div>
 
-          <h1 className="text-white text-4xl font-bold tracking-tight mb-3 animate-fadeIn">
+          <h1 className="text-white text-4xl font-bold tracking-tight mb-3 animate-fadeInUp">
             SIMPATI
           </h1>
 
-          <p className="text-white/70 text-sm text-center leading-relaxed max-w-[280px] animate-fadeIn">
+          <p className="text-white/80 text-sm text-center leading-relaxed max-w-[280px] animate-fadeInUp">
             Sistem Informasi Manajemen<br />
             Protokol & Agenda Terintegrasi
           </p>
         </div>
 
         {/* Bottom Wave */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 375 50" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full">
-            <path d="M0 50C96.667 50 96.667 20 193.333 20C290 20 290 50 387.667 50V100H0V50Z" fill="white"/>
-          </svg>
+        <div className="absolute bottom-0 left-0 right-0 h-16 overflow-hidden">
+          <div className="absolute bottom-0 w-[150%] left-[-25%] h-24 rounded-t-[100%] bg-white" />
         </div>
       </div>
 
       {/* Login Form Section */}
-      <div className="flex-1 px-6 py-8 -mt-12 relative z-10">
+      <div className="flex-1 px-6 -mt-12 relative z-10">
         {/* Setup Modal - Name */}
         {showSetup && setupStep === "name" && (
-          <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 animate-fadeIn">
-            <div className="mb-6">
-              <div className="w-12 h-12 bg-[#1e3a5f]/10 rounded-full flex items-center justify-center mb-4 mx-auto">
-                <span className="text-2xl">👋</span>
+          <div className="bg-white rounded-[20px] p-8 animate-scaleIn" style={{ boxShadow: '0 20px 40px -12px rgba(0, 0, 0, 0.1)' }}>
+            <div className="flex justify-center mb-6">
+              <div className="w-16 h-16 rounded-full flex items-center justify-center text-3xl bg-[#f3e8ff]">
+                👋
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">
+            </div>
+            <div className="mb-6 text-center">
+              <h2 className="text-2xl font-bold mb-2 text-[#18181b]">
                 Selamat Datang!
               </h2>
-              <p className="text-gray-500 text-sm text-center">
+              <p className="text-sm text-[#71717a]">
                 Lengkapi profil Anda untuk melanjutkan
               </p>
             </div>
 
             <form onSubmit={handleNameSubmit}>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2 text-[#18181b]">
                   Nama Lengkap
                 </label>
                 <input
@@ -172,20 +177,24 @@ export default function LoginPage() {
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="Masukkan nama lengkap"
-                  className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent transition-all min-h-[48px]"
+                  className="w-full px-4 py-3.5 rounded-xl text-base bg-white border-[1.5px] border-[#e4e4e7] text-[#18181b] btn-press"
                   autoFocus
                   required
                 />
               </div>
 
               {error && (
-                <p className="text-red-500 text-sm mb-4">{error}</p>
+                <p className="text-sm mb-4 text-[#ef4444]">{error}</p>
               )}
 
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-12 bg-[#1e3a5f] text-white rounded-xl font-semibold text-base shadow-lg shadow-[#1e3a5f]/30 hover:shadow-xl hover:shadow-[#1e3a5f]/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full h-12 rounded-xl font-semibold text-white btn-press flex items-center justify-center gap-2"
+                style={{
+                  background: 'linear-gradient(135deg, #9333ea 0%, #3b82f6 100%)',
+                  boxShadow: '0 4px 12px rgba(147, 51, 234, 0.3)'
+                }}
               >
                 {isLoading ? (
                   <span className="flex items-center justify-center gap-2">
@@ -263,12 +272,12 @@ export default function LoginPage() {
 
         {/* Login Button - Initial State */}
         {!showSetup && (
-          <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 animate-fadeIn">
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          <div className="bg-white rounded-[20px] p-8 animate-fadeInUp" style={{ boxShadow: '0 20px 40px -12px rgba(0, 0, 0, 0.1)' }}>
+            <div className="mb-8 text-center">
+              <h2 className="text-2xl font-bold mb-2 text-[#18181b]">
                 Selamat Datang! 👋
               </h2>
-              <p className="text-gray-500 text-sm">
+              <p className="text-sm text-[#71717a]">
                 Masuk dengan akun Google untuk melanjutkan
               </p>
             </div>
@@ -276,7 +285,11 @@ export default function LoginPage() {
             <button
               onClick={handleGoogleSignIn}
               disabled={isLoading}
-              className="w-full h-14 flex items-center justify-center gap-4 bg-[#1e3a5f] text-white rounded-2xl font-semibold text-base shadow-lg shadow-[#1e3a5f]/30 hover:shadow-xl hover:shadow-[#1e3a5f]/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full h-14 rounded-2xl font-semibold text-white btn-press flex items-center justify-center gap-4"
+              style={{
+                background: '#18181b',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+              }}
             >
               {isLoading ? (
                 <>
@@ -297,19 +310,19 @@ export default function LoginPage() {
             </button>
 
             {/* Info Box */}
-            <div className="mt-6 bg-[#f8fafc] rounded-2xl p-4 border border-gray-100">
+            <div className="mt-6 rounded-2xl p-4 border" style={{ background: '#faf5ff', borderColor: '#e9d5ff' }}>
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 bg-[#1e3a5f]/10 rounded-full flex items-center justify-center flex-shrink-0">
-                  <svg className="w-4 h-4 text-[#1e3a5f]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#f3e8ff' }}>
+                  <svg className="w-4 h-4" style={{ color: '#9333ea' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-700 mb-0.5">
+                  <p className="text-sm font-medium mb-0.5" style={{ color: '#7e22ce' }}>
                     Akses Terbatas
                   </p>
-                  <p className="text-xs text-gray-500 leading-relaxed">
-                    Hanya administrator yang memiliki izin akses dapat login ke sistem.
+                  <p className="text-xs" style={{ color: '#9333ea' }}>
+                    Hanya administrator berizin dapat login.
                   </p>
                 </div>
               </div>
@@ -319,16 +332,16 @@ export default function LoginPage() {
 
         {/* Footer */}
         <div className="mt-8 text-center">
-          <p className="text-xs text-gray-400 leading-relaxed">
+          <p className="text-xs" style={{ color: '#a1a1aa' }}>
             Dengan masuk, Anda menyetujui<br />
-            <span className="text-gray-500 font-medium">Syarat & Ketentuan</span> serta <span className="text-gray-500 font-medium">Kebijakan Privasi</span>
+            <span style={{ color: '#71717a', fontWeight: 500 }}>Syarat & Ketentuan</span> serta <span style={{ color: '#71717a', fontWeight: 500 }}>Kebijakan Privasi</span>
           </p>
         </div>
 
         {/* Version Badge */}
         <div className="mt-6 flex justify-center">
-          <span className="px-3 py-1 bg-gray-100 rounded-full text-[10px] text-gray-400 font-medium">
-            v1.0.0
+          <span className="px-3 py-1 rounded-full text-[10px] font-medium" style={{ background: '#f4f4f5', color: '#a1a1aa' }}>
+            v2.0
           </span>
         </div>
       </div>
