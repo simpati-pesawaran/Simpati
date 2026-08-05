@@ -82,7 +82,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-dvh flex flex-col bg-gradient-to-br from-[#1e3a5f] via-[#2563eb] to-[#7c3aed] overflow-x-hidden">
+    <div className="min-h-dvh flex flex-col bg-gradient-to-br from-[#1e3a5f] via-[#2563eb] to-[#7c3aed] overflow-x-hidden" style={{ paddingTop: "env(safe-area-inset-top)" }}>
       {/* Main Content - Centered */}
       <main className="flex-1 flex flex-col items-center justify-center px-6 py-8">
         {/* Logo & Branding */}
@@ -204,7 +204,7 @@ export default function LoginPage() {
       </main>
 
       {/* Footer */}
-      <footer className="text-center pb-6">
+      <footer className="text-center pb-6" style={{ paddingBottom: "calc(1.5rem + env(safe-area-inset-bottom))" }}>
         <p className="text-white/40 text-xs">Dengan masuk, Anda menyetujui</p>
         <p className="text-white/60 text-xs font-medium mt-0.5">Syarat & Ketentuan</p>
         <span className="inline-block mt-3 px-3 py-1 bg-white/10 rounded-full text-[10px] text-white/40 font-medium">
