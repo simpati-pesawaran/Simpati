@@ -62,12 +62,8 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50">
-      <div
-        className="bg-gradient-to-r from-[#1e3a5f] to-[#2d5a8a]"
-        style={{ paddingTop: "env(safe-area-inset-top)" }}
-      >
-        <div className="h-14 px-4 flex items-center justify-between">
+    <header className="sticky top-0 z-50 bg-gradient-to-r from-[#1e3a5f] to-[#2d5a8a]" style={{ paddingTop: "env(safe-area-inset-top)" }}>
+      <div className="h-14 px-4 flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
