@@ -87,8 +87,8 @@ export default function LoginPage() {
       <main className="flex-1 flex flex-col items-center justify-center px-6 py-8">
         {/* Logo & Branding */}
         <div className="text-center mb-10">
-          <div className="w-20 h-20 mx-auto mb-4 bg-white rounded-2xl flex items-center justify-center shadow-2xl">
-            <Image src="/logo/logo-master.png" alt="SIMPATI" width={48} height={48} />
+          <div className="w-20 h-20 mx-auto mb-4 shadow-2xl overflow-hidden">
+            <Image src="/logo/logo-master.png" alt="SIMPATI" width={80} height={80} className="w-full h-full object-cover" />
           </div>
           <h1 className="text-white text-2xl font-bold tracking-widest">SIMPATI</h1>
           <p className="text-white/60 text-xs mt-2 max-w-[260px]">
