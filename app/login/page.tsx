@@ -107,7 +107,7 @@ export default function LoginPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-[3px] border-[#9333ea] border-t-transparent rounded-full animate-spin" />
+          <div className="w-12 h-12 border-[3px] border-[#2563EB] border-t-transparent rounded-full animate-spin" />
           <p className="text-sm text-[#71717a]">Memuat...</p>
         </div>
       </div>
@@ -118,7 +118,7 @@ export default function LoginPage() {
     <div className="app-container">
       {/* Header Background - NEW Blue-Purple Gradient */}
       <div className="px-6 pt-12 pb-24 relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #9333ea 0%, #7c3aed 50%, #3b82f6 100%)' }}>
+        style={{ background: 'linear-gradient(135deg, #2563EB 0%, #123C69 50%, #3B82F6 100%)' }}>
         {/* Decorative Elements */}
         <div className="absolute -top-24 -right-24 w-80 h-80 bg-white/5 rounded-full blur-3xl" />
         <div className="absolute -bottom-40 -left-20 w-72 h-72 bg-white/5 rounded-full blur-3xl" />
@@ -129,7 +129,7 @@ export default function LoginPage() {
         <div className="relative z-10 flex flex-col items-center">
           <div className="w-28 h-28 rounded-[2rem] flex items-center justify-center mb-8 animate-fadeInUp"
             style={{ background: 'rgba(255, 255, 255, 0.95)', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
-            <Image src="/logo/logo.svg" alt="SIMPATI" width={80} height={80} className="w-20 h-20" priority />
+            <Image src="/logo/ocean-depth.svg" alt="SIMPATI" width={80} height={80} className="w-20 h-20" priority />
           </div>
 
           <h1 className="text-white text-4xl font-bold tracking-tight mb-3 animate-fadeInUp">
@@ -192,7 +192,7 @@ export default function LoginPage() {
                 disabled={isLoading}
                 className="w-full h-12 rounded-xl font-semibold text-white btn-press flex items-center justify-center gap-2"
                 style={{
-                  background: 'linear-gradient(135deg, #9333ea 0%, #3b82f6 100%)',
+                  background: 'linear-gradient(135deg, #2563EB 0%, #3B82F6 100%)',
                   boxShadow: '0 4px 12px rgba(147, 51, 234, 0.3)'
                 }}
               >
@@ -310,10 +310,10 @@ export default function LoginPage() {
             </button>
 
             {/* Info Box */}
-            <div className="mt-6 rounded-2xl p-4 border" style={{ background: '#faf5ff', borderColor: '#e9d5ff' }}>
+            <div className="mt-6 rounded-2xl p-4 border" style={{ background: '#faf5ff', borderColor: '#DBEAFE' }}>
               <div className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#f3e8ff' }}>
-                  <svg className="w-4 h-4" style={{ color: '#9333ea' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4" style={{ color: '#2563EB' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
@@ -321,7 +321,7 @@ export default function LoginPage() {
                   <p className="text-sm font-medium mb-0.5" style={{ color: '#7e22ce' }}>
                     Akses Terbatas
                   </p>
-                  <p className="text-xs" style={{ color: '#9333ea' }}>
+                  <p className="text-xs" style={{ color: '#2563EB' }}>
                     Hanya administrator berizin dapat login.
                   </p>
                 </div>
