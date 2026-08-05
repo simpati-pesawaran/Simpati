@@ -1,18 +1,20 @@
 "use client";
 
+import { Header } from "@/app/components/layout/Header";
+import { BottomNav } from "@/app/components/layout/BottomNav";
+
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-surface flex flex-col">
-      <div className="bg-gradient-to-r from-navy-800 to-navy-700 p-4">
-        <h1 className="text-white font-semibold text-lg">SIMPATI</h1>
-      </div>
-      <main className="flex-1 pb-20 p-4">
+    <div className="min-h-screen bg-white flex flex-col">
+      <Header />
+      <main className="flex-1 pb-20">
         {children}
       </main>
+      <BottomNav />
     </div>
   );
 }
