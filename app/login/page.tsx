@@ -75,14 +75,14 @@ export default function LoginPage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#1e3a5f] via-[#2563eb] to-[#7c3aed]">
+      <div className="min-h-dvh flex items-center justify-center bg-gradient-to-br from-[#1e3a5f] via-[#2563eb] to-[#7c3aed]">
         <div className="w-10 h-10 border-3 border-white/30 border-t-white rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#1e3a5f] via-[#2563eb] to-[#7c3aed]">
+    <div className="min-h-dvh flex flex-col bg-gradient-to-br from-[#1e3a5f] via-[#2563eb] to-[#7c3aed] overflow-x-hidden">
       {/* Main Content - Centered */}
       <main className="flex-1 flex flex-col items-center justify-center px-6 py-8">
         {/* Logo & Branding */}
