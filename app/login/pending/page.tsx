@@ -16,9 +16,9 @@ export default function PendingPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "linear-gradient(180deg, #071E3D 0%, #123C69 40%, #2563EB 100%)" }}>
-      {/* Header Section */}
-      <div className="px-5 pt-4 pb-6 flex flex-col items-center" style={{ paddingTop: "max(1rem, env(safe-area-inset-top))" }}>
+    <div className="min-h-screen" style={{ background: "linear-gradient(180deg, #071E3D 0%, #123C69 50%, #2563EB 100%)" }}>
+      {/* Header Area */}
+      <div className="px-5 pt-[max(2.5rem,env(safe-area-inset-top))] pb-24 flex flex-col items-center">
         {/* Logo */}
         <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-xl">
           <svg width="48" height="48" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -34,14 +34,15 @@ export default function PendingPage() {
         </div>
 
         <h1 className="mt-4 text-white text-2xl font-bold tracking-tight">SIMPATI</h1>
-        <p className="mt-2 text-white/70 text-xs text-center max-w-[260px] leading-relaxed">
+        <p className="mt-2 text-white/70 text-xs text-center max-w-[260px]">
           Sistem Informasi Manajemen Protokol & Agenda Terintegrasi
         </p>
       </div>
 
-      {/* Content Card */}
-      <div className="flex-1 px-5 -mt-3">
-        <div className="bg-white rounded-t-3xl rounded-b-2xl p-6 shadow-xl">
+      {/* White Card Container */}
+      <div className="mx-4 bg-white rounded-t-[28px] rounded-b-3xl shadow-2xl overflow-hidden" style={{ marginTop: "-60px" }}>
+        {/* Card Content */}
+        <div className="p-6">
           {/* Status Icon */}
           <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4 relative">
             <div className="absolute inset-0 bg-amber-100 rounded-full animate-ping opacity-20" />
@@ -111,19 +112,20 @@ export default function PendingPage() {
             Batal dan Masuk dengan Akun Lain
           </button>
         </div>
+
+        {/* Footer inside card */}
+        <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 text-center">
+          <p className="text-xs text-gray-500">
+            Butuh bantuan? <a href="mailto:siagapesarawan@gmail.com" className="text-indigo-600 font-medium">siagapesarawan@gmail.com</a>
+          </p>
+        </div>
       </div>
 
-      {/* Footer */}
-      <div className="px-5 py-6 text-center">
-        <p className="text-xs text-white/60 mb-1">Butuh bantuan?</p>
-        <a href="mailto:siagapesarawan@gmail.com" className="text-xs text-white/80 hover:text-white">
-          siagapesarawan@gmail.com
-        </a>
-        <div className="mt-4">
-          <span className="px-3 py-1 bg-white/10 rounded-full text-[10px] text-white/50 font-medium">
-            v2.0.0
-          </span>
-        </div>
+      {/* Version Badge */}
+      <div className="text-center mt-6 mb-6">
+        <span className="px-3 py-1 bg-white/10 rounded-full text-[10px] text-white/50 font-medium">
+          v2.0.0
+        </span>
       </div>
     </div>
   );
