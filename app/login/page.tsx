@@ -105,17 +105,17 @@ export default function LoginPage() {
   // Loading state while checking session
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-[3px] border-[#1e3a5f] border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm text-gray-500">Memuat...</p>
+          <div className="w-12 h-12 border-[3px] border-[#9333ea] border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-[#71717a]">Memuat...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="app-container">
       {/* Header Background - NEW Blue-Purple Gradient */}
       <div className="px-6 pt-12 pb-24 relative overflow-hidden"
         style={{ background: 'linear-gradient(135deg, #9333ea 0%, #7c3aed 50%, #3b82f6 100%)' }}>
