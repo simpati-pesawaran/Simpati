@@ -101,40 +101,40 @@ export default function LoginPage() {
       <div className="float-bubble-3" />
       <div className="float-glow" style={{ top: "-80px", left: "-80px" }} />
 
-      <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center", minHeight: "100vh", padding: "3rem 1.5rem", paddingTop: "max(3rem, env(safe-area-inset-top))" }}>
+      <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column", alignItems: "center", minHeight: "100dvh", padding: "1.5rem 1.5rem 2rem", paddingTop: "max(1.5rem, env(safe-area-inset-top))" }}>
         {/* Logo */}
         <div style={{ animation: "fadeIn 0.3s ease-out" }}>
-          <div style={{ width: "72px", height: "72px", background: "white", borderRadius: "1rem", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 25px 50px rgba(0,0,0,0.3)" }}>
-            <Image src="/logo/logo.svg" alt="SIMPATI" width={48} height={48} />
+          <div style={{ width: "64px", height: "64px", background: "white", borderRadius: "1rem", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 20px 40px rgba(0,0,0,0.25)" }}>
+            <Image src="/logo/logo.svg" alt="SIMPATI" width={40} height={40} />
           </div>
         </div>
 
         {/* Brand */}
-        <h1 style={{ marginTop: "1.5rem", fontSize: "1.25rem", fontWeight: 700, color: "white", letterSpacing: "0.15em" }}>SIMPATI</h1>
+        <h1 style={{ marginTop: "1rem", fontSize: "1.125rem", fontWeight: 700, color: "white", letterSpacing: "0.15em" }}>SIMPATI</h1>
 
         <p style={{ marginTop: "0.5rem", color: "rgba(255,255,255,0.7)", fontSize: "0.8125rem", textAlign: "center", maxWidth: "280px", lineHeight: 1.5 }}>
           Sistem Informasi Manajemen<br />Protokol & Agenda Terintegrasi
         </p>
 
         {/* Main Content Card */}
-        <div style={{ marginTop: "3rem", width: "100%", maxWidth: "320px" }}>
+        <div style={{ marginTop: "2rem", width: "100%", maxWidth: "320px" }}>
           {showSetup && setupStep === "name" && (
-            <div className="card-animate" style={{ background: "white", borderRadius: "1.5rem", padding: "2rem", boxShadow: "0 20px 40px rgba(0,0,0,0.2)" }}>
+            <div className="card-animate" style={{ background: "white", borderRadius: "1.5rem", padding: "1.5rem", boxShadow: "0 20px 40px rgba(0,0,0,0.2)" }}>
               {/* Avatar Icon */}
-              <div style={{ display: "flex", justifyContent: "center", marginBottom: "1.5rem" }}>
-                <div style={{ width: "72px", height: "72px", borderRadius: "50%", background: "linear-gradient(135deg, #DBEAFE 0%, #E9D5FF 100%)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <SparklesIcon className="w-8 h-8 text-indigo-600" />
+              <div style={{ display: "flex", justifyContent: "center", marginBottom: "1rem" }}>
+                <div style={{ width: "56px", height: "56px", borderRadius: "50%", background: "linear-gradient(135deg, #DBEAFE 0%, #E9D5FF 100%)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <SparklesIcon className="w-6 h-6 text-indigo-600" />
                 </div>
               </div>
 
-              <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
-                <h2 style={{ fontSize: "1.25rem", fontWeight: 700, color: "#071E3D", marginBottom: "0.5rem" }}>Selamat Datang! 👋</h2>
-                <p style={{ fontSize: "0.875rem", color: "#64748B" }}>Lengkapi profil Anda untuk melanjutkan</p>
+              <div style={{ textAlign: "center", marginBottom: "1.25rem" }}>
+                <h2 style={{ fontSize: "1.125rem", fontWeight: 700, color: "#071E3D", marginBottom: "0.25rem" }}>Selamat Datang! 👋</h2>
+                <p style={{ fontSize: "0.8125rem", color: "#64748B" }}>Lengkapi profil Anda</p>
               </div>
 
               <form onSubmit={handleNameSubmit}>
-                <div style={{ marginBottom: "1rem" }}>
-                  <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.875rem", fontWeight: 500, color: "#071E3D", marginBottom: "0.5rem" }}>
+                <div style={{ marginBottom: "0.875rem" }}>
+                  <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8125rem", fontWeight: 500, color: "#071E3D", marginBottom: "0.375rem" }}>
                     <UserCircleIcon className="w-4 h-4 text-indigo-500" />
                     Nama Lengkap
                   </label>
@@ -142,21 +142,21 @@ export default function LoginPage() {
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    placeholder="Masukkan nama lengkap Anda"
+                    placeholder="Nama lengkap"
                     autoFocus
                     required
-                    style={{ width: "100%", padding: "0.875rem 1rem", fontSize: "1rem", border: "1.5px solid #E5E7EB", borderRadius: "0.75rem", outline: "none" }}
+                    style={{ width: "100%", padding: "0.75rem 1rem", fontSize: "1rem", border: "1.5px solid #E5E7EB", borderRadius: "0.75rem", outline: "none" }}
                     onFocus={(e) => { e.target.style.borderColor = "#2563EB"; e.target.style.boxShadow = "0 0 0 3px rgba(37,99,235,0.1)"; }}
                     onBlur={(e) => { e.target.style.borderColor = "#E5E7EB"; e.target.style.boxShadow = "none"; }}
                   />
                 </div>
                 {error && (
-                  <p style={{ fontSize: "0.8125rem", color: "#EF4444", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                  <p style={{ fontSize: "0.75rem", color: "#EF4444", marginBottom: "0.875rem", display: "flex", alignItems: "center", gap: "0.25rem" }}>
                     <InformationCircleIcon className="w-4 h-4" />
                     {error}
                   </p>
                 )}
-                <button type="submit" className="btn btn-primary" style={{ width: "100%", padding: "0.875rem", fontSize: "1rem" }}>
+                <button type="submit" className="btn btn-primary" style={{ width: "100%", padding: "0.75rem", fontSize: "0.9375rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
                   Lanjut
                   <ArrowRightIcon className="w-5 h-5" />
                 </button>
@@ -165,19 +165,19 @@ export default function LoginPage() {
           )}
 
           {showSetup && setupStep === "division" && (
-            <div className="card-animate" style={{ background: "white", borderRadius: "1.5rem", padding: "2rem", boxShadow: "0 20px 40px rgba(0,0,0,0.2)" }}>
+            <div className="card-animate" style={{ background: "white", borderRadius: "1.5rem", padding: "1.5rem", boxShadow: "0 20px 40px rgba(0,0,0,0.2)" }}>
               {/* User Avatar */}
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "1.5rem" }}>
-                <div style={{ width: "72px", height: "72px", borderRadius: "50%", background: "linear-gradient(135deg, #9333ea 0%, #3b82f6 100%)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "0.75rem" }}>
-                  <span className="text-white text-2xl font-bold">{formData.name.charAt(0).toUpperCase()}</span>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "1rem" }}>
+                <div style={{ width: "56px", height: "56px", borderRadius: "50%", background: "linear-gradient(135deg, #9333ea 0%, #3b82f6 100%)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "0.5rem" }}>
+                  <span className="text-white text-xl font-bold">{formData.name.charAt(0).toUpperCase()}</span>
                 </div>
-                <h2 style={{ fontSize: "1.125rem", fontWeight: 600, color: "#071E3D" }}>{formData.name}</h2>
-                <p style={{ fontSize: "0.8125rem", color: "#64748B" }}>{session?.user?.email}</p>
+                <h2 style={{ fontSize: "1rem", fontWeight: 600, color: "#071E3D" }}>{formData.name}</h2>
+                <p style={{ fontSize: "0.75rem", color: "#64748B" }}>{session?.user?.email}</p>
               </div>
 
               <form onSubmit={handleDivisionSubmit}>
-                <div style={{ marginBottom: "1rem" }}>
-                  <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.875rem", fontWeight: 500, color: "#071E3D", marginBottom: "0.5rem" }}>
+                <div style={{ marginBottom: "0.875rem" }}>
+                  <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.8125rem", fontWeight: 500, color: "#071E3D", marginBottom: "0.375rem" }}>
                     <BuildingOfficeIcon className="w-4 h-4 text-indigo-500" />
                     Divisi / Unit Kerja
                   </label>
@@ -188,29 +188,29 @@ export default function LoginPage() {
                     placeholder="Contoh: Sekretariat Daerah"
                     autoFocus
                     required
-                    style={{ width: "100%", padding: "0.875rem 1rem", fontSize: "1rem", border: "1.5px solid #E5E7EB", borderRadius: "0.75rem", outline: "none" }}
+                    style={{ width: "100%", padding: "0.75rem 1rem", fontSize: "1rem", border: "1.5px solid #E5E7EB", borderRadius: "0.75rem", outline: "none" }}
                     onFocus={(e) => { e.target.style.borderColor = "#2563EB"; e.target.style.boxShadow = "0 0 0 3px rgba(37,99,235,0.1)"; }}
                     onBlur={(e) => { e.target.style.borderColor = "#E5E7EB"; e.target.style.boxShadow = "none"; }}
                   />
                 </div>
                 {error && (
-                  <p style={{ fontSize: "0.8125rem", color: "#EF4444", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                  <p style={{ fontSize: "0.75rem", color: "#EF4444", marginBottom: "0.875rem", display: "flex", alignItems: "center", gap: "0.25rem" }}>
                     <InformationCircleIcon className="w-4 h-4" />
                     {error}
                   </p>
                 )}
-                <div style={{ display: "flex", gap: "0.75rem" }}>
-                  <button type="button" onClick={() => setSetupStep("name")} className="btn btn-ghost" style={{ flex: 1, padding: "0.875rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
-                    <ArrowLeftIcon className="w-5 h-5" />
+                <div style={{ display: "flex", gap: "0.75rem", marginTop: "1rem" }}>
+                  <button type="button" onClick={() => setSetupStep("name")} className="btn btn-ghost" style={{ flex: 1, padding: "0.75rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.375rem" }}>
+                    <ArrowLeftIcon className="w-4 h-4" />
                     Kembali
                   </button>
-                  <button type="submit" disabled={isLoading} className="btn btn-primary" style={{ flex: 1, padding: "0.875rem" }}>
+                  <button type="submit" disabled={isLoading} className="btn btn-primary" style={{ flex: 1, padding: "0.75rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.375rem" }}>
                     {isLoading ? (
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     ) : (
                       <>
                         Daftar
-                        <CheckCircleIcon className="w-5 h-5" />
+                        <CheckCircleIcon className="w-4 h-4" />
                       </>
                     )}
                   </button>
@@ -220,10 +220,10 @@ export default function LoginPage() {
           )}
 
           {!showSetup && (
-            <div className="card-animate" style={{ background: "white", borderRadius: "1.5rem", padding: "2rem", boxShadow: "0 20px 40px rgba(0,0,0,0.2)" }}>
-              <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
-                <h2 style={{ fontSize: "1.25rem", fontWeight: 700, color: "#071E3D", marginBottom: "0.5rem" }}>Selamat Datang! 👋</h2>
-                <p style={{ fontSize: "0.875rem", color: "#64748B" }}>Masuk dengan akun Google Anda</p>
+            <div className="card-animate" style={{ background: "white", borderRadius: "1.5rem", padding: "1.5rem", boxShadow: "0 20px 40px rgba(0,0,0,0.2)" }}>
+              <div style={{ textAlign: "center", marginBottom: "1.25rem" }}>
+                <h2 style={{ fontSize: "1.125rem", fontWeight: 700, color: "#071E3D", marginBottom: "0.25rem" }}>Selamat Datang! 👋</h2>
+                <p style={{ fontSize: "0.8125rem", color: "#64748B" }}>Masuk dengan akun Google Anda</p>
               </div>
 
               {/* Google Sign In Button */}
@@ -233,8 +233,8 @@ export default function LoginPage() {
                 className="btn"
                 style={{
                   width: "100%",
-                  padding: "0.875rem 1rem",
-                  fontSize: "1rem",
+                  padding: "0.75rem 1rem",
+                  fontSize: "0.9375rem",
                   background: "white",
                   border: "1.5px solid #E5E7EB",
                   borderRadius: "0.75rem",
@@ -264,11 +264,11 @@ export default function LoginPage() {
               </button>
 
               {/* Info Box */}
-              <div style={{ marginTop: "1.5rem", padding: "1rem", background: "#EFF6FF", borderRadius: "0.75rem", display: "flex", gap: "0.75rem", alignItems: "flex-start" }}>
+              <div style={{ marginTop: "1.25rem", padding: "0.875rem", background: "#EFF6FF", borderRadius: "0.75rem", display: "flex", gap: "0.625rem", alignItems: "flex-start" }}>
                 <InformationCircleIcon className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p style={{ fontSize: "0.875rem", fontWeight: 500, color: "#1E40AF" }}>Akses Terbatas</p>
-                  <p style={{ fontSize: "0.8125rem", color: "#3B82F6", marginTop: "0.25rem" }}>Hanya administrator berizin dapat login. Permintaan akses akan ditinjau oleh Superadmin.</p>
+                  <p style={{ fontSize: "0.8125rem", fontWeight: 500, color: "#1E40AF" }}>Akses Terbatas</p>
+                  <p style={{ fontSize: "0.75rem", color: "#3B82F6", marginTop: "0.125rem" }}>Hanya administrator berizin dapat login.</p>
                 </div>
               </div>
             </div>
@@ -276,13 +276,13 @@ export default function LoginPage() {
         </div>
 
         {/* Footer */}
-        <div style={{ marginTop: "auto", paddingTop: "2rem", textAlign: "center" }}>
-          <p style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.5)" }}>
+        <div style={{ marginTop: "auto", paddingTop: "1.5rem", textAlign: "center" }}>
+          <p style={{ fontSize: "0.6875rem", color: "rgba(255,255,255,0.5)" }}>
             Dengan masuk, Anda menyetujui<br />
-            <span style={{ color: "rgba(255,255,255,0.7)", fontWeight: 500 }}>Syarat & Ketentuan</span> penggunaan
+            <span style={{ color: "rgba(255,255,255,0.7)", fontWeight: 500 }}>Syarat & Ketentuan</span>
           </p>
-          <div style={{ display: "flex", justifyContent: "center", gap: "0.5rem", marginTop: "1rem" }}>
-            <span style={{ display: "inline-block", padding: "0.25rem 0.75rem", background: "rgba(255,255,255,0.1)", borderRadius: "9999px", fontSize: "0.625rem", color: "rgba(255,255,255,0.5)", fontWeight: 500 }}>
+          <div style={{ display: "flex", justifyContent: "center", gap: "0.5rem", marginTop: "0.75rem" }}>
+            <span style={{ display: "inline-block", padding: "0.25rem 0.625rem", background: "rgba(255,255,255,0.1)", borderRadius: "9999px", fontSize: "0.625rem", color: "rgba(255,255,255,0.5)", fontWeight: 500 }}>
               v2.0.0
             </span>
           </div>

@@ -87,16 +87,16 @@ export default function RejectedPage() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       {/* Header - Ocean Depth Gradient */}
-      <div className="bg-gradient-to-br from-[#071E3D] via-[#123C69] to-[#2563EB] px-6 pt-12 pb-24 relative overflow-hidden">
+      <div className="bg-gradient-to-br from-[#071E3D] via-[#123C69] to-[#2563EB] px-4 pb-20 relative overflow-hidden" style={{ paddingTop: "max(1rem, env(safe-area-inset-top))" }}>
         {/* Decorative elements */}
-        <div className="absolute -top-20 -right-20 w-72 h-72 bg-white/5 rounded-full blur-3xl" />
-        <div className="absolute -bottom-32 -left-16 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
+        <div className="absolute -top-16 -right-16 w-56 h-56 bg-white/5 rounded-full blur-3xl" />
+        <div className="absolute -bottom-24 -left-12 w-48 h-48 bg-white/5 rounded-full blur-3xl" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl" />
 
         <div className="relative z-10 flex flex-col items-center">
           {/* Logo */}
-          <div className="w-28 h-28 bg-white rounded-[2rem] shadow-2xl flex items-center justify-center mb-6">
-            <svg width="64" height="64" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <div className="w-20 h-20 bg-white rounded-2xl shadow-2xl flex items-center justify-center mb-4">
+            <svg width="48" height="48" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <linearGradient id="logoGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop offset="0%" stopColor="#9333ea"/>
@@ -108,13 +108,12 @@ export default function RejectedPage() {
             </svg>
           </div>
 
-          <h1 className="text-white text-4xl font-bold tracking-tight mb-3">
+          <h1 className="text-white text-2xl font-bold tracking-tight mb-2">
             SIMPATI
           </h1>
 
-          <p className="text-white/70 text-sm text-center leading-relaxed max-w-[280px]">
-            Sistem Informasi Manajemen<br />
-            Protokol & Agenda Terintegrasi
+          <p className="text-white/70 text-xs text-center leading-relaxed max-w-[260px]">
+            Sistem Informasi Manajemen Protokol & Agenda Terintegrasi
           </p>
         </div>
 
@@ -127,15 +126,15 @@ export default function RejectedPage() {
       </div>
 
       {/* Content Card */}
-      <div className="flex-1 px-6 py-8 -mt-16 relative z-10">
+      <div className="flex-1 px-4 py-6 -mt-12 relative z-10">
         {/* Re-apply Form */}
         {showReapply ? (
-          <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 animate-fadeIn">
-            <div className="mb-6">
-              <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mb-4 mx-auto">
-                <ArrowPathIcon className="w-8 h-8 text-indigo-600" />
+          <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 animate-fadeIn">
+            <div className="mb-5">
+              <div className="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center mb-3 mx-auto">
+                <ArrowPathIcon className="w-7 h-7 text-indigo-600" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 text-center mb-2">
+              <h2 className="text-xl font-bold text-gray-900 text-center mb-1">
                 Ajukan Ulang
               </h2>
               <p className="text-gray-500 text-sm text-center">
@@ -144,8 +143,8 @@ export default function RejectedPage() {
             </div>
 
             <form onSubmit={handleReapply}>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+              <div className="mb-3">
+                <label className="block text-sm font-medium text-gray-700 mb-1.5 flex items-center gap-2">
                   <UserCircleIcon className="w-4 h-4 text-indigo-500" />
                   Nama Lengkap
                 </label>
@@ -154,13 +153,13 @@ export default function RejectedPage() {
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="Masukkan nama lengkap"
-                  className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all min-h-[48px]"
+                  className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                   required
                 />
               </div>
 
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+              <div className="mb-3">
+                <label className="block text-sm font-medium text-gray-700 mb-1.5 flex items-center gap-2">
                   <BuildingOfficeIcon className="w-4 h-4 text-indigo-500" />
                   Divisi / Unit Kerja
                 </label>
@@ -169,36 +168,36 @@ export default function RejectedPage() {
                   value={formData.division}
                   onChange={(e) => setFormData({ ...formData, division: e.target.value })}
                   placeholder="Contoh: Sekretariat Daerah"
-                  className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all min-h-[48px]"
+                  className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                   required
                 />
               </div>
 
               {error && (
-                <div className="mb-4 p-3 bg-red-50 rounded-xl flex items-start gap-2">
+                <div className="mb-3 p-3 bg-red-50 rounded-xl flex items-start gap-2">
                   <InformationCircleIcon className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
                   <p className="text-sm text-red-600">{error}</p>
                 </div>
               )}
 
-              <div className="flex gap-3">
+              <div className="flex gap-3 mt-5">
                 <button
                   type="button"
                   onClick={() => setShowReapply(false)}
-                  className="flex-1 h-12 bg-white border border-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
+                  className="flex-1 h-11 bg-white border border-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="flex-1 h-12 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-70 flex items-center justify-center gap-2"
+                  className="flex-1 h-11 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-70 flex items-center justify-center gap-2"
                 >
                   {isLoading ? (
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   ) : (
                     <>
-                      Kirim Ulang
+                      Kirim
                       <CheckCircleIcon className="w-5 h-5" />
                     </>
                   )}
@@ -207,18 +206,18 @@ export default function RejectedPage() {
             </form>
           </div>
         ) : (
-          <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 animate-fadeIn">
+          <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 animate-fadeIn">
             {/* Status Icon */}
-            <div className="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 relative">
+            <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4 relative">
               <div className="absolute inset-0 bg-red-100 rounded-full animate-pulse opacity-30" />
-              <XCircleIcon className="w-12 h-12 text-red-500" />
+              <XCircleIcon className="w-10 h-10 text-red-500" />
             </div>
 
-            <h2 className="text-2xl font-bold text-gray-900 text-center mb-3">
+            <h2 className="text-xl font-bold text-gray-900 text-center mb-2">
               Permintaan Ditolak ❌
             </h2>
 
-            <p className="text-gray-500 text-center mb-6 leading-relaxed">
+            <p className="text-gray-500 text-center mb-5 leading-relaxed text-sm">
               Maaf, permintaan akses Anda<br />
               <span className="font-semibold text-red-600">telah ditolak</span><br />
               oleh Superadmin.
@@ -265,7 +264,7 @@ export default function RejectedPage() {
             {/* Action Buttons */}
             <button
               onClick={() => setShowReapply(true)}
-              className="w-full h-12 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all mb-3 flex items-center justify-center gap-2"
+              className="w-full h-11 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all mb-3 flex items-center justify-center gap-2"
             >
               <ArrowPathIcon className="w-5 h-5" />
               Ajukan Ulang
@@ -273,7 +272,7 @@ export default function RejectedPage() {
 
             <button
               onClick={handleLogout}
-              className="w-full h-12 bg-white border border-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center justify-center gap-2"
+              className="w-full h-11 bg-white border border-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center justify-center gap-2"
             >
               <ArrowRightOnRectangleIcon className="w-5 h-5" />
               Masuk dengan Akun Lain
@@ -282,13 +281,10 @@ export default function RejectedPage() {
         )}
 
         {/* Footer */}
-        <div className="mt-8 text-center">
-          <p className="text-sm text-gray-500 mb-2">Butuh bantuan?</p>
+        <div className="mt-6 text-center">
+          <p className="text-xs text-gray-500 mb-1">Butuh bantuan?</p>
           <p className="text-xs text-gray-400">
-            Hubungi Superadmin di<br />
-            <a href="mailto:siagapesarawan@gmail.com" className="text-indigo-600 font-medium hover:text-indigo-700">
-              siagapesarawan@gmail.com
-            </a>
+            Hubungi <a href="mailto:siagapesarawan@gmail.com" className="text-indigo-600 font-medium">siagapesarawan@gmail.com</a>
           </p>
         </div>
 
