@@ -2,6 +2,7 @@
 
 import { Providers } from "./providers";
 import "./globals.css";
+import "./animations.css";
 
 export default function RootLayout({
   children,

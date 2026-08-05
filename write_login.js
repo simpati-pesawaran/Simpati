@@ -1,4 +1,7 @@
-"use client";
+"use strict";
+const fs = require('fs');
+
+const loginPage = `"use client";
 
 import { useState, useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
@@ -176,3 +179,7 @@ export default function LoginPage() {
     </div>
   );
 }
+`;
+
+fs.writeFileSync('C:/simpati/app/login/page.tsx', loginPage);
+console.log('Login page written');
