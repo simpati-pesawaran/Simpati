@@ -93,7 +93,7 @@ export async function getUserProfileByEmail(email: string) {
  * Check if user is superadmin
  */
 export function isSuperadmin(email: string): boolean {
-  return email.toLowerCase() === 'siagapesyaratan@gmail.com';
+  return email.toLowerCase() === 'siagapesawaran@gmail.com';
 }
 
 /**

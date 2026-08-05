@@ -9,7 +9,7 @@ import { authOptions } from "../../auth/[...nextauth]/route";
 import { supabaseAdmin } from "@/app/lib/supabase";
 
 // Superadmin constant
-const SUPERADMIN_EMAIL = "siagapesarawan@gmail.com";
+const SUPERADMIN_EMAIL = "siagapesawaran@gmail.com";
 
 /**
  * GET /api/auth/profile

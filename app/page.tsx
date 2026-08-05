@@ -14,7 +14,7 @@ export default async function HomePage() {
   const profile = (session.user as any)?.profile;
 
   // Superadmin always goes to dashboard
-  if (email === "siagapesarawan@gmail.com") {
+  if (email === "siagapesawaran@gmail.com") {
     redirect("/dashboard");
   }
 

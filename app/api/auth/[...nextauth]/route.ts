@@ -2,8 +2,18 @@ import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { supabaseAdmin } from "@/app/lib/supabase";
 
+// Enable debug logging
+const DEBUG = process.env.NEXTAUTH_DEBUG === 'true' || process.env.NODE_ENV === 'development';
+if (DEBUG) {
+  console.log('🔍 [NEXTAUTH DEBUG] NextAuth initializing...');
+  console.log('🔍 [NEXTAUTH DEBUG] GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID ? 'SET' : 'NOT SET');
+  console.log('🔍 [NEXTAUTH DEBUG] GOOGLE_CLIENT_SECRET:', process.env.GOOGLE_CLIENT_SECRET ? 'SET' : 'NOT SET');
+  console.log('🔍 [NEXTAUTH DEBUG] NEXTAUTH_SECRET:', process.env.NEXTAUTH_SECRET ? 'SET' : 'NOT SET');
+  console.log('🔍 [NEXTAUTH DEBUG] NEXTAUTH_URL:', process.env.NEXTAUTH_URL || 'NOT SET');
+}
+
 // Superadmin constant
-const SUPERADMIN_EMAIL = "siagapesarawan@gmail.com";
+const SUPERADMIN_EMAIL = "siagapesawaran@gmail.com";
 
 export const authOptions: NextAuthOptions = {
   providers: [

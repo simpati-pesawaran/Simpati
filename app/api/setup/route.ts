@@ -211,7 +211,7 @@ CREATE POLICY "settings_insert" ON settings FOR INSERT WITH CHECK (true);
 
 -- Seed superadmin
 INSERT INTO profiles (email, name, role, status, approved_at)
-VALUES ('siagapesarawan@gmail.com', 'Superadmin', 'superadmin', 'approved', NOW())
+VALUES ('siagapesasaran@gmail.com', 'Superadmin', 'superadmin', 'approved', NOW())
 ON CONFLICT (email) DO NOTHING;
 `;
 

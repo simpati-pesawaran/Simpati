@@ -5,7 +5,7 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-const SUPERADMIN_EMAIL = "siagapesarawan@gmail.com";
+const SUPERADMIN_EMAIL = "siagapesawaran@gmail.com";
 
 export default function LoginPage() {
   const { data: session, status } = useSession();
@@ -58,9 +58,17 @@ export default function LoginPage() {
   };
 
   const handleGoogleSignIn = async () => {
+    if (isLoading) return; // Prevent double-click
     setIsLoading(true);
     try {
-      await signIn("google", { callbackUrl: "/login" });
+      const result = await signIn("google", {
+        callbackUrl: "/dashboard",
+        redirect: true,
+      });
+      if (result?.error) {
+        console.error("Sign in error:", result.error);
+        setIsLoading(false);
+      }
     } catch (err) {
       console.error("Sign in error:", err);
       setIsLoading(false);
