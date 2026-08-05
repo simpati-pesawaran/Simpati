@@ -4,23 +4,13 @@ import { useState, useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import {
-  UserCircleIcon,
-  BuildingOfficeIcon,
-  InformationCircleIcon,
-  ArrowLeftIcon,
-  CheckCircleIcon,
-  ArrowRightIcon,
-} from "@heroicons/react/24/outline";
-import { SparklesIcon } from "@heroicons/react/24/solid";
 
 export default function LoginPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [showSetup, setShowSetup] = useState(false);
-  const [setupStep, setSetupStep] = useState("name");
   const [formData, setFormData] = useState({ name: "", division: "" });
+  const [step, setStep] = useState<"welcome" | "name" | "division">("welcome");
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -39,10 +29,10 @@ export default function LoginPage() {
         else if (data.profile.status === "rejected") router.push("/login/rejected");
       } else {
         setFormData((prev) => ({ ...prev, name: session?.user?.name || "" }));
-        setShowSetup(true);
+        setStep("name");
       }
     } catch {
-      setShowSetup(true);
+      setStep("name");
     }
   };
 
@@ -58,7 +48,7 @@ export default function LoginPage() {
       return;
     }
     setError("");
-    setSetupStep("division");
+    setStep("division");
   };
 
   const handleDivisionSubmit = async (e: React.FormEvent) => {
@@ -83,140 +73,41 @@ export default function LoginPage() {
     }
   };
 
-  if (status === "loading") return (
-    <div className="min-h-screen flex items-center justify-center" style={{ background: "linear-gradient(180deg, #071E3D 0%, #123C69 50%, #2563EB 100%)" }}>
-      <div className="flex flex-col items-center gap-3">
-        <div className="w-10 h-10 border-[3px] border-white/30 border-t-blue-400 rounded-full animate-spin" />
-        <p className="text-white/70 text-sm">Memuat...</p>
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#1e3a5f] via-[#2563eb] to-[#7c3aed]">
+        <div className="w-10 h-10 border-3 border-white/30 border-t-white rounded-full animate-spin" />
       </div>
-    </div>
-  );
+    );
+  }
 
   return (
-    <div className="min-h-screen" style={{ background: "linear-gradient(180deg, #071E3D 0%, #123C69 50%, #2563EB 100%)" }}>
-      {/* Header Area */}
-      <div className="px-5 pt-[max(2.5rem,env(safe-area-inset-top))] pb-24 flex flex-col items-center">
-        {/* Logo */}
-        <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg shadow-black/20">
-          <Image src="/logo/logo.svg" alt="SIMPATI" width={40} height={40} />
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-[#1e3a5f] via-[#2563eb] to-[#7c3aed]">
+      {/* Main Content - Centered */}
+      <main className="flex-1 flex flex-col items-center justify-center px-6 py-8">
+        {/* Logo & Branding */}
+        <div className="text-center mb-10">
+          <div className="w-20 h-20 mx-auto mb-4 bg-white rounded-2xl flex items-center justify-center shadow-2xl">
+            <Image src="/logo/logo.svg" alt="SIMPATI" width={48} height={48} />
+          </div>
+          <h1 className="text-white text-2xl font-bold tracking-widest">SIMPATI</h1>
+          <p className="text-white/60 text-xs mt-2 max-w-[260px]">
+            Sistem Informasi Manajemen Protokol & Agenda Terintegrasi
+          </p>
         </div>
 
-        {/* Brand */}
-        <h1 className="mt-3 text-white text-xl font-bold tracking-wider">SIMPATI</h1>
-        <p className="mt-1 text-white/60 text-xs text-center max-w-[260px]">
-          Sistem Informasi Manajemen Protokol & Agenda Terintegrasi
-        </p>
-      </div>
+        {/* Login Card */}
+        <div className="w-full max-w-[300px] bg-white rounded-2xl p-5 shadow-2xl">
+          {/* Step: Welcome */}
+          {step === "welcome" && (
+            <div className="text-center">
+              <h2 className="text-lg font-bold text-gray-900 mb-1">Selamat Datang! 👋</h2>
+              <p className="text-sm text-gray-500 mb-4">Masuk dengan akun Google Anda</p>
 
-      {/* White Card Container */}
-      <div className="mx-4 bg-white rounded-t-[28px] rounded-b-3xl shadow-2xl overflow-hidden" style={{ marginTop: "-60px" }}>
-        {/* Card Content */}
-        <div className="p-6">
-          {showSetup && setupStep === "name" && (
-            <div>
-              {/* Avatar */}
-              <div className="flex justify-center mb-4">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
-                  <SparklesIcon className="w-7 h-7 text-indigo-500" />
-                </div>
-              </div>
-
-              <h2 className="text-center text-lg font-bold text-gray-900 mb-1">Selamat Datang! 👋</h2>
-              <p className="text-center text-sm text-gray-500 mb-5">Lengkapi profil Anda</p>
-
-              <form onSubmit={handleNameSubmit}>
-                <div className="mb-4">
-                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-                    <UserCircleIcon className="w-4 h-4 text-indigo-500" />
-                    Nama Lengkap
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.name}
-                    onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    placeholder="Nama lengkap"
-                    autoFocus
-                    required
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                  />
-                </div>
-                {error && (
-                  <p className="flex items-center gap-1 text-xs text-red-500 mb-3">
-                    <InformationCircleIcon className="w-4 h-4" />
-                    {error}
-                  </p>
-                )}
-                <button type="submit" className="w-full py-3 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-xl font-semibold text-sm flex items-center justify-center gap-2 active:scale-[0.98] transition-transform">
-                  Lanjut
-                  <ArrowRightIcon className="w-5 h-5" />
-                </button>
-              </form>
-            </div>
-          )}
-
-          {showSetup && setupStep === "division" && (
-            <div>
-              {/* User Avatar */}
-              <div className="flex flex-col items-center mb-4">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-r from-indigo-500 to-blue-500 flex items-center justify-center text-white text-xl font-bold mb-2">
-                  {formData.name.charAt(0).toUpperCase()}
-                </div>
-                <p className="font-semibold text-gray-900">{formData.name}</p>
-                <p className="text-xs text-gray-500">{session?.user?.email}</p>
-              </div>
-
-              <form onSubmit={handleDivisionSubmit}>
-                <div className="mb-4">
-                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-                    <BuildingOfficeIcon className="w-4 h-4 text-indigo-500" />
-                    Divisi / Unit Kerja
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.division}
-                    onChange={(e) => setFormData({...formData, division: e.target.value})}
-                    placeholder="Contoh: Sekretariat Daerah"
-                    autoFocus
-                    required
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                  />
-                </div>
-                {error && (
-                  <p className="flex items-center gap-1 text-xs text-red-500 mb-3">
-                    <InformationCircleIcon className="w-4 h-4" />
-                    {error}
-                  </p>
-                )}
-                <div className="flex gap-3">
-                  <button type="button" onClick={() => setSetupStep("name")} className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium text-sm flex items-center justify-center gap-2 active:scale-[0.98] transition-transform">
-                    <ArrowLeftIcon className="w-4 h-4" />
-                    Kembali
-                  </button>
-                  <button type="submit" disabled={isLoading} className="flex-1 py-3 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-xl font-semibold text-sm flex items-center justify-center gap-2 active:scale-[0.98] transition-transform disabled:opacity-50">
-                    {isLoading ? (
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    ) : (
-                      <>
-                        Daftar
-                        <CheckCircleIcon className="w-4 h-4" />
-                      </>
-                    )}
-                  </button>
-                </div>
-              </form>
-            </div>
-          )}
-
-          {!showSetup && (
-            <div>
-              <h2 className="text-center text-lg font-bold text-gray-900 mb-1">Selamat Datang! 👋</h2>
-              <p className="text-center text-sm text-gray-500 mb-5">Masuk dengan akun Google Anda</p>
-
-              {/* Google Button */}
               <button
                 onClick={handleGoogleSignIn}
                 disabled={isLoading}
-                className="w-full py-3 bg-white border border-gray-200 rounded-xl font-medium text-sm flex items-center justify-center gap-3 text-gray-800 active:scale-[0.98] transition-transform shadow-sm"
+                className="w-full h-11 bg-white border border-gray-200 rounded-xl font-medium text-sm flex items-center justify-center gap-3 text-gray-700 hover:bg-gray-50 active:scale-[0.98] transition-all shadow-sm"
               >
                 {isLoading ? (
                   <div className="w-5 h-5 border-2 border-gray-300 border-t-indigo-600 rounded-full animate-spin" />
@@ -233,32 +124,93 @@ export default function LoginPage() {
                 )}
               </button>
 
-              {/* Info Box */}
-              <div className="mt-4 p-3 bg-blue-50 rounded-xl flex gap-3">
-                <InformationCircleIcon className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-blue-900">Akses Terbatas</p>
-                  <p className="text-xs text-blue-600 mt-0.5">Hanya administrator berizin dapat login.</p>
-                </div>
+              <div className="mt-4 p-3 bg-blue-50 rounded-xl text-left">
+                <p className="text-xs font-medium text-blue-900">Akses Terbatas</p>
+                <p className="text-xs text-blue-600 mt-0.5">Hanya administrator berizin dapat login.</p>
               </div>
             </div>
           )}
-        </div>
 
-        {/* Footer inside card */}
-        <div className="px-6 py-5 bg-gray-50 border-t border-gray-100 text-center">
-          <p className="text-xs text-gray-400">
-            Dengan masuk, Anda menyetujui <span className="text-gray-600 font-medium">Syarat & Ketentuan</span>
-          </p>
-        </div>
-      </div>
+          {/* Step: Name */}
+          {step === "name" && (
+            <div className="text-center">
+              <div className="w-14 h-14 mx-auto mb-3 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
+                <svg className="w-7 h-7 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                </svg>
+              </div>
 
-      {/* Version Badge */}
-      <div className="text-center mt-6 mb-6">
-        <span className="px-3 py-1 bg-white/10 rounded-full text-[10px] text-white/50 font-medium">
+              <h2 className="text-lg font-bold text-gray-900 mb-1">Lengkapi Profil</h2>
+              <p className="text-sm text-gray-500 mb-4">Masukkan informasi Anda</p>
+
+              <form onSubmit={handleNameSubmit}>
+                <div className="mb-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5 text-left">Nama Lengkap</label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    placeholder="Nama lengkap"
+                    autoFocus
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl text-base focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                  />
+                </div>
+
+                {error && <p className="text-xs text-red-500 mb-3 text-left">{error}</p>}
+
+                <button type="submit" className="w-full h-11 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-xl font-semibold text-sm active:scale-[0.98] transition-transform shadow-lg">
+                  Lanjut
+                </button>
+              </form>
+            </div>
+          )}
+
+          {/* Step: Division */}
+          {step === "division" && (
+            <div className="text-center">
+              <div className="w-14 h-14 mx-auto mb-3 rounded-full bg-gradient-to-r from-indigo-500 to-blue-500 flex items-center justify-center text-white text-lg font-bold">
+                {formData.name.charAt(0).toUpperCase()}
+              </div>
+              <p className="font-semibold text-gray-900">{formData.name}</p>
+              <p className="text-xs text-gray-500">{session?.user?.email}</p>
+
+              <form onSubmit={handleDivisionSubmit} className="mt-4">
+                <div className="mb-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5 text-left">Divisi / Unit Kerja</label>
+                  <input
+                    type="text"
+                    value={formData.division}
+                    onChange={(e) => setFormData({...formData, division: e.target.value})}
+                    placeholder="Contoh: Sekretariat Daerah"
+                    autoFocus
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl text-base focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                  />
+                </div>
+
+                {error && <p className="text-xs text-red-500 mb-3 text-left">{error}</p>}
+
+                <div className="flex gap-2">
+                  <button type="button" onClick={() => setStep("name")} className="flex-1 h-11 bg-gray-100 text-gray-700 rounded-xl font-medium text-sm active:scale-[0.98] transition-transform">
+                    Kembali
+                  </button>
+                  <button type="submit" disabled={isLoading} className="flex-1 h-11 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-xl font-semibold text-sm active:scale-[0.98] transition-transform disabled:opacity-50">
+                    {isLoading ? "..." : "Daftar"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="text-center pb-6">
+        <p className="text-white/40 text-xs">Dengan masuk, Anda menyetujui</p>
+        <p className="text-white/60 text-xs font-medium mt-0.5">Syarat & Ketentuan</p>
+        <span className="inline-block mt-3 px-3 py-1 bg-white/10 rounded-full text-[10px] text-white/40 font-medium">
           v2.0.0
         </span>
-      </div>
+      </footer>
     </div>
   );
 }
