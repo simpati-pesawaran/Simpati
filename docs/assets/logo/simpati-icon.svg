@@ -1,0 +1,60 @@
+﻿<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Primary Gradient - Blue to Purple -->
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9333ea"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+    
+    <!-- Subtle inner shadow -->
+    <filter id="innerGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8" result="blur"/>
+      <feOffset dx="0" dy="4" result="offsetBlur"/>
+      <feComposite in="SourceGraphic" in2="offsetBlur" operator="over"/>
+    </filter>
+  </defs>
+  
+  <!-- Background Circle - Subtle -->
+  <circle cx="256" cy="256" r="240" fill="#fafafa" stroke="#e4e4e7" stroke-width="2"/>
+  
+  <!-- Outer Ring - Protocol/Security Symbol -->
+  <circle cx="256" cy="256" r="180" fill="none" stroke="url(#logoGradient)" stroke-width="16" stroke-linecap="round" stroke-dasharray="60 30"/>
+  
+  <!-- Inner Shield Shape - Government/Protection -->
+  <path d="M256 80 L400 160 L400 280 C400 380 256 440 256 440 C256 440 112 380 112 280 L112 160 Z" 
+        fill="url(#logoGradient)" 
+        filter="url(#innerGlow)"/>
+  
+  <!-- Shield Inner - Lighter -->
+  <path d="M256 110 L375 175 L375 275 C375 355 256 405 256 405 C256 405 137 355 137 275 L137 175 Z" 
+        fill="white" 
+        fill-opacity="0.15"/>
+  
+  <!-- Calendar/Agenda Icon - Abstract S Letter -->
+  <g transform="translate(256, 220)">
+    <!-- Abstract "S" formed by calendar pages -->
+    <rect x="-70" y="-60" width="140" height="120" rx="12" fill="white"/>
+    
+    <!-- Calendar binding dots -->
+    <circle cx="-45" cy="-60" r="8" fill="white"/>
+    <circle cx="-15" cy="-60" r="8" fill="white"/>
+    <circle cx="15" cy="-60" r="8" fill="white"/>
+    <circle cx="45" cy="-60" r="8" fill="white"/>
+    
+    <!-- Abstract S curve -->
+    <path d="M-50 0 C-50 -30 0 -30 0 0 C0 30 50 30 50 0" 
+          stroke="url(#logoGradient)" 
+          stroke-width="16" 
+          stroke-linecap="round" 
+          fill="none"/>
+    
+    <!-- Bottom bar of calendar -->
+    <rect x="-50" y="30" width="100" height="8" rx="4" fill="url(#logoGradient)" fill-opacity="0.5"/>
+  </g>
+  
+  <!-- Accent Stars - Excellence -->
+  <circle cx="380" cy="120" r="6" fill="#f59e0b"/>
+  <circle cx="420" cy="160" r="4" fill="#f59e0b" fill-opacity="0.6"/>
+  <circle cx="130" cy="380" r="5" fill="#f59e0b"/>
+  <circle cx="100" cy="340" r="3" fill="#f59e0b" fill-opacity="0.6"/>
+</svg>
