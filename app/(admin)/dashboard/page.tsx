@@ -113,22 +113,23 @@ export default function DashboardPage() {
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl" style={{ transform: "translate(-30%, 50%)" }} />
         </div>
 
-        {/* Header Content - Logo + Bell */}
+        {/* Header Content - Logo + Description + Bell */}
         <div className="relative z-10 flex items-center justify-between pb-6">
-          {/* Logo */}
+          {/* Logo + Description */}
           <div className="flex items-center gap-3">
             <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg"
+              className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden"
               style={{
                 background: "rgba(255,255,255,0.2)",
                 backdropFilter: "blur(10px)",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.15)"
               }}
             >
-              <Image src="/logo/logo-master.png" alt="SIMPATI" width={40} height={40} className="w-5 h-5 object-contain" />
+              <Image src="/logo/logo-master.png" alt="SIMPATI" width={40} height={40} className="w-full h-full object-cover" />
             </div>
-            <div>
-              <h1 className="font-bold text-base text-white leading-tight">SIMPATI</h1>
-              <p className="text-white/60 text-xs">Protokol & Agenda</p>
+            <div className="leading-tight">
+              <p className="text-white/80 text-[11px] font-medium tracking-wide">Sistem Informasi Manajemen</p>
+              <p className="text-white/60 text-[10px]">Protokol & Agenda Terintegrasi</p>
             </div>
           </div>
 
@@ -137,6 +138,7 @@ export default function DashboardPage() {
             style={{
               background: "rgba(255,255,255,0.2)",
               backdropFilter: "blur(10px)",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.15)"
             }}
           >
             <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -146,22 +148,37 @@ export default function DashboardPage() {
           </button>
         </div>
 
-        {/* Greeting */}
-        <div className="relative z-10 mt-8">
-          <h2 className="text-sm text-white/80 mb-0.5">Halo</h2>
-          <p className="text-xl font-bold text-white leading-tight">{userName}</p>
+        {/* Greeting - 3 Lines */}
+        <div className="mt-8">
+          <h2 className="text-white text-xl font-bold">Halo,</h2>
+          <h2 className="text-white text-xl font-bold">{userName}</h2>
           <p className="text-white/60 text-xs mt-0.5">{userDivision}</p>
         </div>
 
-        {/* Quick Stats */}
-        <div className="flex gap-3 mt-4 relative z-10">
-          <div className="flex-1 flex flex-col justify-between rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.2)" }}>
-            <p className="text-white/70 text-xs">Kegiatan</p>
-            <p className="text-lg font-bold text-white">{stats?.total_kegiatan || 0}</p>
+        {/* Quick Stats - with Icons */}
+        <div className="grid grid-cols-2 gap-2.5 mt-4">
+          <div className="bg-white/15 backdrop-blur-sm rounded-xl p-3">
+            <div className="flex items-center gap-2 mb-1.5">
+              <div className="w-7 h-7 rounded-lg bg-blue-400/30 flex items-center justify-center">
+                <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <span className="text-white/60 text-[11px]">Kegiatan</span>
+            </div>
+            <p className="text-white text-xl font-bold">{stats?.total_kegiatan || 0}</p>
           </div>
-          <div className="flex-1 flex flex-col justify-between rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.2)" }}>
-            <p className="text-white/70 text-xs">Audiensi</p>
-            <p className="text-lg font-bold text-white">{stats?.total_audiensi || 0}</p>
+
+          <div className="bg-white/15 backdrop-blur-sm rounded-xl p-3">
+            <div className="flex items-center gap-2 mb-1.5">
+              <div className="w-7 h-7 rounded-lg bg-purple-400/30 flex items-center justify-center">
+                <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+              <span className="text-white/60 text-[11px]">Audiensi</span>
+            </div>
+            <p className="text-white text-xl font-bold">{stats?.total_audiensi || 0}</p>
           </div>
         </div>
       </div>
@@ -178,126 +195,124 @@ export default function DashboardPage() {
           boxShadow: "0 -10px 40px rgba(0,0,0,0.08)",
         }}
       >
-        {/* Menu Section */}
-        <div className="mb-6">
-          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4" style={{ letterSpacing: "0.5px" }}>Menu</h3>
-          <div className="grid grid-cols-3 gap-3">
+        {/* Menu Grid - Previous Structure */}
+        <div className="mb-5">
+          <h3 className="text-gray-900 font-bold text-sm mb-3">Menu</h3>
+
+          {/* Grid 3 Kolom - Row 1 */}
+          <div className="grid grid-cols-3 gap-2 mb-2">
             {menuItems.slice(0, 3).map((menu) => (
               <Link
                 key={menu.name}
                 href={menu.href}
-                className="flex flex-col items-center p-4 rounded-2xl transition-all active:scale-95"
-                style={{
-                  background: "white",
-                  border: "1px solid rgba(17,24,39,0.06)",
-                  boxShadow: "0 2px 8px rgba(15,23,42,0.04)",
-                }}
+                className="group flex flex-col items-center p-2.5 rounded-2xl hover:bg-slate-50 transition-all active:scale-95"
               >
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${menu.color} flex items-center justify-center mb-2 shadow-lg`}>
-                  <Image src={menu.icon} alt={menu.name} width={26} height={26} />
+                <div className={`w-[52px] h-[52px] rounded-xl bg-gradient-to-br ${menu.color} flex items-center justify-center mb-1.5 shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all`}>
+                  <Image src={menu.icon} alt={menu.name} width={28} height={28} />
                 </div>
-                <span className="text-xs font-semibold text-gray-900 text-center">{menu.name}</span>
+                <span className="text-[10px] font-semibold text-gray-700 text-center leading-tight">{menu.name}</span>
               </Link>
             ))}
           </div>
-          <div className="grid grid-cols-3 gap-3 mt-3">
+
+          {/* Grid 3 Kolom - Row 2 (2 items + 1 empty) */}
+          <div className="grid grid-cols-3 gap-2">
             {menuItems.slice(3, 5).map((menu) => (
               <Link
                 key={menu.name}
                 href={menu.href}
-                className="flex flex-col items-center p-4 rounded-2xl transition-all active:scale-95"
-                style={{
-                  background: "white",
-                  border: "1px solid rgba(17,24,39,0.06)",
-                  boxShadow: "0 2px 8px rgba(15,23,42,0.04)",
-                }}
+                className="group flex flex-col items-center p-2.5 rounded-2xl hover:bg-slate-50 transition-all active:scale-95"
               >
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${menu.color} flex items-center justify-center mb-2 shadow-lg`}>
-                  <Image src={menu.icon} alt={menu.name} width={26} height={26} />
+                <div className={`w-[52px] h-[52px] rounded-xl bg-gradient-to-br ${menu.color} flex items-center justify-center mb-1.5 shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all`}>
+                  <Image src={menu.icon} alt={menu.name} width={28} height={28} />
                 </div>
-                <span className="text-xs font-semibold text-gray-900 text-center">{menu.name}</span>
+                <span className="text-[10px] font-semibold text-gray-700 text-center leading-tight">{menu.name}</span>
               </Link>
             ))}
-            <div className="p-4" /> {/* Empty for alignment */}
+            {/* Empty cell untuk alignment */}
+            <div className="p-2.5" />
           </div>
         </div>
 
+        {/* Divider */}
+        <div className="border-t border-dashed border-gray-200 my-3" />
+
         {/* Agenda Section */}
-        <div className="border-t border-dashed border-gray-200 pt-5">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider" style={{ letterSpacing: "0.5px" }}>Agenda</h3>
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-gray-900 font-bold text-sm">Agenda</h3>
             <span className="px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[10px] font-semibold rounded-full">
               {upcomingEvents.length}
             </span>
           </div>
 
-            {upcomingEvents.length === 0 ? (
-              <div className="bg-gradient-to-br from-slate-50 to-indigo-50 rounded-xl p-5 text-center">
-                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mx-auto mb-2 shadow-sm">
-                  <svg className="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <p className="text-gray-500 font-medium text-sm">Belum ada agenda</p>
+          {upcomingEvents.length === 0 ? (
+            <div className="bg-gradient-to-br from-slate-50 to-indigo-50 rounded-xl p-5 text-center">
+              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mx-auto mb-2 shadow-sm">
+                <svg className="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
               </div>
-            ) : (
-              <div className="space-y-2">
-                {upcomingEvents.slice(0, 4).map((event) => (
-                  <button
-                    key={event.id}
-                    onClick={() => setShowDetail(event)}
-                    className="w-full bg-white border border-gray-100 rounded-xl p-3 text-left hover:shadow-md hover:border-indigo-100 transition-all active:scale-[0.98]"
-                  >
-                    <div className="flex items-start gap-3">
-                      {/* Date Badge */}
-                      <div className={`flex-shrink-0 w-10 h-12 rounded-lg flex flex-col items-center justify-center py-1 ${
-                        event.jenis === "agenda"
-                          ? "bg-gradient-to-br from-blue-500 to-indigo-500"
-                          : "bg-gradient-to-br from-purple-500 to-pink-500"
-                      }`}>
-                        <span className="text-white/80 text-[9px] font-medium uppercase">
-                          {new Date(event.date).toLocaleDateString("id-ID", { weekday: "short" })}
-                        </span>
-                        <span className="text-white text-base font-bold leading-none">
-                          {new Date(event.date).getDate()}
-                        </span>
-                      </div>
-
-                      {/* Content */}
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-gray-900 text-xs truncate pr-2">{event.title}</p>
-                        <div className="flex items-center gap-1 mt-0.5">
-                          <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                          <span className="text-[11px] text-gray-500">{event.time_start}</span>
-                        </div>
-                      </div>
-
-                      {/* Type Badge */}
-                      <span className={`flex-shrink-0 px-1.5 py-0.5 rounded-full text-[9px] font-semibold ${
-                        event.jenis === "agenda"
-                          ? "bg-blue-50 text-blue-600"
-                          : "bg-purple-50 text-purple-600"
-                      }`}>
-                        {event.jenis === "agenda" ? "Keg" : "Aud"}
+              <p className="text-gray-500 font-medium text-sm">Belum ada agenda</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {upcomingEvents.slice(0, 4).map((event) => (
+                <button
+                  key={event.id}
+                  onClick={() => setShowDetail(event)}
+                  className="w-full bg-white border border-gray-100 rounded-xl p-3 text-left hover:shadow-md hover:border-indigo-100 transition-all active:scale-[0.98]"
+                >
+                  <div className="flex items-start gap-3">
+                    {/* Date Badge */}
+                    <div className={`flex-shrink-0 w-10 h-12 rounded-lg flex flex-col items-center justify-center py-1 ${
+                      event.jenis === "agenda"
+                        ? "bg-gradient-to-br from-blue-500 to-indigo-500"
+                        : "bg-gradient-to-br from-purple-500 to-pink-500"
+                    }`}>
+                      <span className="text-white/80 text-[9px] font-medium uppercase">
+                        {new Date(event.date).toLocaleDateString("id-ID", { weekday: "short" })}
+                      </span>
+                      <span className="text-white text-base font-bold leading-none">
+                        {new Date(event.date).getDate()}
                       </span>
                     </div>
-                  </button>
-                ))}
 
-                {upcomingEvents.length > 4 && (
-                  <Link
-                    href="/kegiatan"
-                    className="block w-full py-2 text-center text-indigo-600 font-medium text-xs hover:bg-indigo-50 rounded-lg transition-colors"
-                  >
-                    Lihat semua →
-                  </Link>
-                )}
-              </div>
-            )}
-          </div>
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-gray-900 text-xs truncate pr-2">{event.title}</p>
+                      <div className="flex items-center gap-1 mt-0.5">
+                        <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span className="text-[11px] text-gray-500">{event.time_start}</span>
+                      </div>
+                    </div>
+
+                    {/* Type Badge */}
+                    <span className={`flex-shrink-0 px-1.5 py-0.5 rounded-full text-[9px] font-semibold ${
+                      event.jenis === "agenda"
+                        ? "bg-blue-50 text-blue-600"
+                        : "bg-purple-50 text-purple-600"
+                    }`}>
+                      {event.jenis === "agenda" ? "Keg" : "Aud"}
+                    </span>
+                  </div>
+                </button>
+              ))}
+
+              {upcomingEvents.length > 4 && (
+                <Link
+                  href="/kegiatan"
+                  className="block w-full py-2 text-center text-indigo-600 font-medium text-xs hover:bg-indigo-50 rounded-lg transition-colors"
+                >
+                  Lihat semua →
+                </Link>
+              )}
+            </div>
+          )}
         </div>
+      </div>
 
       {/* Bottom Sheet Detail */}
       {showDetail && (
