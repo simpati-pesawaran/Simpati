@@ -2,16 +2,6 @@ import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { supabaseAdmin } from "@/app/lib/supabase";
 
-// Enable debug logging
-const DEBUG = process.env.NEXTAUTH_DEBUG === 'true' || process.env.NODE_ENV === 'development';
-if (DEBUG) {
-  console.log('🔍 [NEXTAUTH DEBUG] NextAuth initializing...');
-  console.log('🔍 [NEXTAUTH DEBUG] GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID ? 'SET' : 'NOT SET');
-  console.log('🔍 [NEXTAUTH DEBUG] GOOGLE_CLIENT_SECRET:', process.env.GOOGLE_CLIENT_SECRET ? 'SET' : 'NOT SET');
-  console.log('🔍 [NEXTAUTH DEBUG] NEXTAUTH_SECRET:', process.env.NEXTAUTH_SECRET ? 'SET' : 'NOT SET');
-  console.log('🔍 [NEXTAUTH DEBUG] NEXTAUTH_URL:', process.env.NEXTAUTH_URL || 'NOT SET');
-}
-
 // Superadmin constant
 const SUPERADMIN_EMAIL = "siagapesasakan@gmail.com";
 
@@ -32,29 +22,24 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     async signIn({ user, account, profile }) {
-      console.log('=== [CALLBACK] signIn ===');
-      console.log('user.email:', user?.email);
-      console.log('user.name:', user?.name);
-      console.log('account.provider:', account?.provider);
-      console.log('account.access_token:', account?.access_token ? 'EXISTS' : 'NULL');
-      console.log('profile:', profile);
+      try {
+        console.log("=== signIn callback ===");
+        console.log("user:", user);
+        console.log("account:", account);
+        console.log("profile:", profile);
 
-      // Superadmin auto-approve: Create profile if not exists
-      if (user.email?.toLowerCase() === SUPERADMIN_EMAIL.toLowerCase()) {
-        console.log('SUPERADMIN DETECTED:', user.email);
-        try {
-          // Check if profile exists
+        // Superadmin auto-approve: Create profile if not exists
+        if (user.email?.toLowerCase() === SUPERADMIN_EMAIL.toLowerCase()) {
+          console.log("SUPERADMIN DETECTED:", user.email);
           const { data: existingProfile } = await supabaseAdmin
             .from('profiles')
             .select('id, status')
             .eq('email', user.email)
             .single();
 
-          console.log('existingProfile:', existingProfile);
+          console.log("existingProfile:", existingProfile);
 
           if (!existingProfile) {
-            console.log('Creating NEW superadmin profile...');
-            // Create superadmin profile with approved status
             const { error: insertError } = await supabaseAdmin
               .from('profiles')
               .insert({
@@ -70,56 +55,77 @@ export const authOptions: NextAuthOptions = {
             if (insertError) {
               console.error("Error creating superadmin profile:", insertError);
             } else {
-              console.log('Superadmin profile CREATED');
+              console.log("Superadmin profile CREATED");
             }
-          } else if (existingProfile.status !== 'approved') {
-            console.log('Re-approving superadmin...');
-            // Re-approve if rejected
-            await supabaseAdmin
-              .from('profiles')
-              .update({
-                status: 'approved',
-                approved_at: new Date().toISOString(),
-                approved_by: user.email,
-                rejected_by: null,
-                rejected_at: null,
-                rejection_reason: null,
-              })
-              .eq('email', user.email);
-          } else {
-            console.log('Superadmin already approved');
           }
-        } catch (error) {
-          console.error("Error in superadmin signIn:", error);
         }
-      }
 
-      console.log('signIn returning: true');
-      return true;
+        console.log("signIn returning: true");
+        return true;
+      } catch (error) {
+        console.error("OAUTH CALLBACK ERROR signIn:", error);
+        console.error((error as Error).stack);
+        return false;
+      }
     },
 
     async jwt({ token, account, profile }) {
-      console.log("=== [CALLBACK] jwt ===");
+      try {
+        console.log("=== jwt callback ===");
+        console.log("account:", account);
+        console.log("profile:", profile);
+        console.log("token before:", token);
 
-      if (account && profile) {
-        token.accessToken = account.access_token;
-        token.id = profile.sub;
+        if (account && profile) {
+          token.accessToken = account.access_token;
+          token.id = profile.sub;
+          token.email = profile.email;
+          token.name = profile.name;
+          token.picture = profile.picture;
+        }
 
-        token.email = profile.email;
-        token.name = profile.name;
-        token.picture = profile.picture;
+        console.log("token after:", token);
+        return token;
+      } catch (error) {
+        console.error("OAUTH CALLBACK ERROR jwt:", error);
+        console.error((error as Error).stack);
+        return token;
       }
-
-      console.log("token after:", token);
-
-      return token;
     },
 
     async session({ session, token }) {
-      console.log("SESSION CALLBACK");
-      console.log("token =", token);
-      console.log("session =", session);
-      return session;
+      try {
+        console.log("=== session callback ===");
+        console.log("token:", token);
+        console.log("session:", session);
+        console.log("NEXTAUTH_URL:", process.env.NEXTAUTH_URL);
+        console.log("NEXTAUTH_SECRET exists:", !!process.env.NEXTAUTH_SECRET);
+
+        if (session.user) {
+          session.user.email = token.email as string;
+          session.user.name = token.name as string;
+          session.user.image = token.picture as string;
+
+          const { data: profile } = await supabaseAdmin
+            .from('profiles')
+            .select('id, name, division, role, status, rejection_reason')
+            .eq('email', token.email as string)
+            .single();
+
+          if (profile) {
+            (session.user as any).profile = profile;
+            (session.user as any).userId = profile.id;
+            (session.user as any).role = profile.role;
+            (session.user as any).status = profile.status;
+          }
+        }
+
+        return session;
+      } catch (error) {
+        console.error("OAUTH CALLBACK ERROR session:", error);
+        console.error((error as Error).stack);
+        return session;
+      }
     },
   },
 
@@ -130,7 +136,7 @@ export const authOptions: NextAuthOptions = {
 
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 30 * 24 * 60 * 60,
   },
 
   secret: process.env.NEXTAUTH_SECRET,
