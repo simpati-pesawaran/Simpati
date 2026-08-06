@@ -134,7 +134,7 @@ export default function DashboardPage() {
 
         {/* Greeting - 3 Lines */}
         <div className="mt-6">
-          <p className="text-white/60 text-sm">Halo,</p>
+          <h2 className="text-white text-xl font-bold">Halo,</h2>
           <h2 className="text-white text-xl font-bold">{userName}</h2>
           <p className="text-white/60 text-xs mt-0.5">{userDivision}</p>
         </div>
