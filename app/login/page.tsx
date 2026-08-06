@@ -27,7 +27,10 @@ export default function LoginPage() {
       const data = await res.json();
       const isSuperadmin = session?.user?.email?.toLowerCase() === SUPERADMIN_EMAIL.toLowerCase();
 
+      console.log("Profile check:", data);
+
       if (data.exists) {
+        console.log("Profile exists, status:", data.profile.status);
         if (data.profile.status === "approved") {
           router.push("/dashboard");
         } else if (data.profile.status === "pending") {
@@ -36,31 +39,58 @@ export default function LoginPage() {
           router.push("/login/rejected");
         }
       } else if (isSuperadmin) {
-        router.push("/dashboard");
+        // Superadmin - create profile if not exists
+        console.log("Superadmin - creating profile");
+        await createSuperadminProfile();
       } else {
+        console.log("No profile - show registration form");
         setFormData((prev) => ({ ...prev, name: session?.user?.name || "" }));
         setStep("name");
       }
-    } catch {
+    } catch (err) {
+      console.error("Check profile error:", err);
       const isSuperadmin = session?.user?.email?.toLowerCase() === SUPERADMIN_EMAIL.toLowerCase();
       if (isSuperadmin) {
-        router.push("/dashboard");
+        await createSuperadminProfile();
       } else {
         setStep("name");
       }
     }
   };
 
+  const createSuperadminProfile = async () => {
+    try {
+      const res = await fetch("/api/auth/profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: session?.user?.name || "Superadmin",
+          division: "Administrator"
+        }),
+      });
+      const data = await res.json();
+      console.log("Superadmin profile created:", data);
+      if (data.success) {
+        router.push("/dashboard");
+      }
+    } catch (err) {
+      console.error("Create superadmin profile error:", err);
+      router.push("/dashboard");
+    }
+  };
+
   const handleGoogleSignIn = async () => {
     if (isLoading) return;
     setIsLoading(true);
+    setError("");
     try {
       await signIn("google", {
-        callbackUrl: "/dashboard",
+        callbackUrl: "/login",
         redirect: true,
       });
     } catch (err) {
       console.error("Sign in error:", err);
+      setError("Gagal login dengan Google");
       setIsLoading(false);
     }
   };
@@ -82,24 +112,36 @@ export default function LoginPage() {
       return;
     }
     setIsLoading(true);
+    setError("");
     try {
+      console.log("Submitting profile:", { name: formData.name, division: formData.division });
       const res = await fetch("/api/auth/profile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: formData.name, division: formData.division }),
       });
-      const d = await res.json();
-      if (!res.ok) throw new Error();
-      router.push(d.needsApproval ? "/login/pending" : "/dashboard");
-    } catch {
-      setError("Terjadi kesalahan");
+      const data = await res.json();
+      console.log("Profile response:", data);
+
+      if (!res.ok) {
+        throw new Error(data.error || "Gagal menyimpan");
+      }
+
+      if (data.needsApproval) {
+        router.push("/login/pending");
+      } else {
+        router.push("/dashboard");
+      }
+    } catch (err) {
+      console.error("Submit error:", err);
+      setError("Terjadi kesalahan. Silakan coba lagi.");
       setIsLoading(false);
     }
   };
 
   if (status === "loading") {
     return (
-      <div className="min-h-dvh flex flex-col bg-gradient-to-br from-[#1e3a5f] via-[#2563eb] to-[#7c3aed] overflow-x-hidden" style={{ paddingTop: "env(safe-area-inset-top)" }}>
+      <div className="min-h-dvh flex flex-col bg-gradient-to-br from-[#1e3a5f] via-[#2563eb] to-[#7c3aed]" style={{ paddingTop: "env(safe-area-inset-top)" }}>
         <main className="flex-1 flex flex-col items-center justify-center px-6 py-8">
           <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin mx-auto mb-4" />
           <p className="text-white/70 text-sm">Memuat...</p>
@@ -109,10 +151,10 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-dvh flex flex-col bg-gradient-to-br from-[#1e3a5f] via-[#2563eb] to-[#7c3aed] overflow-x-hidden" style={{ paddingTop: "env(safe-area-inset-top)" }}>
+    <div className="min-h-dvh flex flex-col bg-gradient-to-br from-[#1e3a5f] via-[#2563eb] to-[#7c3aed]" style={{ paddingTop: "env(safe-area-inset-top)" }}>
       <main className="flex-1 flex flex-col items-center justify-center px-6 py-8">
         <div className="text-center mb-10">
-          <div className="w-20 h-20 mx-auto mb-4 shadow-2xl overflow-hidden">
+          <div className="w-20 h-20 mx-auto mb-4 shadow-2xl overflow-hidden rounded-2xl">
             <Image src="/logo/logo-master.png" alt="SIMPATI" width={80} height={80} className="w-full h-full object-cover" />
           </div>
           <h1 className="text-white text-2xl font-bold tracking-widest">SIMPATI</h1>
@@ -124,8 +166,14 @@ export default function LoginPage() {
         <div className="w-full max-w-[300px] bg-white rounded-2xl p-5 shadow-2xl">
           {step === "welcome" && (
             <div className="text-center">
-              <h2 className="text-lg font-bold text-gray-900 mb-1">Selamat Datang! 👋</h2>
+              <h2 className="text-lg font-bold text-gray-900 mb-1">Selamat Datang!</h2>
               <p className="text-sm text-gray-500 mb-4">Masuk dengan akun Google Anda</p>
+
+              {error && (
+                <div className="mb-4 p-3 bg-red-50 rounded-xl text-left">
+                  <p className="text-xs text-red-600">{error}</p>
+                </div>
+              )}
 
               <button
                 onClick={handleGoogleSignIn}
@@ -159,6 +207,14 @@ export default function LoginPage() {
               <h2 className="text-lg font-bold text-gray-900 mb-1">Lengkapi Profil</h2>
               <p className="text-sm text-gray-500 mb-4">Masukkan informasi Anda</p>
 
+              <p className="text-xs text-gray-400 mb-3">Login sebagai: {session?.user?.email}</p>
+
+              {error && (
+                <div className="mb-3 p-3 bg-red-50 rounded-xl text-left">
+                  <p className="text-xs text-red-600">{error}</p>
+                </div>
+              )}
+
               <form onSubmit={handleNameSubmit}>
                 <div className="mb-3">
                   <label className="block text-sm font-medium text-gray-700 mb-1.5 text-left">Nama Lengkap</label>
@@ -171,7 +227,6 @@ export default function LoginPage() {
                     className="w-full px-4 py-3 border border-gray-200 rounded-xl text-base focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
                   />
                 </div>
-                {error && <p className="text-xs text-red-500 mb-3 text-left">{error}</p>}
                 <button type="submit" className="w-full h-11 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-xl font-semibold text-sm active:scale-[0.98] transition-transform shadow-lg">
                   Lanjut
                 </button>
@@ -187,6 +242,12 @@ export default function LoginPage() {
               <p className="font-semibold text-gray-900">{formData.name}</p>
               <p className="text-xs text-gray-500">{session?.user?.email}</p>
 
+              {error && (
+                <div className="mt-4 mb-3 p-3 bg-red-50 rounded-xl text-left">
+                  <p className="text-xs text-red-600">{error}</p>
+                </div>
+              )}
+
               <form onSubmit={handleDivisionSubmit} className="mt-4">
                 <div className="mb-3">
                   <label className="block text-sm font-medium text-gray-700 mb-1.5 text-left">Divisi / Unit Kerja</label>
@@ -199,13 +260,12 @@ export default function LoginPage() {
                     className="w-full px-4 py-3 border border-gray-200 rounded-xl text-base focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
                   />
                 </div>
-                {error && <p className="text-xs text-red-500 mb-3 text-left">{error}</p>}
                 <div className="flex gap-2">
                   <button type="button" onClick={() => setStep("name")} className="flex-1 h-11 bg-gray-100 text-gray-700 rounded-xl font-medium text-sm active:scale-[0.98] transition-transform">
                     Kembali
                   </button>
                   <button type="submit" disabled={isLoading} className="flex-1 h-11 bg-gradient-to-r from-indigo-600 to-blue-600 text-white rounded-xl font-semibold text-sm active:scale-[0.98] transition-transform disabled:opacity-50">
-                    {isLoading ? "..." : "Daftar"}
+                    {isLoading ? "Menyimpan..." : "Daftar"}
                   </button>
                 </div>
               </form>
