@@ -168,7 +168,8 @@ export async function POST(request: NextRequest) {
 
 /**
  * PUT /api/auth/profile
- * Re-apply after rejection
+ * Update user profile (name and division)
+ * Used by approved users to edit their profile
  */
 export async function PUT(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -180,28 +181,39 @@ export async function PUT(request: NextRequest) {
   const body = await request.json();
   const { name, division } = body;
 
-  if (!name || !division) {
+  if (!name && !division) {
     return NextResponse.json(
-      { error: "Name and division are required" },
+      { error: "Name or division is required" },
       { status: 400 }
     );
   }
 
   const email = session.user.email;
 
-  // Update profile and reset status to pending
+  // Get current profile
+  const { data: currentProfile } = await supabaseAdmin
+    .from('profiles')
+    .select('status')
+    .eq('email', email)
+    .single();
+
+  // Build update object
+  const updateData: Record<string, string | null> = {};
+  if (name !== undefined) updateData.name = name;
+  if (division !== undefined) updateData.division = division;
+
+  // If user is re-applying after rejection, reset status
+  if (currentProfile?.status === 'rejected') {
+    updateData.status = 'pending';
+    updateData.rejected_by = null;
+    updateData.rejected_at = null;
+    updateData.rejection_reason = null;
+  }
+
+  // Update profile
   const { data: updated, error } = await supabaseAdmin
     .from('profiles')
-    .update({
-      name,
-      division,
-      status: 'pending',
-      rejected_by: null,
-      rejected_at: null,
-      rejection_reason: null,
-      approved_by: null,
-      approved_at: null,
-    })
+    .update(updateData)
     .eq('email', email)
     .select()
     .single();
@@ -210,28 +222,30 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: "Update failed" }, { status: 500 });
   }
 
-  // Notify superadmin
-  const { data: superadmin } = await supabaseAdmin
-    .from('profiles')
-    .select('id')
-    .eq('role', 'superadmin')
-    .single();
+  // If re-applying, notify superadmin
+  if (currentProfile?.status === 'rejected') {
+    const { data: superadmin } = await supabaseAdmin
+      .from('profiles')
+      .select('id')
+      .eq('role', 'superadmin')
+      .single();
 
-  if (superadmin) {
-    await supabaseAdmin
-      .from('notifications')
-      .insert({
-        user_id: superadmin.id,
-        type: 'user_registered',
-        title: 'Pendaftaran Ulang',
-        message: `${name} (${email}) mengajukan ulang akses ke SIMPATI`,
-        data: {
-          new_user_email: email,
-          new_user_name: name,
-          new_user_division: division,
-          reapply: true,
-        },
-      });
+    if (superadmin) {
+      await supabaseAdmin
+        .from('notifications')
+        .insert({
+          user_id: superadmin.id,
+          type: 'user_registered',
+          title: 'Pendaftaran Ulang',
+          message: `${name} (${email}) mengajukan ulang akses ke SIMPATI`,
+          data: {
+            new_user_email: email,
+            new_user_name: name,
+            new_user_division: division,
+            reapply: true,
+          },
+        });
+    }
   }
 
   return NextResponse.json({
