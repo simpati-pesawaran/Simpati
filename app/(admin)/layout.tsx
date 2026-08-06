@@ -21,6 +21,7 @@ export default function AdminLayout({
           maxWidth: "430px",
           minHeight: "100vh",
           minHeight: "100dvh",
+          margin: "0 auto",
           background: "#f1f5f9",
           boxShadow: "0 0 60px rgba(0, 0, 0, 0.15)",
           position: "relative",
@@ -29,12 +30,12 @@ export default function AdminLayout({
         {/* Header untuk semua halaman KECUALI dashboard */}
         {!isDashboard && <Header />}
 
-        {/* Main content - with padding for bottom nav */}
+        {/* Main content */}
         <main className="flex-1">
           {children}
         </main>
 
-        {/* Bottom Navigation - absolute position within shell */}
+        {/* Bottom Navigation */}
         <BottomNav />
       </div>
     </div>
