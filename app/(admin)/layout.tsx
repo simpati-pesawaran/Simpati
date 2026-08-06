@@ -22,18 +22,18 @@ export default function AdminLayout({
           minHeight: "100vh",
           minHeight: "100dvh",
           background: "#f1f5f9",
-          boxShadow: "0 0 60px rgba(0, 0, 0, 0.1)",
+          boxShadow: "0 0 60px rgba(0, 0, 0, 0.15)",
         }}
       >
         {/* Header untuk semua halaman KECUALI dashboard */}
         {!isDashboard && <Header />}
 
-        {/* Main content */}
-        <main className={`flex-1 ${isDashboard ? '' : 'pt-0'}`}>
+        {/* Main content - with padding for bottom nav */}
+        <main className="flex-1" style={{ paddingBottom: "100px" }}>
           {children}
         </main>
 
-        {/* Bottom Navigation - inside shell */}
+        {/* Bottom Navigation - fixed position */}
         <BottomNav />
       </div>
     </div>

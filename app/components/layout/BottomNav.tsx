@@ -14,21 +14,27 @@ export function BottomNav() {
 
   return (
     <nav
-      className="sticky bottom-0 z-50"
+      className="bottom-nav-fixed"
       style={{
         paddingBottom: "env(safe-area-inset-bottom, 0px)",
-        paddingTop: "8px"
+        position: "fixed",
+        bottom: 0,
+        left: "50%",
+        transform: "translateX(-50%)",
+        width: "100%",
+        maxWidth: "430px",
+        zIndex: 50,
       }}
     >
       {/* Frosted Glass Container - Rounded Full */}
-      <div className="mx-3">
+      <div className="mx-3 mb-2">
         <div
           className="flex items-center justify-around h-16 rounded-full relative"
           style={{
             background: "rgba(255,255,255,0.95)",
             backdropFilter: "blur(20px)",
             WebkitBackdropFilter: "blur(20px)",
-            boxShadow: "0 -4px 30px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.8)"
+            boxShadow: "0 -4px 30px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.8)",
           }}
         >
           {/* Beranda */}
@@ -51,7 +57,7 @@ export function BottomNav() {
               className="flex items-center justify-center w-14 h-14 rounded-full transition-all duration-200 hover:scale-105 active:scale-95"
               style={{
                 background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
-                boxShadow: "0 6px 24px rgba(99, 102, 241, 0.45), 0 4px 12px rgba(0,0,0,0.15)"
+                boxShadow: "0 6px 24px rgba(99, 102, 241, 0.45), 0 4px 12px rgba(0,0,0,0.15)",
               }}
             >
               <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
