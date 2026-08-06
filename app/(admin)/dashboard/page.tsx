@@ -98,128 +98,138 @@ export default function DashboardPage() {
   // No loading screen - UI shows immediately
 
   return (
-    <div className="min-h-screen bg-slate-100 pb-20">
+    <div className="min-h-screen" style={{ background: "#f1f5f9" }}>
       {/* Hero Header - Full Width with Safe Area */}
       <div
-        className="bg-gradient-to-br from-[#1e3a5f] via-[#2563eb] to-[#7c3aed] px-4 pb-8 relative overflow-hidden"
-        style={{ paddingTop: `calc(0.75rem + env(safe-area-inset-top))` }}
+        className="px-5 pb-16 relative overflow-hidden"
+        style={{
+          background: "linear-gradient(135deg, #1e3a5f 0%, #2563eb 55%, #7c3aed 100%)",
+          paddingTop: "20px"
+        }}
       >
         {/* Floating Bubbles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-10 right-6 w-24 h-24 bg-white/10 rounded-full blur-2xl animate-pulse" />
-          <div className="absolute bottom-6 left-4 w-16 h-16 bg-white/5 rounded-full blur-xl animate-pulse" style={{ animationDelay: "1s" }} />
+          <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-3xl" style={{ transform: "translate(20%, -50%)" }} />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl" style={{ transform: "translate(-30%, 50%)" }} />
         </div>
 
-        {/* Header Content - Logo + Description + Bell */}
-        <div className="relative z-10 flex items-start justify-between">
-          {/* Logo + Description */}
-          <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg overflow-hidden flex-shrink-0">
-              <Image src="/logo/logo-master.png" alt="SIMPATI" width={40} height={40} className="w-full h-full object-cover" />
+        {/* Header Content - Logo + Bell */}
+        <div className="relative z-10 flex items-center justify-between pb-6">
+          {/* Logo */}
+          <div className="flex items-center gap-3">
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg"
+              style={{
+                background: "rgba(255,255,255,0.2)",
+                backdropFilter: "blur(10px)",
+              }}
+            >
+              <Image src="/logo/logo-master.png" alt="SIMPATI" width={40} height={40} className="w-5 h-5 object-contain" />
             </div>
-            <div className="leading-tight">
-              <p className="text-white/80 text-[11px] font-medium tracking-wide">Sistem Informasi Manajemen</p>
-              <p className="text-white/60 text-[10px]">Protokol & Agenda Terintegrasi</p>
+            <div>
+              <h1 className="font-bold text-base text-white leading-tight">SIMPATI</h1>
+              <p className="text-white/60 text-xs">Protokol & Agenda</p>
             </div>
           </div>
 
-          {/* Bell Notification - Bigger */}
-          <button className="relative p-2.5 bg-white/15 backdrop-blur-sm rounded-xl hover:bg-white/25 transition-colors flex-shrink-0">
+          {/* Bell Notification */}
+          <button className="relative w-10 h-10 flex items-center justify-center rounded-xl transition-all"
+            style={{
+              background: "rgba(255,255,255,0.2)",
+              backdropFilter: "blur(10px)",
+            }}
+          >
             <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
             </svg>
-            <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-[10px] font-bold text-white">{stats?.upcoming || 0}</span>
+            <span className="absolute -top-1 -right-1 w-5 h-5 bg-white text-red-500 text-xs font-bold rounded-full flex items-center justify-center shadow">{stats?.upcoming || 0}</span>
           </button>
         </div>
 
-        {/* Greeting - 3 Lines */}
-        <div className="mt-6">
-          <h2 className="text-white text-xl font-bold">Halo,</h2>
-          <h2 className="text-white text-xl font-bold">{userName}</h2>
+        {/* Greeting */}
+        <div className="relative z-10 mt-8">
+          <h2 className="text-sm text-white/80 mb-0.5">Halo</h2>
+          <p className="text-xl font-bold text-white leading-tight">{userName}</p>
           <p className="text-white/60 text-xs mt-0.5">{userDivision}</p>
         </div>
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-2 gap-2.5 mt-4">
-          <div className="bg-white/15 backdrop-blur-sm rounded-xl p-3">
-            <div className="flex items-center gap-2 mb-1.5">
-              <div className="w-7 h-7 rounded-lg bg-blue-400/30 flex items-center justify-center">
-                <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <span className="text-white/60 text-[11px]">Kegiatan</span>
-            </div>
-            <p className="text-white text-xl font-bold">{stats?.total_kegiatan || 0}</p>
+        <div className="flex gap-3 mt-4 relative z-10">
+          <div className="flex-1 flex flex-col justify-between rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.2)" }}>
+            <p className="text-white/70 text-xs">Kegiatan</p>
+            <p className="text-lg font-bold text-white">{stats?.total_kegiatan || 0}</p>
           </div>
-
-          <div className="bg-white/15 backdrop-blur-sm rounded-xl p-3">
-            <div className="flex items-center gap-2 mb-1.5">
-              <div className="w-7 h-7 rounded-lg bg-purple-400/30 flex items-center justify-center">
-                <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              </div>
-              <span className="text-white/60 text-[11px]">Audiensi</span>
-            </div>
-            <p className="text-white text-xl font-bold">{stats?.total_audiensi || 0}</p>
+          <div className="flex-1 flex flex-col justify-between rounded-2xl p-4" style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.2)" }}>
+            <p className="text-white/70 text-xs">Audiensi</p>
+            <p className="text-lg font-bold text-white">{stats?.total_audiensi || 0}</p>
           </div>
         </div>
       </div>
 
-      {/* Main Content - White Container (Full Width) */}
-      <div className="px-3 -mt-4 relative z-20">
-        <div className="bg-white rounded-3xl shadow-xl shadow-indigo-500/10 p-4">
-          {/* Menu Grid - 3 Kolom, Rata Kiri */}
-          <div className="mb-5">
-            <h3 className="text-gray-900 font-bold text-sm mb-3">Menu</h3>
-
-            {/* Grid 3 Kolom - Row 1 */}
-            <div className="grid grid-cols-3 gap-2 mb-2">
-              {menuItems.slice(0, 3).map((menu) => (
-                <Link
-                  key={menu.name}
-                  href={menu.href}
-                  className="group flex flex-col items-center p-2.5 rounded-2xl hover:bg-slate-50 transition-all active:scale-95"
-                >
-                  <div className={`w-[52px] h-[52px] rounded-xl bg-gradient-to-br ${menu.color} flex items-center justify-center mb-1.5 shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all`}>
-                    <Image src={menu.icon} alt={menu.name} width={28} height={28} />
-                  </div>
-                  <span className="text-[10px] font-semibold text-gray-700 text-center leading-tight">{menu.name}</span>
-                </Link>
-              ))}
-            </div>
-
-            {/* Grid 3 Kolom - Row 2 (2 items + 1 empty) */}
-            <div className="grid grid-cols-3 gap-2">
-              {menuItems.slice(3, 5).map((menu) => (
-                <Link
-                  key={menu.name}
-                  href={menu.href}
-                  className="group flex flex-col items-center p-2.5 rounded-2xl hover:bg-slate-50 transition-all active:scale-95"
-                >
-                  <div className={`w-[52px] h-[52px] rounded-xl bg-gradient-to-br ${menu.color} flex items-center justify-center mb-1.5 shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all`}>
-                    <Image src={menu.icon} alt={menu.name} width={28} height={28} />
-                  </div>
-                  <span className="text-[10px] font-semibold text-gray-700 text-center leading-tight">{menu.name}</span>
-                </Link>
-              ))}
-              {/* Empty cell untuk alignment */}
-              <div className="p-2.5" />
-            </div>
+      {/* White Content Sheet - Overlaps Hero */}
+      <div
+        className="relative z-20"
+        style={{
+          background: "white",
+          borderRadius: "20px 20px 0 0",
+          marginTop: "-44px",
+          padding: "20px",
+          paddingBottom: "calc(100px + env(safe-area-inset-bottom, 0px))",
+          boxShadow: "0 -10px 40px rgba(0,0,0,0.08)",
+        }}
+      >
+        {/* Menu Section */}
+        <div className="mb-6">
+          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4" style={{ letterSpacing: "0.5px" }}>Menu</h3>
+          <div className="grid grid-cols-3 gap-3">
+            {menuItems.slice(0, 3).map((menu) => (
+              <Link
+                key={menu.name}
+                href={menu.href}
+                className="flex flex-col items-center p-4 rounded-2xl transition-all active:scale-95"
+                style={{
+                  background: "white",
+                  border: "1px solid rgba(17,24,39,0.06)",
+                  boxShadow: "0 2px 8px rgba(15,23,42,0.04)",
+                }}
+              >
+                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${menu.color} flex items-center justify-center mb-2 shadow-lg`}>
+                  <Image src={menu.icon} alt={menu.name} width={26} height={26} />
+                </div>
+                <span className="text-xs font-semibold text-gray-900 text-center">{menu.name}</span>
+              </Link>
+            ))}
           </div>
+          <div className="grid grid-cols-3 gap-3 mt-3">
+            {menuItems.slice(3, 5).map((menu) => (
+              <Link
+                key={menu.name}
+                href={menu.href}
+                className="flex flex-col items-center p-4 rounded-2xl transition-all active:scale-95"
+                style={{
+                  background: "white",
+                  border: "1px solid rgba(17,24,39,0.06)",
+                  boxShadow: "0 2px 8px rgba(15,23,42,0.04)",
+                }}
+              >
+                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${menu.color} flex items-center justify-center mb-2 shadow-lg`}>
+                  <Image src={menu.icon} alt={menu.name} width={26} height={26} />
+                </div>
+                <span className="text-xs font-semibold text-gray-900 text-center">{menu.name}</span>
+              </Link>
+            ))}
+            <div className="p-4" /> {/* Empty for alignment */}
+          </div>
+        </div>
 
-          {/* Divider */}
-          <div className="border-t border-dashed border-gray-200 my-3" />
-
-          {/* Today's Agenda */}
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-gray-900 font-bold text-sm">Agenda</h3>
-              <span className="px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[10px] font-semibold rounded-full">
-                {upcomingEvents.length}
-              </span>
-            </div>
+        {/* Agenda Section */}
+        <div className="border-t border-dashed border-gray-200 pt-5">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider" style={{ letterSpacing: "0.5px" }}>Agenda</h3>
+            <span className="px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[10px] font-semibold rounded-full">
+              {upcomingEvents.length}
+            </span>
+          </div>
 
             {upcomingEvents.length === 0 ? (
               <div className="bg-gradient-to-br from-slate-50 to-indigo-50 rounded-xl p-5 text-center">
@@ -288,7 +298,6 @@ export default function DashboardPage() {
             )}
           </div>
         </div>
-      </div>
 
       {/* Bottom Sheet Detail */}
       {showDetail && (
