@@ -153,7 +153,7 @@ html {
 
 /* ========================================
    MOBILE FIRST - Full width on mobile
-   Desktop: centered shell with dark background
+   Desktop: phone frame with dark background
    ======================================== */
 
 body {
@@ -168,12 +168,26 @@ body {
   overflow-x: hidden;
 }
 
-/* Desktop: centered shell */
+/* Phone frame on desktop (min-width: 431px) */
 @media (min-width: 431px) {
   body {
     display: flex;
+    align-items: center;
     justify-content: center;
-    padding: 20px 0;
+    padding: 20px;
+  }
+
+  /* Phone frame container */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 430px;
+    height: 100%;
+    background: #1a1a2e;
+    z-index: -1;
   }
 }
 
