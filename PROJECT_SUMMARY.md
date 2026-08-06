@@ -126,7 +126,7 @@ GOOGLE_SHEETS_ID=xxx
 
 ### Superadmin
 ```
-Email: siagapesarawan@gmail.com
+Email: siagapesawaran@gmail.com
 Role: superadmin
 Status: approved
 Akses: Full access, approve/reject users, manage all agendas

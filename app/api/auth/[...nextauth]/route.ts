@@ -23,24 +23,16 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ user, account, profile }) {
       try {
-        console.log("=== signIn callback ===");
-        console.log("user:", user);
-        console.log("account:", account);
-        console.log("profile:", profile);
-
-        // Superadmin auto-approve: Create profile if not exists
+        // Superadmin auto-approve
         if (user.email?.toLowerCase() === SUPERADMIN_EMAIL.toLowerCase()) {
-          console.log("SUPERADMIN DETECTED:", user.email);
           const { data: existingProfile } = await supabaseAdmin
             .from('profiles')
             .select('id, status')
             .eq('email', user.email)
             .single();
 
-          console.log("existingProfile:", existingProfile);
-
           if (!existingProfile) {
-            const { error: insertError } = await supabaseAdmin
+            await supabaseAdmin
               .from('profiles')
               .insert({
                 email: user.email,
@@ -51,61 +43,33 @@ export const authOptions: NextAuthOptions = {
                 approved_at: new Date().toISOString(),
                 approved_by: user.email,
               });
-
-            if (insertError) {
-              console.error("Error creating superadmin profile:", insertError);
-            } else {
-              console.log("Superadmin profile CREATED");
-            }
           }
         }
-
-        console.log("signIn returning: true");
         return true;
       } catch (error) {
-        console.error("OAUTH CALLBACK ERROR signIn:", error);
-        console.error((error as Error).stack);
+        console.error("Error in signIn:", error);
         return false;
       }
     },
 
     async jwt({ token, account, profile }) {
-      try {
-        console.log("=== jwt callback ===");
-        console.log("account:", account);
-        console.log("profile:", profile);
-        console.log("token before:", token);
-
-        if (account && profile) {
-          token.accessToken = account.access_token;
-          token.id = profile.sub;
-          token.email = profile.email;
-          token.name = profile.name;
-          token.picture = profile.picture;
-        }
-
-        console.log("token after:", token);
-        return token;
-      } catch (error) {
-        console.error("OAUTH CALLBACK ERROR jwt:", error);
-        console.error((error as Error).stack);
-        return token;
+      if (account && profile) {
+        token.accessToken = account.access_token;
+        token.id = profile.sub;
+        token.email = profile.email;
+        token.name = profile.name;
+        token.picture = profile.picture;
       }
+      return token;
     },
 
     async session({ session, token }) {
-      try {
-        console.log("=== session callback ===");
-        console.log("token:", token);
-        console.log("session:", session);
-        console.log("NEXTAUTH_URL:", process.env.NEXTAUTH_URL);
-        console.log("NEXTAUTH_SECRET exists:", !!process.env.NEXTAUTH_SECRET);
+      if (session.user) {
+        session.user.email = token.email as string;
+        session.user.name = token.name as string;
+        session.user.image = token.picture as string;
 
-        if (session.user) {
-          session.user.email = token.email as string;
-          session.user.name = token.name as string;
-          session.user.image = token.picture as string;
-
+        try {
           const { data: profile } = await supabaseAdmin
             .from('profiles')
             .select('id, name, division, role, status, rejection_reason')
@@ -118,14 +82,11 @@ export const authOptions: NextAuthOptions = {
             (session.user as any).role = profile.role;
             (session.user as any).status = profile.status;
           }
+        } catch (error) {
+          console.error("Error fetching profile:", error);
         }
-
-        return session;
-      } catch (error) {
-        console.error("OAUTH CALLBACK ERROR session:", error);
-        console.error((error as Error).stack);
-        return session;
       }
+      return session;
     },
   },
 

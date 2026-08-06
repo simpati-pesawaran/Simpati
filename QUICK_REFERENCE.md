@@ -6,7 +6,7 @@
 - **Repo**: https://github.com/simpati-pesawaran/Simpati
 
 ## Akun Superadmin
-`siagapesarawan@gmail.com`
+`siagapesawaran@gmail.com`
 
 ## Konfigurasi Penting (cek .env.local)
 

@@ -16,9 +16,7 @@ const SUPERADMIN_EMAIL = "siagapesasakan@gmail.com";
  * Get current user's profile status
  */
 export async function GET() {
-  console.log("PROFILE API");
   const session = await getServerSession(authOptions);
-  console.log("session =", session);
 
   if (!session?.user?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -43,7 +41,6 @@ export async function GET() {
   }
 
   if (error) {
-    console.error("Error fetching profile:", error);
     return NextResponse.json({ error: "Database error" }, { status: 500 });
   }
 

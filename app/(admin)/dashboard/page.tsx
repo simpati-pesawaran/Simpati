@@ -29,10 +29,6 @@ export default function DashboardPage() {
   const [upcomingEvents, setUpcomingEvents] = useState<Agenda[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  console.log("DASHBOARD");
-  console.log("status =", status);
-  console.log("session =", session);
-
   const profile = (session?.user as any)?.profile;
   const userName = profile?.name || session?.user?.name || "User";
 
@@ -41,23 +37,18 @@ export default function DashboardPage() {
   }, []);
 
   const fetchDashboardData = async () => {
-    console.log('=== [fetchDashboardData] START ===');
     setIsLoading(true);
     try {
       // Fetch stats
-      console.log('Fetching /api/dashboard/stats...');
       const statsRes = await fetch("/api/dashboard/stats");
       const statsData = await statsRes.json();
-      console.log('stats result:', JSON.stringify(statsData));
       if (statsData.success) {
         setStats(statsData.stats);
       }
 
       // Fetch upcoming events
-      console.log('Fetching /api/agenda?limit=5&upcoming=true...');
       const eventsRes = await fetch("/api/agenda?limit=5&upcoming=true");
       const eventsData = await eventsRes.json();
-      console.log('events result:', JSON.stringify(eventsData));
       if (eventsData.success) {
         setUpcomingEvents(eventsData.data || []);
       }
@@ -65,7 +56,6 @@ export default function DashboardPage() {
       console.error("Error fetching dashboard data:", error);
     } finally {
       setIsLoading(false);
-      console.log('=== [fetchDashboardData] END ===');
     }
   };
 
@@ -77,8 +67,6 @@ export default function DashboardPage() {
       month: "short",
     });
   };
-
-  console.log('=== [DASHBOARD] Rendering component ===');
 
   return (
     <div className="p-4 animate-fadeIn">
