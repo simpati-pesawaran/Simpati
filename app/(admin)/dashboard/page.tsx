@@ -42,7 +42,6 @@ export default function DashboardPage() {
   const profile = (session?.user as any)?.profile;
   const userName = profile?.name || session?.user?.name || "User";
   const userDivision = profile?.division || "Administrator";
-  const userRole = profile?.role || "admin";
 
   useEffect(() => {
     fetchDashboardData();
@@ -150,9 +149,9 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100">
-      {/* Hero Header */}
-      <div className="bg-gradient-to-br from-[#1e3a5f] via-[#2563eb] to-[#7c3aed] px-4 pt-8 pb-12 rounded-b-[32px] relative overflow-hidden">
+    <div className="min-h-screen bg-slate-100 pb-20">
+      {/* Hero Header - Full Mobile */}
+      <div className="bg-gradient-to-br from-[#1e3a5f] via-[#2563eb] to-[#7c3aed] px-4 pt-6 pb-10 rounded-b-[32px] relative overflow-hidden">
         {/* Floating Bubbles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-8 right-8 w-32 h-32 bg-white/10 rounded-full blur-2xl animate-pulse" />
@@ -165,11 +164,11 @@ export default function DashboardPage() {
 
         {/* Header Content */}
         <div className="relative z-10">
-          {/* Top Bar */}
+          {/* Top Bar - Logo + Bell */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg overflow-hidden">
-                <Image src="/icons/logo-3d.svg" alt="SIMPATI" width={48} height={48} />
+              <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg overflow-hidden">
+                <Image src="/logo/logo-master.png" alt="SIMPATI" width={40} height={40} className="w-full h-full object-cover" />
               </div>
               <div>
                 <h1 className="text-white font-bold text-lg tracking-wide">SIMPATI</h1>
@@ -231,21 +230,38 @@ export default function DashboardPage() {
       {/* Main Content - White Container */}
       <div className="mx-4 -mt-6 relative z-20">
         <div className="bg-white rounded-3xl shadow-xl shadow-indigo-500/10 p-5">
-          {/* Menu Grid */}
+          {/* Menu Grid - 2 Rows: 3 + 2 */}
           <div className="mb-6">
             <h3 className="text-gray-900 font-bold text-lg mb-4">Menu Utama</h3>
-            <div className="grid grid-cols-5 gap-2">
-              {menuItems.map((menu, index) => (
+
+            {/* Row 1: 3 Menu */}
+            <div className="grid grid-cols-3 gap-3 mb-3">
+              {menuItems.slice(0, 3).map((menu) => (
                 <Link
                   key={menu.name}
                   href={menu.href}
-                  className="group flex flex-col items-center p-3 rounded-2xl hover:bg-slate-50 transition-all active:scale-95"
-                  style={{ animationDelay: `${index * 100}ms` }}
+                  className="group flex flex-col items-center p-4 rounded-2xl hover:bg-slate-50 transition-all active:scale-95"
                 >
-                  <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${menu.color} flex items-center justify-center mb-2 shadow-lg shadow-indigo-500/20 group-hover:shadow-xl group-hover:scale-105 transition-all`}>
-                    <Image src={menu.icon} alt={menu.name} width={28} height={28} className="group-hover:scale-110 transition-transform" />
+                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${menu.color} flex items-center justify-center mb-3 shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all`}>
+                    <Image src={menu.icon} alt={menu.name} width={32} height={32} />
                   </div>
-                  <span className="text-[11px] font-semibold text-gray-700 text-center leading-tight">{menu.name}</span>
+                  <span className="text-sm font-semibold text-gray-700 text-center">{menu.name}</span>
+                </Link>
+              ))}
+            </div>
+
+            {/* Row 2: 2 Menu (centered) */}
+            <div className="grid grid-cols-2 gap-3 max-w-[66%] mx-auto">
+              {menuItems.slice(3, 5).map((menu) => (
+                <Link
+                  key={menu.name}
+                  href={menu.href}
+                  className="group flex flex-col items-center p-4 rounded-2xl hover:bg-slate-50 transition-all active:scale-95"
+                >
+                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${menu.color} flex items-center justify-center mb-3 shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all`}>
+                    <Image src={menu.icon} alt={menu.name} width={32} height={32} />
+                  </div>
+                  <span className="text-sm font-semibold text-gray-700 text-center">{menu.name}</span>
                 </Link>
               ))}
             </div>
@@ -257,7 +273,7 @@ export default function DashboardPage() {
           {/* Today's Agenda */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-gray-900 font-bold text-lg">Agenda Hari Ini</h3>
+              <h3 className="text-gray-900 font-bold text-lg">Agenda Mendatang</h3>
               <span className="px-3 py-1 bg-indigo-50 text-indigo-600 text-xs font-semibold rounded-full">
                 {upcomingEvents.length} agenda
               </span>
@@ -270,17 +286,16 @@ export default function DashboardPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </div>
-                <p className="text-gray-500 font-medium mb-1">Tidak ada agenda hari ini</p>
-                <p className="text-gray-400 text-sm">Nikmati waktu luang Anda</p>
+                <p className="text-gray-500 font-medium mb-1">Belum ada agenda mendatang</p>
+                <p className="text-gray-400 text-sm">Tambahkan agenda baru</p>
               </div>
             ) : (
               <div className="space-y-3">
-                {upcomingEvents.slice(0, 4).map((event, index) => (
+                {upcomingEvents.slice(0, 4).map((event) => (
                   <button
                     key={event.id}
                     onClick={() => setShowDetail(event)}
                     className="w-full bg-white border border-gray-100 rounded-2xl p-4 text-left hover:shadow-md hover:border-indigo-100 transition-all active:scale-[0.98]"
-                    style={{ animationDelay: `${index * 50}ms` }}
                   >
                     <div className="flex items-start gap-4">
                       {/* Date Badge */}
@@ -343,15 +358,12 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Bottom Spacing for Navigation */}
-      <div className="h-24" />
-
       {/* Bottom Sheet Detail */}
       {showDetail && (
         <div className="fixed inset-0 z-50 flex items-end justify-center" onClick={() => setShowDetail(null)}>
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
           <div
-            className="relative w-full max-w-md bg-white rounded-t-3xl p-6 animate-slideUp"
+            className="relative w-full bg-white rounded-t-3xl p-6 animate-slideUp"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Handle */}
