@@ -64,11 +64,6 @@ export function BottomNav() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
               </svg>
             </Link>
-            <span className={`absolute -bottom-5 left-1/2 -translate-x-1/2 text-[10px] font-semibold ${
-              isAgendaActive ? "text-indigo-600" : "text-gray-600"
-            }`}>
-              Tambah
-            </span>
           </div>
 
           {/* Akun */}
