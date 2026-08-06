@@ -62,37 +62,56 @@ export function Header() {
 
   return (
     <header
-      className="bg-gradient-to-r from-[#1e3a5f] via-[#2563eb] to-[#7c3aed]"
-      style={{ paddingTop: "env(safe-area-inset-top)" }}
+      className="sticky top-0 z-40"
+      style={{
+        background: "rgba(255,255,255,0.95)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        borderBottom: "1px solid rgba(17,24,39,0.08)",
+        boxShadow: "0 4px 16px rgba(15,23,42,0.04)",
+        paddingTop: "env(safe-area-inset-top)"
+      }}
     >
-      <div className="h-14 px-4 flex items-center justify-between">
-        {/* Logo */}
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
-            <Image src="/icons/logo-3d.svg" alt="SIMPATI" width={36} height={36} />
-          </div>
-          <h1 className="text-white font-bold text-lg tracking-wide">SIMPATI</h1>
-        </div>
+      <div className="max-w-md mx-auto px-4">
+        <div className="flex items-center justify-between py-3">
+          {/* Logo */}
+          <Link href="/dashboard" className="flex items-center gap-3">
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg overflow-hidden"
+              style={{
+                background: "linear-gradient(135deg, #1e3a5f 0%, #2563eb 55%, #7c3aed 100%)",
+                boxShadow: "0 4px 14px rgba(37, 99, 235, 0.3)"
+              }}
+            >
+              <Image src="/logo/logo-master.png" alt="SIMPATI" width={40} height={40} className="w-full h-full object-cover" />
+            </div>
+            <div className="min-w-0">
+              <h1 className="font-bold text-base text-gray-900 leading-tight">SIMPATI</h1>
+              <p className="text-xs text-gray-500 leading-tight">Protokol & Agenda</p>
+            </div>
+          </Link>
 
-        {/* Bell Notification */}
-        <button
-          onClick={() => {
-            setShowNotifications(!showNotifications);
-            if (!showNotifications && unreadCount > 0) {
-              markAsRead();
-            }
-          }}
-          className="relative p-2.5 bg-white/15 backdrop-blur-sm rounded-xl text-white hover:bg-white/25 transition-colors"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-          </svg>
-          {unreadCount > 0 && (
-            <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
-              {unreadCount > 9 ? "9+" : unreadCount}
-            </span>
-          )}
-        </button>
+          {/* Bell Notification */}
+          <button
+            onClick={() => {
+              setShowNotifications(!showNotifications);
+              if (!showNotifications && unreadCount > 0) {
+                markAsRead();
+              }
+            }}
+            className="relative p-2.5 bg-gray-50 rounded-xl border border-gray-200 hover:bg-gray-100 transition-all"
+            style={{ width: 40, height: 40, display: "flex", alignItems: "center", justifyContent: "center" }}
+          >
+            <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+            {unreadCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </span>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Notification Dropdown */}
