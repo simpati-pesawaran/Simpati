@@ -5,7 +5,7 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-const SUPERADMIN_EMAIL = "siagapesawaran@gmail.com";
+const SUPERADMIN_EMAIL = "siagapesasakan@gmail.com";
 
 export default function LoginPage() {
   const { data: session, status } = useSession();
@@ -15,64 +15,97 @@ export default function LoginPage() {
   const [step, setStep] = useState<"welcome" | "name" | "division">("welcome");
   const [error, setError] = useState("");
 
+  console.log('=== [LOGIN PAGE] ===');
+  console.log('status:', status);
+  console.log('session:', JSON.stringify(session));
+  console.log('step:', step);
+
   useEffect(() => {
+    console.log('=== [LOGIN PAGE] useEffect triggered ===');
+    console.log('status:', status);
+    console.log('session:', session ? 'EXISTS' : 'NULL');
+
     if (status === "authenticated" && session?.user?.email) {
+      console.log('Session authenticated, calling checkProfileStatus...');
       checkProfileStatus();
     }
   }, [status, session]);
 
   const checkProfileStatus = async () => {
+    console.log('=== [checkProfileStatus] START ===');
     try {
+      console.log('Fetching /api/auth/profile...');
       const res = await fetch("/api/auth/profile");
       const data = await res.json();
 
+      console.log('checkProfileStatus result:', JSON.stringify(data));
+
       // Check if superadmin
       const isSuperadmin = session?.user?.email?.toLowerCase() === SUPERADMIN_EMAIL.toLowerCase();
+      console.log('isSuperadmin:', isSuperadmin);
+      console.log('session email:', session?.user?.email);
+      console.log('SUPERADMIN_EMAIL:', SUPERADMIN_EMAIL);
 
       if (data.exists) {
+        console.log('Profile EXISTS');
+        console.log('Profile status:', data.profile.status);
         // Profile exists - check status
         if (data.profile.status === "approved") {
+          console.log('Redirect -> /dashboard (approved)');
           router.push("/dashboard");
         } else if (data.profile.status === "pending") {
+          console.log('Redirect -> /login/pending (pending)');
           router.push("/login/pending");
         } else if (data.profile.status === "rejected") {
+          console.log('Redirect -> /login/rejected (rejected)');
           router.push("/login/rejected");
         }
       } else if (isSuperadmin) {
         // Superadmin - profile should be auto-created, redirect to dashboard
+        console.log('SUPERADMIN - NO PROFILE but isSuperadmin=true');
+        console.log('Redirect -> /dashboard (superadmin no profile)');
         router.push("/dashboard");
       } else {
         // New user - show name form
+        console.log('NEW USER - showing name form');
         setFormData((prev) => ({ ...prev, name: session?.user?.name || "" }));
         setStep("name");
       }
-    } catch {
+    } catch (err) {
+      console.error('checkProfileStatus ERROR:', err);
       // If API fails, try to proceed
       const isSuperadmin = session?.user?.email?.toLowerCase() === SUPERADMIN_EMAIL.toLowerCase();
       if (isSuperadmin) {
+        console.log('API failed but SUPERADMIN - Redirect -> /dashboard');
         router.push("/dashboard");
       } else {
+        console.log('API failed - showing name form');
         setStep("name");
       }
     }
+    console.log('=== [checkProfileStatus] END ===');
   };
 
   const handleGoogleSignIn = async () => {
+    console.log('=== [handleGoogleSignIn] START ===');
     if (isLoading) return; // Prevent double-click
     setIsLoading(true);
     try {
+      console.log('Calling signIn("google", { callbackUrl: "/dashboard" })');
       const result = await signIn("google", {
         callbackUrl: "/dashboard",
         redirect: true,
       });
+      console.log('signIn result:', JSON.stringify(result));
       if (result?.error) {
         console.error("Sign in error:", result.error);
         setIsLoading(false);
       }
     } catch (err) {
-      console.error("Sign in error:", err);
+      console.error("Sign in ERROR:", err);
       setIsLoading(false);
     }
+    console.log('=== [handleGoogleSignIn] END ===');
   };
 
   const handleNameSubmit = (e: React.FormEvent) => {
@@ -100,6 +133,8 @@ export default function LoginPage() {
       });
       const d = await res.json();
       if (!res.ok) throw new Error();
+      console.log('Division submit result:', JSON.stringify(d));
+      console.log('Redirect:', d.needsApproval ? '/login/pending' : '/dashboard');
       router.push(d.needsApproval ? "/login/pending" : "/dashboard");
     } catch {
       setError("Terjadi kesalahan");
@@ -108,6 +143,7 @@ export default function LoginPage() {
   };
 
   if (status === "loading") {
+    console.log('RENDERING: loading spinner');
     return (
       <div className="min-h-dvh flex flex-col bg-gradient-to-br from-[#1e3a5f] via-[#2563eb] to-[#7c3aed] overflow-x-hidden" style={{ paddingTop: "env(safe-area-inset-top)" }}>
         <main className="flex-1 flex flex-col items-center justify-center px-6 py-8">
@@ -120,6 +156,8 @@ export default function LoginPage() {
       </div>
     );
   }
+
+  console.log('RENDERING: login form, step:', step);
 
   return (
     <div className="min-h-dvh flex flex-col bg-gradient-to-br from-[#1e3a5f] via-[#2563eb] to-[#7c3aed] overflow-x-hidden" style={{ paddingTop: "env(safe-area-inset-top)" }}>

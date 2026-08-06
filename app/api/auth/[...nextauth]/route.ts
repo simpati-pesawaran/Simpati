@@ -116,44 +116,9 @@ export const authOptions: NextAuthOptions = {
     },
 
     async session({ session, token }) {
-      console.log('=== [CALLBACK] session ===');
-      console.log('token.email:', token.email);
-      console.log('token.name:', token.name);
-      console.log('session before:', JSON.stringify(session));
-
-      if (session.user) {
-        session.user.email = token.email as string;
-        session.user.name = token.name as string;
-        session.user.image = token.picture as string;
-
-        // Get user profile from database
-        try {
-          console.log('Fetching profile from Supabase for:', token.email);
-          const { data: profile, error } = await supabaseAdmin
-            .from('profiles')
-            .select('id, name, division, role, status, rejection_reason')
-            .eq('email', token.email as string)
-            .single();
-
-          console.log('Profile fetch result:', profile);
-          console.log('Profile fetch error:', error);
-
-          if (profile) {
-            (session.user as any).profile = profile;
-            (session.user as any).userId = profile.id;
-            (session.user as any).role = profile.role;
-            (session.user as any).status = profile.status;
-            console.log('Profile attached to session');
-          } else {
-            console.log('NO PROFILE FOUND - session will have no profile');
-          }
-        } catch (error) {
-          console.error("Error fetching profile:", error);
-        }
-      }
-
-      console.log('session after:', JSON.stringify(session));
-      console.log('=== [CALLBACK] session END ===');
+      console.log("SESSION CALLBACK");
+      console.log("token =", token);
+      console.log("session =", session);
       return session;
     },
   },

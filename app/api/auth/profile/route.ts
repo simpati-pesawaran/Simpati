@@ -9,44 +9,56 @@ import { authOptions } from "../../auth/[...nextauth]/route";
 import { supabaseAdmin } from "@/app/lib/supabase";
 
 // Superadmin constant
-const SUPERADMIN_EMAIL = "siagapesawaran@gmail.com";
+const SUPERADMIN_EMAIL = "siagapesasakan@gmail.com";
 
 /**
  * GET /api/auth/profile
  * Get current user's profile status
  */
 export async function GET() {
-  try {
-    const session = await getServerSession(authOptions);
+  console.log("PROFILE API");
+  const session = await getServerSession(authOptions);
+  console.log("session =", session);
 
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
     const email = session.user.email;
+    console.log('API: Checking profile for email:', email);
+    console.log('API: SUPERADMIN_EMAIL:', SUPERADMIN_EMAIL);
+    console.log('API: isSuperadmin check:', email.toLowerCase() === SUPERADMIN_EMAIL.toLowerCase());
 
     // Check if profile exists
+    console.log('API: Querying Supabase profiles table...');
     const { data: profile, error } = await supabaseAdmin
       .from('profiles')
       .select('*')
       .eq('email', email)
       .single();
 
+    console.log('API: Supabase query result - profile:', JSON.stringify(profile));
+    console.log('API: Supabase query result - error:', JSON.stringify(error));
+
     if (error && error.code === 'PGRST116') {
       // Profile doesn't exist - new user
-      return NextResponse.json({
+      console.log('API: Profile NOT FOUND (new user)');
+      const response = {
         exists: false,
         isSuperadmin: email.toLowerCase() === SUPERADMIN_EMAIL.toLowerCase(),
         needsSetup: true,
-      });
+      };
+      console.log('API: Returning response:', JSON.stringify(response));
+      return NextResponse.json(response);
     }
 
     if (error) {
       console.error("Error fetching profile:", error);
+      console.log('API: Database error - returning 500');
       return NextResponse.json({ error: "Database error" }, { status: 500 });
     }
 
-    return NextResponse.json({
+    const response = {
       exists: true,
       isSuperadmin: email.toLowerCase() === SUPERADMIN_EMAIL.toLowerCase(),
       profile: {
@@ -57,9 +69,12 @@ export async function GET() {
         status: profile.status,
         rejection_reason: profile.rejection_reason,
       },
-    });
+    };
+    console.log('API: Returning success response:', JSON.stringify(response));
+    return NextResponse.json(response);
   } catch (error) {
     console.error("GET /api/auth/profile error:", error);
+    console.log('API: Exception caught - returning 500');
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
@@ -69,6 +84,8 @@ export async function GET() {
  * Create or update user profile (after Google login)
  */
 export async function POST(request: NextRequest) {
+  console.log('=== [API] /api/auth/profile POST ===');
+
   try {
     const session = await getServerSession(authOptions);
 
