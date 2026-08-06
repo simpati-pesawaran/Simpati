@@ -256,7 +256,7 @@ export default function RejectedPage() {
         {/* Footer inside card */}
         <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 text-center">
           <p className="text-xs text-gray-500">
-            Butuh bantuan? <a href="mailto:siagapesasaran@gmail.com" className="text-indigo-600 font-medium">siagapesasaran@gmail.com</a>
+            Butuh bantuan? <a href="mailto:siagapesawaran@gmail.com@gmail.com" className="text-indigo-600 font-medium">siagapesawaran@gmail.com@gmail.com</a>
           </p>
         </div>
       </div>
