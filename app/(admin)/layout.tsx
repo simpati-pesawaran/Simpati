@@ -13,25 +13,27 @@ export default function AdminLayout({
   const isDashboard = pathname === "/dashboard" || pathname === "/";
 
   return (
-    <div className="min-h-screen flex justify-center" style={{ background: "#f1f5f9" }}>
+    <div className="min-h-screen flex justify-center" style={{ background: "#1a1a2e" }}>
       {/* Mobile Shell - Max 430px, centered on desktop */}
       <div
-        className="w-full min-h-screen flex flex-col"
+        className="w-full flex flex-col relative"
         style={{
           maxWidth: "430px",
+          minHeight: "100vh",
+          minHeight: "100dvh",
           background: "#f1f5f9",
-          position: "relative"
+          boxShadow: "0 0 60px rgba(0, 0, 0, 0.1)",
         }}
       >
         {/* Header untuk semua halaman KECUALI dashboard */}
         {!isDashboard && <Header />}
 
         {/* Main content */}
-        <main className={`flex-1 ${isDashboard ? '' : 'pt-14'}`}>
+        <main className={`flex-1 ${isDashboard ? '' : 'pt-0'}`}>
           {children}
         </main>
 
-        {/* Bottom Navigation */}
+        {/* Bottom Navigation - inside shell */}
         <BottomNav />
       </div>
     </div>
