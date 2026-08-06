@@ -28,8 +28,6 @@ interface MenuItem {
   href: string;
   icon: string;
   color: string;
-  bgGradient: string;
-  description: string;
 }
 
 export default function DashboardPage() {
@@ -100,40 +98,30 @@ export default function DashboardPage() {
       href: "/kegiatan",
       icon: "/icons/icon-agenda.svg",
       color: "from-blue-500 to-indigo-500",
-      bgGradient: "bg-blue-50",
-      description: "Kelola jadwal",
     },
     {
       name: "Calendar",
       href: "/kalender",
       icon: "/icons/icon-calendar.svg",
       color: "from-indigo-500 to-purple-500",
-      bgGradient: "bg-indigo-50",
-      description: "Kalender bulan",
     },
     {
       name: "Galeri",
       href: "/galeri",
       icon: "/icons/icon-galeri.svg",
       color: "from-purple-500 to-pink-500",
-      bgGradient: "bg-purple-50",
-      description: "Dokumentasi",
     },
     {
       name: "Usulan",
       href: "/usulan",
       icon: "/icons/icon-usulan.svg",
       color: "from-amber-500 to-orange-500",
-      bgGradient: "bg-amber-50",
-      description: "Proposal kegiatan",
     },
     {
       name: "Log Aktivitas",
       href: "/log",
       icon: "/icons/icon-log.svg",
       color: "from-emerald-500 to-teal-500",
-      bgGradient: "bg-emerald-50",
-      description: "Riwayat sistem",
     },
   ];
 
@@ -150,13 +138,12 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-slate-100 pb-20">
-      {/* Hero Header - Full Mobile */}
-      <div className="bg-gradient-to-br from-[#1e3a5f] via-[#2563eb] to-[#7c3aed] px-4 pt-6 pb-10 rounded-b-[32px] relative overflow-hidden">
+      {/* Hero Header - Full Mobile Width */}
+      <div className="bg-gradient-to-br from-[#1e3a5f] via-[#2563eb] to-[#7c3aed] px-4 pt-6 pb-10 relative overflow-hidden">
         {/* Floating Bubbles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-8 right-8 w-32 h-32 bg-white/10 rounded-full blur-2xl animate-pulse" />
           <div className="absolute bottom-4 left-4 w-24 h-24 bg-white/5 rounded-full blur-xl animate-pulse" style={{ animationDelay: "1s" }} />
-          <div className="absolute top-1/2 right-1/4 w-16 h-16 bg-indigo-400/20 rounded-full blur-lg animate-bounce" style={{ animationDuration: "4s" }} />
         </div>
 
         {/* Status Bar Spacer */}
@@ -172,7 +159,8 @@ export default function DashboardPage() {
               </div>
               <div>
                 <h1 className="text-white font-bold text-lg tracking-wide">SIMPATI</h1>
-                <p className="text-white/60 text-xs">Protokol & Agenda</p>
+                <p className="text-white/60 text-xs leading-tight">Sistem Informasi Manajemen</p>
+                <p className="text-white/60 text-xs leading-tight">Protokol & Agenda Terintegrasi</p>
               </div>
             </div>
 
@@ -230,40 +218,43 @@ export default function DashboardPage() {
       {/* Main Content - White Container */}
       <div className="mx-4 -mt-6 relative z-20">
         <div className="bg-white rounded-3xl shadow-xl shadow-indigo-500/10 p-5">
-          {/* Menu Grid - 2 Rows: 3 + 2 */}
+          {/* Menu Grid - Mobile Style: 3 items in column, last 2 side by side */}
           <div className="mb-6">
             <h3 className="text-gray-900 font-bold text-lg mb-4">Menu Utama</h3>
 
-            {/* Row 1: 3 Menu */}
-            <div className="grid grid-cols-3 gap-3 mb-3">
-              {menuItems.slice(0, 3).map((menu) => (
-                <Link
-                  key={menu.name}
-                  href={menu.href}
-                  className="group flex flex-col items-center p-4 rounded-2xl hover:bg-slate-50 transition-all active:scale-95"
-                >
-                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${menu.color} flex items-center justify-center mb-3 shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all`}>
-                    <Image src={menu.icon} alt={menu.name} width={32} height={32} />
-                  </div>
-                  <span className="text-sm font-semibold text-gray-700 text-center">{menu.name}</span>
-                </Link>
-              ))}
-            </div>
+            {/* Menu items - mobile style layout */}
+            <div className="space-y-3">
+              {/* Row 1, 2, 3 - Full width, side by side 3 items */}
+              <div className="flex gap-3 justify-between">
+                {menuItems.slice(0, 3).map((menu) => (
+                  <Link
+                    key={menu.name}
+                    href={menu.href}
+                    className="flex-1 group flex flex-col items-center p-3 rounded-2xl hover:bg-slate-50 transition-all active:scale-95"
+                  >
+                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${menu.color} flex items-center justify-center mb-2 shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all`}>
+                      <Image src={menu.icon} alt={menu.name} width={36} height={36} />
+                    </div>
+                    <span className="text-xs font-semibold text-gray-700 text-center leading-tight">{menu.name}</span>
+                  </Link>
+                ))}
+              </div>
 
-            {/* Row 2: 2 Menu (centered) */}
-            <div className="grid grid-cols-2 gap-3 max-w-[66%] mx-auto">
-              {menuItems.slice(3, 5).map((menu) => (
-                <Link
-                  key={menu.name}
-                  href={menu.href}
-                  className="group flex flex-col items-center p-4 rounded-2xl hover:bg-slate-50 transition-all active:scale-95"
-                >
-                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${menu.color} flex items-center justify-center mb-3 shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all`}>
-                    <Image src={menu.icon} alt={menu.name} width={32} height={32} />
-                  </div>
-                  <span className="text-sm font-semibold text-gray-700 text-center">{menu.name}</span>
-                </Link>
-              ))}
+              {/* Row 4, 5 - 2 items side by side */}
+              <div className="flex gap-3 justify-center">
+                {menuItems.slice(3, 5).map((menu) => (
+                  <Link
+                    key={menu.name}
+                    href={menu.href}
+                    className="flex-1 max-w-[calc(50%-6px)] group flex flex-col items-center p-3 rounded-2xl hover:bg-slate-50 transition-all active:scale-95"
+                  >
+                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${menu.color} flex items-center justify-center mb-2 shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all`}>
+                      <Image src={menu.icon} alt={menu.name} width={36} height={36} />
+                    </div>
+                    <span className="text-xs font-semibold text-gray-700 text-center leading-tight">{menu.name}</span>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -280,9 +271,9 @@ export default function DashboardPage() {
             </div>
 
             {upcomingEvents.length === 0 ? (
-              <div className="bg-gradient-to-br from-slate-50 to-indigo-50 rounded-2xl p-8 text-center">
-                <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
-                  <svg className="w-8 h-8 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="bg-gradient-to-br from-slate-50 to-indigo-50 rounded-2xl p-6 text-center">
+                <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-sm">
+                  <svg className="w-7 h-7 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </div>
@@ -315,7 +306,7 @@ export default function DashboardPage() {
                       {/* Content */}
                       <div className="flex-1 min-w-0">
                         <p className="font-semibold text-gray-900 truncate pr-2">{event.title}</p>
-                        <div className="flex items-center gap-2 mt-1.5">
+                        <div className="flex items-center gap-2 mt-1">
                           <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
@@ -333,7 +324,7 @@ export default function DashboardPage() {
                       </div>
 
                       {/* Type Badge */}
-                      <span className={`flex-shrink-0 px-2.5 py-1 rounded-full text-[10px] font-semibold ${
+                      <span className={`flex-shrink-0 px-2 py-1 rounded-full text-[10px] font-semibold ${
                         event.jenis === "agenda"
                           ? "bg-blue-50 text-blue-600"
                           : "bg-purple-50 text-purple-600"

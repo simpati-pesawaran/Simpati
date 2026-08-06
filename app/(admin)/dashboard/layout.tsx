@@ -8,8 +8,8 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-white">
-      {/* No Header for Dashboard - Dashboard has its own hero */}
+    <div className="min-h-screen bg-slate-100">
+      {/* No Header for Dashboard - Dashboard has its own hero header */}
       <main className="flex-1">
         {children}
       </main>
