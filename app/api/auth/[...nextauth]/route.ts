@@ -13,7 +13,7 @@ if (DEBUG) {
 }
 
 // Superadmin constant
-const SUPERADMIN_EMAIL = "siagapesawaran@gmail.com";
+const SUPERADMIN_EMAIL = "siagapesasakan@gmail.com";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -32,8 +32,16 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     async signIn({ user, account, profile }) {
+      console.log('=== [CALLBACK] signIn ===');
+      console.log('user.email:', user?.email);
+      console.log('user.name:', user?.name);
+      console.log('account.provider:', account?.provider);
+      console.log('account.access_token:', account?.access_token ? 'EXISTS' : 'NULL');
+      console.log('profile:', profile);
+
       // Superadmin auto-approve: Create profile if not exists
       if (user.email?.toLowerCase() === SUPERADMIN_EMAIL.toLowerCase()) {
+        console.log('SUPERADMIN DETECTED:', user.email);
         try {
           // Check if profile exists
           const { data: existingProfile } = await supabaseAdmin
@@ -42,7 +50,10 @@ export const authOptions: NextAuthOptions = {
             .eq('email', user.email)
             .single();
 
+          console.log('existingProfile:', existingProfile);
+
           if (!existingProfile) {
+            console.log('Creating NEW superadmin profile...');
             // Create superadmin profile with approved status
             const { error: insertError } = await supabaseAdmin
               .from('profiles')
@@ -58,8 +69,11 @@ export const authOptions: NextAuthOptions = {
 
             if (insertError) {
               console.error("Error creating superadmin profile:", insertError);
+            } else {
+              console.log('Superadmin profile CREATED');
             }
           } else if (existingProfile.status !== 'approved') {
+            console.log('Re-approving superadmin...');
             // Re-approve if rejected
             await supabaseAdmin
               .from('profiles')
@@ -72,24 +86,41 @@ export const authOptions: NextAuthOptions = {
                 rejection_reason: null,
               })
               .eq('email', user.email);
+          } else {
+            console.log('Superadmin already approved');
           }
         } catch (error) {
           console.error("Error in superadmin signIn:", error);
         }
       }
 
+      console.log('signIn returning: true');
       return true;
     },
 
     async jwt({ token, account, profile }) {
-      if (account) {
+      console.log("=== [CALLBACK] jwt ===");
+
+      if (account && profile) {
         token.accessToken = account.access_token;
-        token.id = profile?.sub;
+        token.id = profile.sub;
+
+        token.email = profile.email;
+        token.name = profile.name;
+        token.picture = profile.picture;
       }
+
+      console.log("token after:", token);
+
       return token;
     },
 
     async session({ session, token }) {
+      console.log('=== [CALLBACK] session ===');
+      console.log('token.email:', token.email);
+      console.log('token.name:', token.name);
+      console.log('session before:', JSON.stringify(session));
+
       if (session.user) {
         session.user.email = token.email as string;
         session.user.name = token.name as string;
@@ -97,22 +128,32 @@ export const authOptions: NextAuthOptions = {
 
         // Get user profile from database
         try {
-          const { data: profile } = await supabaseAdmin
+          console.log('Fetching profile from Supabase for:', token.email);
+          const { data: profile, error } = await supabaseAdmin
             .from('profiles')
             .select('id, name, division, role, status, rejection_reason')
             .eq('email', token.email as string)
             .single();
+
+          console.log('Profile fetch result:', profile);
+          console.log('Profile fetch error:', error);
 
           if (profile) {
             (session.user as any).profile = profile;
             (session.user as any).userId = profile.id;
             (session.user as any).role = profile.role;
             (session.user as any).status = profile.status;
+            console.log('Profile attached to session');
+          } else {
+            console.log('NO PROFILE FOUND - session will have no profile');
           }
         } catch (error) {
           console.error("Error fetching profile:", error);
         }
       }
+
+      console.log('session after:', JSON.stringify(session));
+      console.log('=== [CALLBACK] session END ===');
       return session;
     },
   },
