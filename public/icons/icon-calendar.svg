@@ -1,0 +1,56 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="calendarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4F46E5"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+    <linearGradient id="calendarGradLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#818CF8"/>
+      <stop offset="100%" stop-color="#A78BFA"/>
+    </linearGradient>
+    <filter id="calendarShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#4F46E5" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Background Card -->
+  <rect x="6" y="6" width="36" height="36" rx="10" fill="white" filter="url(#calendarShadow)"/>
+
+  <!-- Month Header -->
+  <rect x="6" y="6" width="36" height="12" rx="10" fill="url(#calendarGrad)"/>
+  <rect x="6" y="14" width="36" height="4" fill="url(#calendarGrad)"/>
+
+  <!-- Month/Year Text -->
+  <text x="24" y="15" text-anchor="middle" fill="white" font-size="6" font-weight="600" font-family="system-ui">AUG</text>
+
+  <!-- Calendar Rings -->
+  <rect x="14" y="3" width="3" height="8" rx="1.5" fill="#7C3AED"/>
+  <rect x="22" y="3" width="3" height="8" rx="1.5" fill="#4F46E5"/>
+  <rect x="30" y="3" width="3" height="8" rx="1.5" fill="#6366F1"/>
+
+  <!-- Day Dots Row 1 -->
+  <circle cx="12" cy="24" r="2" fill="#E2E8F0"/>
+  <circle cx="18" cy="24" r="2" fill="#E2E8F0"/>
+  <circle cx="24" cy="24" r="2" fill="#E2E8F0"/>
+  <circle cx="30" cy="24" r="2" fill="#E2E8F0"/>
+  <circle cx="36" cy="24" r="2" fill="#E2E8F0"/>
+
+  <!-- Day Dots Row 2 -->
+  <circle cx="12" cy="30" r="2" fill="#E2E8F0"/>
+  <circle cx="18" cy="30" r="2" fill="#E2E8F0"/>
+  <circle cx="24" cy="30" r="2" fill="#E2E8F0"/>
+  <circle cx="30" cy="30" r="2" fill="#E2E8F0"/>
+  <circle cx="36" cy="30" r="2" fill="#E2E8F0"/>
+
+  <!-- Day Dots Row 3 -->
+  <circle cx="12" cy="36" r="2" fill="#E2E8F0"/>
+  <circle cx="18" cy="36" r="2" fill="#E2E8F0"/>
+  <circle cx="24" cy="36" r="2" fill="#E2E8F0"/>
+
+  <!-- Today Highlight -->
+  <circle cx="18" cy="30" r="4" fill="url(#calendarGradLight)"/>
+  <circle cx="18" cy="30" r="1.5" fill="white"/>
+
+  <!-- Events Indicator -->
+  <circle cx="30" cy="30" r="2" fill="#F59E0B"/>
+</svg>

@@ -1,33 +1,79 @@
 /* ========================================
-   OCEAN DEPTH ANIMATIONS
+   SIMPATI PREMIUM ANIMATIONS
+   Design System: Modern Government, Premium
    ======================================== */
 
-/* Floating Bubbles */
+/* ===========================================
+   FLOATING BUBBLES - Hero Section
+   =========================================== */
+
 @keyframes float-1 {
-  0%, 100% { transform: translateY(0px) scale(1); opacity: 0.3; }
-  50% { transform: translateY(-20px) scale(1.1); opacity: 0.5; }
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-20px) scale(1.1);
+    opacity: 0.5;
+  }
 }
 
 @keyframes float-2 {
-  0%, 100% { transform: translateY(0px) scale(1); opacity: 0.2; }
-  50% { transform: translateY(-15px) scale(0.9); opacity: 0.4; }
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateY(-15px) scale(0.9);
+    opacity: 0.4;
+  }
 }
 
 @keyframes float-3 {
-  0%, 100% { transform: translateY(0px) scale(1); opacity: 0.25; }
-  50% { transform: translateY(-25px) scale(1.05); opacity: 0.35; }
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+    opacity: 0.25;
+  }
+  50% {
+    transform: translateY(-25px) scale(1.05);
+    opacity: 0.35;
+  }
 }
 
 @keyframes pulse-glow {
-  0%, 100% { opacity: 0.3; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(1.1); }
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.1);
+  }
 }
 
-/* Float Animation Classes */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Floating Bubble Classes */
 .float-bubble {
   position: absolute;
   border-radius: 50%;
-  background: rgba(37, 99, 235, 0.15);
+  background: rgba(99, 102, 241, 0.15);
   animation: float-1 6s ease-in-out infinite;
   pointer-events: none;
 }
@@ -61,21 +107,26 @@
   width: 200px;
   height: 200px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(37, 99, 235, 0.2) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 70%);
   animation: pulse-glow 4s ease-in-out infinite;
 }
 
-/* Button Animations - High Priority */
+/* ===========================================
+   BUTTON ANIMATIONS - Premium Touch
+   =========================================== */
+
 .btn {
   position: relative;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transform: translateY(0);
-  transition: 
+  transition:
     transform 120ms cubic-bezier(0.34, 1.56, 0.64, 1),
     box-shadow 120ms ease-out,
     background-color 120ms ease-out,
     opacity 120ms ease-out;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .btn:active:not(:disabled) {
@@ -86,32 +137,49 @@
   transform: translateY(-2px);
 }
 
-/* Primary Button Enhanced */
+/* Primary Button - Gradient Indigo to Blue */
 .btn-primary {
-  background: linear-gradient(135deg, #071E3D 0%, #123C69 100%);
+  background: linear-gradient(135deg, #4F46E5 0%, #2563EB 100%);
   color: white;
   border: none;
-  box-shadow: 
-    0 2px 4px rgba(7, 30, 61, 0.15),
-    0 4px 12px rgba(37, 99, 235, 0.25),
+  box-shadow:
+    0 2px 4px rgba(79, 70, 229, 0.15),
+    0 4px 12px rgba(79, 70, 229, 0.25),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #123C69 0%, #2563EB 100%);
-  box-shadow: 
-    0 4px 8px rgba(7, 30, 61, 0.2),
-    0 8px 24px rgba(37, 99, 235, 0.35),
+  background: linear-gradient(135deg, #4338CA 0%, #1D4ED8 100%);
+  box-shadow:
+    0 4px 8px rgba(79, 70, 229, 0.2),
+    0 8px 24px rgba(79, 70, 229, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
   transform: translateY(-2px);
 }
 
 .btn-primary:active:not(:disabled) {
-  background: linear-gradient(135deg, #0F172A 0%, #1E3A5A 100%);
-  box-shadow: 
-    0 1px 2px rgba(7, 30, 61, 0.2),
+  background: linear-gradient(135deg, #3730A3 0%, #1E40AF 100%);
+  box-shadow:
+    0 1px 2px rgba(79, 70, 229, 0.2),
     inset 0 2px 4px rgba(0, 0, 0, 0.1);
   transform: scale(0.97) translateY(0) !important;
+}
+
+/* Secondary Button */
+.btn-secondary {
+  background: linear-gradient(135deg, #7C3AED 0%, #A855F7 100%);
+  color: white;
+  border: none;
+  box-shadow:
+    0 2px 4px rgba(124, 58, 237, 0.15),
+    0 4px 12px rgba(124, 58, 237, 0.25);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  box-shadow:
+    0 4px 8px rgba(124, 58, 237, 0.2),
+    0 8px 24px rgba(124, 58, 237, 0.35);
+  transform: translateY(-2px);
 }
 
 /* Ghost Button */
@@ -123,7 +191,7 @@
 
 .btn-ghost:hover:not(:disabled) {
   background: #F1F5F9;
-  color: #071E3D;
+  color: #4F46E5;
 }
 
 .btn-ghost:active:not(:disabled) {
@@ -160,17 +228,10 @@
   animation: spin 0.6s linear infinite;
 }
 
-/* Focus States */
-.btn:focus-visible {
-  outline: 2px solid #2563EB;
-  outline-offset: 2px;
-}
+/* ===========================================
+   CARD ANIMATIONS
+   =========================================== */
 
-.btn:active {
-  outline: none;
-}
-
-/* Scale Animation for Cards */
 @keyframes card-appear {
   from {
     opacity: 0;
@@ -178,7 +239,16 @@
   }
   to {
     opacity: 1;
-  transform: scale(1) translateY(0);
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes card-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
   }
 }
 
@@ -186,9 +256,344 @@
   animation: card-appear 300ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
-/* Input Focus Animation */
-input:focus {
+.card-hover {
+  transition: transform 200ms ease-out, box-shadow 200ms ease-out;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* ===========================================
+   INPUT ANIMATIONS
+   =========================================== */
+
+input:focus,
+textarea:focus,
+select:focus {
   outline: none;
-  border-color: #2563EB !important;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+  border-color: #4F46E5 !important;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15) !important;
+}
+
+input, textarea, select {
+  transition: border-color 200ms ease-out, box-shadow 200ms ease-out;
+}
+
+/* ===========================================
+   FOCUS STATES
+   =========================================== */
+
+:focus-visible {
+  outline: 2px solid #4F46E5;
+  outline-offset: 2px;
+}
+
+.btn:focus-visible {
+  outline: 2px solid #6366F1;
+  outline-offset: 2px;
+}
+
+/* ===========================================
+   MODAL / BOTTOM SHEET ANIMATIONS
+   =========================================== */
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Animation Classes */
+.animate-slide-up {
+  animation: slideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.animate-slide-down {
+  animation: slideDown 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ===========================================
+   SPINNER
+   =========================================== */
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 0.6s linear infinite;
+}
+
+/* ===========================================
+   PULSE
+   =========================================== */
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ===========================================
+   BOUNCE
+   =========================================== */
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-bounce-subtle {
+  animation: bounce 2s ease-in-out infinite;
+}
+
+/* ===========================================
+   SKELETON LOADING
+   =========================================== */
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 0%,
+    #e2e8f0 50%,
+    #f1f5f9 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+/* ===========================================
+   RIPPLE EFFECT
+   =========================================== */
+
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1) translate(-50%, -50%);
+  transform-origin: 50% 50%;
+}
+
+.ripple:active::after {
+  animation: ripple-effect 0.6s ease-out;
+}
+
+@keyframes ripple-effect {
+  0% {
+    transform: scale(0) translate(-50%, -50%);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(40) translate(-50%, -50%);
+    opacity: 0;
+  }
+}
+
+/* ===========================================
+   BADGE PULSE
+   =========================================== */
+
+.badge-pulse {
+  position: relative;
+}
+
+.badge-pulse::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background: #EF4444;
+  border-radius: 50%;
+  animation: badge-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes badge-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+}
+
+/* ===========================================
+   GRADIENT ANIMATION
+   =========================================== */
+
+.gradient-animate {
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* ===========================================
+   STAGGER CHILDREN ANIMATION
+   =========================================== */
+
+.stagger-children > * {
+  opacity: 0;
+  animation: card-appear 0.4s ease-out forwards;
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-children > *:nth-child(2) { animation-delay: 100ms; }
+.stagger-children > *:nth-child(3) { animation-delay: 200ms; }
+.stagger-children > *:nth-child(4) { animation-delay: 300ms; }
+.stagger-children > *:nth-child(5) { animation-delay: 400ms; }
+.stagger-children > *:nth-child(6) { animation-delay: 500ms; }
+
+/* ===========================================
+   SAFE AREA TRANSITIONS
+   =========================================== */
+
+.safe-area-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ===========================================
+   SMOOTH SCROLL
+   =========================================== */
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar but allow scrolling */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ===========================================
+   GLASS MORPHISM
+   =========================================== */
+
+.glass {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.glass-dark {
+  background: rgba(30, 58, 95, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* ===========================================
+   TEXT GRADIENT
+   =========================================== */
+
+.text-gradient {
+  background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ===========================================
+   REDUCED MOTION
+   =========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

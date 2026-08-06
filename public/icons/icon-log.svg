@@ -1,0 +1,47 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="logGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <linearGradient id="logGradLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34D399"/>
+      <stop offset="100%" stop-color="#10B981"/>
+    </linearGradient>
+    <filter id="logShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#10B981" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Background Card -->
+  <rect x="6" y="6" width="36" height="36" rx="10" fill="white" filter="url(#logShadow)"/>
+
+  <!-- Timeline Line -->
+  <line x1="16" y1="12" x2="16" y2="36" stroke="url(#logGrad)" stroke-width="2" stroke-linecap="round" stroke-dasharray="2 3"/>
+
+  <!-- Timeline Dot 1 (Top - Latest) -->
+  <circle cx="16" cy="14" r="4" fill="url(#logGrad)"/>
+  <circle cx="16" cy="14" r="2" fill="white"/>
+
+  <!-- Timeline Dot 2 -->
+  <circle cx="16" cy="24" r="3" fill="url(#logGradLight)"/>
+  <circle cx="16" cy="24" r="1.5" fill="white"/>
+
+  <!-- Timeline Dot 3 -->
+  <circle cx="16" cy="34" r="2.5" fill="#E2E8F0"/>
+  <circle cx="16" cy="34" r="1" fill="#D1D5DB"/>
+
+  <!-- Activity Bar 1 -->
+  <rect x="24" y="11" width="14" height="6" rx="3" fill="url(#logGrad)"/>
+
+  <!-- Activity Bar 2 -->
+  <rect x="24" y="21" width="10" height="6" rx="3" fill="url(#logGradLight)"/>
+
+  <!-- Activity Bar 3 -->
+  <rect x="24" y="31" width="12" height="6" rx="3" fill="#E2E8F0"/>
+
+  <!-- Mini Icons in Bars -->
+  <circle cx="27" cy="14" r="1.5" fill="white"/>
+  <circle cx="27" cy="24" r="1.5" fill="white"/>
+  <rect x="26" y="33" width="2" height="2" rx="0.5" fill="#D1D5DB"/>
+</svg>
