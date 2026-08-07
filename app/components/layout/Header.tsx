@@ -126,26 +126,38 @@ export function Header() {
         </div>
       </header>
 
-      {/* Notification Dropdown */}
+      {/* Notification Modal - Responsive */}
       {showNotifications && (
-        <div className="fixed inset-0 z-50" onClick={() => setShowNotifications(false)}>
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+        <div
+          className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4"
+          onClick={() => setShowNotifications(false)}
+        >
           <div
-            className="absolute bottom-0 left-0 right-0 bg-white rounded-t-[28px] shadow-2xl flex flex-col animate-slideDown"
+            className="w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl animate-slideDown overflow-hidden"
             style={{ maxHeight: "75vh" }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Handle */}
-            <div className="flex justify-center pt-3 pb-2">
+            {/* Handle - Desktop centered, Mobile top */}
+            <div className="flex justify-center pt-3 pb-2 sm:pt-4 sm:pb-3">
               <div className="w-10 h-1 bg-gray-300 rounded-full" />
             </div>
 
             {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-              <h2 className="text-lg font-bold text-gray-900">Notifikasi</h2>
+            <div className="flex items-center justify-between px-5 py-3 sm:py-4 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                  </svg>
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">Notifikasi</h2>
+                  <p className="text-xs text-gray-500">{notifications.length} notifikasi</p>
+                </div>
+              </div>
               <button
                 onClick={() => setShowNotifications(false)}
-                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 active:bg-gray-200 transition-colors"
+                className="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-gray-100 active:bg-gray-200 transition-all"
               >
                 <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -154,7 +166,7 @@ export function Header() {
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto px-5 py-4">
+            <div className="flex-1 overflow-y-auto px-4 py-4">
               {notifications.length === 0 ? (
                 <div className="text-center py-12">
                   <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -215,11 +227,11 @@ export function Header() {
             </div>
 
             {isSuperadmin && notifications.length > 0 && (
-              <div className="px-5 py-4 border-t border-gray-100 bg-gray-50/50">
+              <div className="px-4 py-4 border-t border-gray-100 bg-gray-50/50">
                 <Link
                   href="/akun"
                   onClick={() => setShowNotifications(false)}
-                  className="flex items-center justify-center gap-2 text-sm text-indigo-600 font-semibold hover:text-indigo-700 transition-colors"
+                  className="flex items-center justify-center gap-2 w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl font-semibold hover:shadow-lg transition-all text-sm"
                 >
                   Lihat semua permintaan
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -236,10 +248,14 @@ export function Header() {
       )}
 
       <style jsx>{`
+        @keyframes slideUp {
+          from { transform: translateY(100%); }
+          to { transform: translateY(0); }
+        }
         @keyframes slideDown {
           from {
             opacity: 0;
-            transform: translateY(20px) scale(0.98);
+            transform: translateY(20px) scale(0.95);
           }
           to {
             opacity: 1;
@@ -248,6 +264,11 @@ export function Header() {
         }
         .animate-slideDown {
           animation: slideDown 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        @media (min-width: 640px) {
+          .animate-slideDown {
+            animation: slideDown 0.25s ease-out;
+          }
         }
       `}</style>
     </>
