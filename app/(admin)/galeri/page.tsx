@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import AppHeader from "@/components/AppHeader";
+import Link from "next/link";
 
 interface GalleryItem {
   id: string;
@@ -115,36 +115,51 @@ export default function GaleriPage() {
 
   return (
     <div className="min-h-screen pb-20" style={{ background: "#f1f5f9" }}>
-      <AppHeader
-        variant="default"
-        title="Galeri"
-        icon={
-          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-        }
-        notificationCount={items.length}
-      />
+      {/* Header Section - Gradient Theme */}
+      <div
+        className="px-5 pb-5"
+        style={{
+          background: "linear-gradient(135deg, #1e3a5f 0%, #2563eb 55%, #7c3aed 100%)",
+        }}
+      >
+        {/* Back Button + Title */}
+        <div className="flex items-center gap-4 pt-2">
+          <Link
+            href="/dashboard"
+            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-95"
+            style={{
+              background: "rgba(255,255,255,0.2)",
+              backdropFilter: "blur(10px)",
+            }}
+          >
+            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </Link>
+          <div>
+            <h1 className="text-white text-xl font-bold">Galeri</h1>
+            <p className="text-white/60 text-xs">Dokumentasi & arsip digital</p>
+          </div>
+        </div>
 
-      {/* Tabs */}
-      <div className="px-5 py-3 bg-white border-b border-gray-100" style={{ marginTop: "-1px" }}>
-        <div className="flex gap-2">
+        {/* Tab Navigation */}
+        <div className="mt-4 bg-white/15 backdrop-blur-sm rounded-2xl p-1 flex">
           <button
             onClick={() => setActiveTab("dokumentasi")}
-            className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition ${
+            className={`flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition-all ${
               activeTab === "dokumentasi"
-                ? "bg-blue-500 text-white"
-                : "bg-gray-100 text-gray-600"
+                ? "bg-white text-gray-900 shadow-md"
+                : "text-white/80 hover:text-white"
             }`}
           >
             Dokumentasi
           </button>
           <button
             onClick={() => setActiveTab("arsip")}
-            className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition ${
+            className={`flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition-all ${
               activeTab === "arsip"
-                ? "bg-purple-500 text-white"
-                : "bg-gray-100 text-gray-600"
+                ? "bg-white text-gray-900 shadow-md"
+                : "text-white/80 hover:text-white"
             }`}
           >
             Arsip Digital
@@ -152,8 +167,8 @@ export default function GaleriPage() {
         </div>
       </div>
 
-      {/* Gallery Grid */}
-      <div className="p-4">
+      {/* Content Section - White Container */}
+      <div className="-mt-3 px-4 py-4">
         {loading ? (
           <div className="flex justify-center py-12">
             <div className="animate-spin w-8 h-8 border-3 border-indigo-500 border-t-transparent rounded-full"></div>
@@ -196,29 +211,40 @@ export default function GaleriPage() {
         )}
       </div>
 
-      {/* Upload Modal */}
+      {/* Upload Modal - Centered */}
       {showUpload && (
-        <div className="fixed inset-0 z-50" onClick={() => setShowUpload(false)}>
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
-          <div className="absolute bottom-0 left-0 right-0 max-h-[92vh] bg-white rounded-t-[28px] shadow-2xl flex flex-col animate-slideUp" onClick={(e) => e.stopPropagation()}>
-            <div className="flex justify-center pt-3 pb-2">
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowUpload(false)}>
+          <div
+            className="w-full sm:max-w-[390px] bg-white rounded-3xl shadow-2xl overflow-hidden animate-slideDown"
+            style={{ maxHeight: "92vh" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-center pt-4 pb-3">
               <div className="w-10 h-1 bg-gray-300 rounded-full" />
             </div>
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-              <h2 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                Upload {activeTab === "dokumentasi" ? "Dokumentasi" : "Arsip Digital"}
-              </h2>
-              <button onClick={() => setShowUpload(false)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 active:bg-gray-200 transition-colors">
+            <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "linear-gradient(135deg, #3b82f6, #6366f1)" }}>
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">Upload</h2>
+                  <p className="text-xs text-gray-500">{activeTab === "dokumentasi" ? "Dokumentasi" : "Arsip Digital"}</p>
+                </div>
+              </div>
+              <button onClick={() => setShowUpload(false)} className="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-gray-100 active:bg-gray-200 transition-all">
                 <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
-            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-5 py-6 space-y-6">
+            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-5 py-6 space-y-5 overscroll-contain">
               {/* Image Upload */}
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-gray-800">Gambar</label>
-                <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-2xl cursor-pointer hover:border-blue-400 hover:bg-blue-50/30 transition-all">
+                <label className="text-sm font-semibold text-gray-700">Gambar</label>
+                <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-2xl cursor-pointer hover:border-blue-400 hover:bg-blue-50/30 transition-all">
                   {imagePreview ? (
                     <div className="relative w-full h-full">
                       <img src={imagePreview} alt="Preview" className="w-full h-full object-cover rounded-2xl" />
@@ -234,12 +260,12 @@ export default function GaleriPage() {
                     </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center">
-                      <div className="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center mb-3">
-                        <svg className="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mb-3">
+                        <svg className="w-7 h-7 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                       </div>
-                      <p className="text-sm text-gray-600 font-medium">Ketuk untuk upload gambar</p>
+                      <p className="text-sm text-gray-500 font-medium">Ketuk untuk upload</p>
                     </div>
                   )}
                   <input type="file" className="hidden" accept="image/*" onChange={handleImageSelect} />
@@ -248,51 +274,48 @@ export default function GaleriPage() {
 
               {/* Title */}
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-gray-800">Judul</label>
+                <label className="text-sm font-semibold text-gray-700">Judul</label>
                 <input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Masukkan judul"
                   required
-                  className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all placeholder:text-gray-500"
+                  className="w-full px-4 py-3.5 bg-gradient-to-br from-gray-50 to-slate-50 border border-gray-200/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 transition-all placeholder:text-gray-400"
                 />
               </div>
 
               {/* Description */}
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-gray-800">Deskripsi <span className="text-xs font-normal text-gray-500">(opsional)</span></label>
+                <label className="text-sm font-semibold text-gray-700">Deskripsi <span className="text-xs font-normal text-gray-500">(opsional)</span></label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Masukkan deskripsi"
                   rows={3}
-                  className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all resize-none placeholder:text-gray-500"
+                  className="w-full px-4 py-3.5 bg-gradient-to-br from-gray-50 to-slate-50 border border-gray-200/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 transition-all resize-none placeholder:text-gray-400"
                 />
               </div>
-
-              {/* Bottom spacing */}
-              <div className="h-20" />
             </form>
             {/* Sticky Submit Button */}
-            <div className="sticky bottom-0 bg-white border-t border-gray-100 px-5 py-4">
+            <div className="sticky bottom-0 bg-white border-t border-gray-100 px-5 py-4" style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom)" }}>
               <button
                 type="submit"
                 disabled={uploading || !imageFile || !title}
                 onClick={handleSubmit}
-                className="w-full py-4 rounded-2xl font-semibold text-base text-white shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+                className="w-full py-3.5 rounded-2xl font-semibold text-sm text-white shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
                 style={{
                   background: uploading || !imageFile || !title
                     ? '#94a3b8'
                     : 'linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #7c3aed 100%)',
                   boxShadow: uploading || !imageFile || !title
                     ? 'none'
-                    : '0 4px 20px rgba(37, 99, 235, 0.35)'
+                    : '0 4px 16px rgba(37, 99, 235, 0.35)'
                 }}
               >
                 {uploading ? (
-                  <span className="flex items-center justify-center gap-3">
-                    <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                     </svg>
@@ -300,7 +323,7 @@ export default function GaleriPage() {
                   </span>
                 ) : (
                   <span className="flex items-center justify-center gap-2">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                     Simpan
@@ -312,22 +335,25 @@ export default function GaleriPage() {
         </div>
       )}
 
-      {/* Detail Modal */}
+      {/* Detail Modal - Centered */}
       {selectedItem && (
-        <div className="fixed inset-0 z-50" onClick={() => setSelectedItem(null)}>
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-          <div className="absolute bottom-0 left-0 right-0 max-h-[90vh] bg-white rounded-t-[28px] shadow-2xl flex flex-col animate-slideUp" onClick={(e) => e.stopPropagation()}>
-            <div className="flex justify-center pt-3 pb-2">
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setSelectedItem(null)}>
+          <div
+            className="w-full sm:max-w-[390px] bg-white rounded-3xl shadow-2xl overflow-hidden animate-slideDown"
+            style={{ maxHeight: "90vh" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-center pt-4 pb-3">
               <div className="w-10 h-1 bg-gray-300 rounded-full" />
             </div>
-            <div className="flex items-center justify-end px-5 py-3">
-              <button onClick={() => setSelectedItem(null)} className="w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-md hover:bg-gray-100 active:bg-gray-200 transition-colors">
+            <div className="flex items-center justify-end px-5 py-2">
+              <button onClick={() => setSelectedItem(null)} className="w-10 h-10 flex items-center justify-center rounded-2xl bg-white shadow-md hover:bg-gray-100 active:bg-gray-200 transition-all">
                 <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto px-5 pb-6">
+            <div className="flex-1 overflow-y-auto px-5 pb-6 overscroll-contain">
               <div className="relative rounded-2xl overflow-hidden shadow-lg mb-4">
                 <img src={selectedItem.image_url} alt={selectedItem.title} className="w-full aspect-video object-cover" />
               </div>
@@ -359,12 +385,28 @@ export default function GaleriPage() {
       )}
 
       <style jsx>{`
-        @keyframes slideUp {
-          from { transform: translateY(100%); }
-          to { transform: translateY(0); }
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
         }
-        .animate-slideUp {
-          animation: slideUp 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+        .animate-slideDown {
+          animation: slideDown 0.25s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+        }
+        .overscroll-contain::-webkit-scrollbar {
+          width: 4px;
+        }
+        .overscroll-contain::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .overscroll-contain::-webkit-scrollbar-thumb {
+          background: rgba(0,0,0,0.15);
+          border-radius: 4px;
         }
       `}</style>
     </div>

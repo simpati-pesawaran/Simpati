@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import AppHeader from "@/components/AppHeader";
+import Link from "next/link";
 
 interface LogEntry {
   id: string;
@@ -123,21 +123,38 @@ export default function LogPage() {
 
   return (
     <div className="min-h-screen pb-20" style={{ background: "#f1f5f9" }}>
-      <AppHeader
-        variant="default"
-        title="Log Aktivitas"
-        icon={
-          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-          </svg>
-        }
-        notificationCount={logs.length}
-      />
+      {/* Header Section - Gradient Theme */}
+      <div
+        className="px-5 pb-5"
+        style={{
+          background: "linear-gradient(135deg, #1e3a5f 0%, #2563eb 55%, #7c3aed 100%)",
+        }}
+      >
+        {/* Back Button + Title */}
+        <div className="flex items-center gap-4 pt-2">
+          <Link
+            href="/dashboard"
+            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-95"
+            style={{
+              background: "rgba(255,255,255,0.2)",
+              backdropFilter: "blur(10px)",
+            }}
+          >
+            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </Link>
+          <div>
+            <h1 className="text-white text-xl font-bold">Log Aktivitas</h1>
+            <p className="text-white/60 text-xs">Riwayat aktivitas sistem</p>
+          </div>
+        </div>
+      </div>
 
-      {/* Filters */}
-      <div className="px-5 py-4 bg-white border-b border-gray-100" style={{ marginTop: "-1px" }}>
-        <div className="space-y-3">
-          <div className="flex gap-2">
+      {/* Content Section */}
+      <div className="-mt-3 px-4 py-4">
+        {/* Filters Card */}
+        <div className="bg-white rounded-2xl shadow-sm p-4 mb-4">
             <select
               value={filterEntity}
               onChange={(e) => setFilterEntity(e.target.value)}
