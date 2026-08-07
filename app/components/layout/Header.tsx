@@ -63,7 +63,7 @@ export function Header() {
   return (
     <>
       <header
-        className="sticky top-0 z-40"
+        className="z-40"
         style={{
           background: "linear-gradient(135deg, #1e3a5f 0%, #2563eb 55%, #7c3aed 100%)",
           paddingTop: "calc(env(safe-area-inset-top, 20px) + 8px)",
