@@ -42,8 +42,9 @@ interface FormData {
 const SUB_JENIS_KEGIATAN = [
   { value: "rapat", label: "Rapat" },
   { value: "meeting", label: "Meeting" },
-  { value: "event", label: "Event" },
   { value: "kunjungan", label: "Kunjungan" },
+  { value: "monitoring", label: "Monitoring" },
+  { value: "event", label: "Event" },
   { value: "lainnya", label: "Lainnya" },
 ];
 
@@ -182,9 +183,32 @@ export default function KegiatanPage() {
 
   return (
     <div className="min-h-screen" style={{ background: "#f1f5f9" }}>
-      <div className="px-5 py-4" style={{ background: "linear-gradient(135deg, #1e3a5f 0%, #2563eb 55%, #7c3aed 100%)" }}>
-        <h1 className="text-white text-xl font-bold">{activeTab === "kegiatan" ? "Kegiatan" : "Audiensi"}</h1>
-        <p className="text-white/60 text-sm mt-1">{agendas.length} {activeTab}</p>
+      {/* Header - Compact Hero Dashboard Pattern */}
+      <div
+        className="px-5 py-4 relative overflow-hidden"
+        style={{
+          background: "linear-gradient(135deg, #1e3a5f 0%, #2563eb 55%, #7c3aed 100%)",
+        }}
+      >
+        <div className="relative z-10 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ background: "rgba(255,255,255,0.2)", backdropFilter: "blur(10px)" }}>
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <div className="leading-tight">
+              <p className="text-white/80 text-xs font-medium">Agenda & Audiensi</p>
+              <p className="text-white/60 text-[11px]">{agendas.length} {activeTab}</p>
+            </div>
+          </div>
+          <button className="w-11 h-11 flex items-center justify-center rounded-xl" style={{ background: "rgba(255,255,255,0.2)", backdropFilter: "blur(10px)" }}>
+            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+          </button>
+        </div>
+        <h1 className="text-white text-xl font-bold mt-4">{activeTab === "kegiatan" ? "Kegiatan" : "Audiensi"}</h1>
       </div>
 
       <div className="px-5 bg-white border-b border-gray-100 sticky top-0 z-10">
