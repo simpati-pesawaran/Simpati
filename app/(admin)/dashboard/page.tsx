@@ -141,7 +141,7 @@ export default function DashboardPage() {
         style={{
           background: "white",
           borderRadius: "24px 24px 0 0",
-          marginTop: "-56px",
+          marginTop: "-80px",
           padding: "24px",
           paddingBottom: "calc(100px + env(safe-area-inset-bottom, 0px))",
           boxShadow: "0 -10px 40px rgba(0,0,0,0.08)",
