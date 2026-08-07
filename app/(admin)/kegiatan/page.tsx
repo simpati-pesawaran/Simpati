@@ -265,11 +265,10 @@ export default function KegiatanPage() {
       </button>
 
       {showDetail && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center" onClick={() => setShowDetail(null)}>
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={() => setShowDetail(null)}>
           <div
-            className="relative w-full bg-white rounded-t-3xl shadow-2xl animate-slideUp overflow-hidden"
-            style={{ maxWidth: "430px", maxHeight: "85vh" }}
+            className="w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl animate-slideUp overflow-hidden"
+            style={{ maxHeight: "85vh" }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Premium Header with Gradient Accent */}
@@ -424,14 +423,10 @@ export default function KegiatanPage() {
       )}
 
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center" onClick={() => setShowModal(false)}>
-          {/* Backdrop */}
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" />
-
-          {/* Bottom Sheet - Premium Style */}
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={() => setShowModal(false)}>
           <div
-            className="relative w-full bg-white rounded-t-3xl shadow-2xl animate-slideUp overflow-hidden"
-            style={{ maxWidth: "430px", maxHeight: "92vh" }}
+            className="w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl animate-slideUp overflow-hidden"
+            style={{ maxHeight: "92vh" }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Premium Header Accent */}
@@ -703,11 +698,9 @@ export default function KegiatanPage() {
       )}
 
       {showDeleteConfirm && (
-        <div className="fixed inset-0 z-[60] flex items-end justify-center" onClick={() => setShowDeleteConfirm(null)}>
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+        <div className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={() => setShowDeleteConfirm(null)}>
           <div
-            className="relative w-full bg-white rounded-t-3xl shadow-2xl animate-slideUp overflow-hidden"
-            style={{ maxWidth: "430px" }}
+            className="w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl animate-slideUp overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Premium Header Accent */}
@@ -753,8 +746,23 @@ export default function KegiatanPage() {
           from { transform: translateY(100%); }
           to { transform: translateY(0); }
         }
+        @keyframes slideUpDesktop {
+          from {
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
         .animate-slideUp {
           animation: slideUp 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        @media (min-width: 640px) {
+          .animate-slideUp {
+            animation: slideUpDesktop 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+          }
         }
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(-8px); }
