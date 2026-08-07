@@ -138,16 +138,16 @@ export function Header() {
       {/* Notification Modal - Responsive */}
       {showNotifications && (
         <div
-          className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4"
+          className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
           onClick={handleCloseNotifications}
         >
           <div
-            className={`w-full sm:max-w-[390px] bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden ${isClosing ? 'closing' : 'animate-slideDown'}`}
+            className={`w-full sm:max-w-[390px] bg-white rounded-3xl shadow-2xl overflow-hidden ${isClosing ? 'closing' : 'animate-slideDown'}`}
             style={{ maxHeight: "75vh" }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Handle - Desktop centered, Mobile top */}
-            <div className="flex justify-center pt-3 pb-2 sm:pt-4 sm:pb-3">
+            {/* Handle */}
+            <div className="flex justify-center pt-4 pb-3">
               <div className="w-10 h-1 bg-gray-300 rounded-full" />
             </div>
 
