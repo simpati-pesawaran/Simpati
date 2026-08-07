@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
+import AppHeader from "@/components/AppHeader";
 
 interface Agenda {
   id: string;
@@ -97,63 +98,16 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen" style={{ background: "#f1f5f9" }}>
-      {/* Hero Header - Full Width */}
-      <div
-        className="px-5 pb-20 relative overflow-hidden"
-        style={{
-          background: "linear-gradient(135deg, #1e3a5f 0%, #2563eb 55%, #7c3aed 100%)",
-          paddingTop: "20px"
-        }}
-      >
-        {/* Floating Bubbles */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-3xl" style={{ transform: "translate(20%, -50%)" }} />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl" style={{ transform: "translate(-30%, 50%)" }} />
-        </div>
-
-        {/* Header Content - Logo + Description + Bell */}
-        <div className="relative z-10 flex items-center justify-between pb-6 -mt-2">
-          {/* Logo + Description */}
-          <div className="flex items-center gap-3">
-            <div
-              className="w-12 h-12 rounded-xl flex items-center justify-center overflow-hidden"
-              style={{
-                background: "rgba(255,255,255,0.2)",
-                backdropFilter: "blur(10px)",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.15)"
-              }}
-            >
-              <Image src="/logo/logo-master.png" alt="SIMPATI" width={48} height={48} className="w-full h-full object-cover" />
-            </div>
-            <div className="leading-tight">
-              <p className="text-white/80 text-xs font-medium tracking-wide">Sistem Informasi Manajemen</p>
-              <p className="text-white/60 text-[11px]">Protokol & Agenda Terintegrasi</p>
-            </div>
-          </div>
-
-          {/* Bell Notification */}
-          <button className="relative w-11 h-11 flex items-center justify-center rounded-xl transition-all"
-            style={{
-              background: "rgba(255,255,255,0.2)",
-              backdropFilter: "blur(10px)",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.15)"
-            }}
-          >
-            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-            </svg>
-            <span className="absolute -top-1 -right-1 w-5 h-5 bg-white text-red-500 text-xs font-bold rounded-full flex items-center justify-center shadow">{stats?.upcoming || 0}</span>
-          </button>
-        </div>
-
-        {/* Greeting - BIGGER */}
+      {/* Hero Header using AppHeader Component */}
+      <AppHeader variant="hero" notificationCount={stats?.upcoming || 0}>
+        {/* Greeting - Inside Hero */}
         <div className="mt-4">
           <h2 className="text-white text-3xl font-bold">Halo,</h2>
           <h2 className="text-white text-2xl font-bold mt-1">{userName}</h2>
           <p className="text-white/60 text-sm mt-1">{userDivision}</p>
         </div>
 
-        {/* Quick Stats - Bigger Icons */}
+        {/* Quick Stats - Inside Hero */}
         <div className="grid grid-cols-2 gap-3 mt-5">
           <div className="bg-white/15 backdrop-blur-sm rounded-2xl p-4">
             <div className="flex items-center gap-3 mb-2">
@@ -179,7 +133,7 @@ export default function DashboardPage() {
             <p className="text-white text-2xl font-bold">{stats?.total_audiensi || 0}</p>
           </div>
         </div>
-      </div>
+      </AppHeader>
 
       {/* White Content Sheet - Overlaps Hero */}
       <div
