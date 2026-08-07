@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
+import AppHeader from "@/components/AppHeader";
 
 interface Usulan {
   id: string;
@@ -138,55 +138,40 @@ export default function UsulanPage() {
 
   return (
     <div className="min-h-screen pb-20" style={{ background: "#f1f5f9" }}>
-      {/* Header Section - Gradient Theme */}
-      <div
-        className="px-5 pb-5"
-        style={{
-          background: "linear-gradient(135deg, #1e3a5f 0%, #2563eb 55%, #7c3aed 100%)",
-        }}
-      >
-        {/* Back Button + Title */}
-        <div className="flex items-center gap-4 pt-2">
-          <Link
-            href="/dashboard"
-            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-95"
-            style={{
-              background: "rgba(255,255,255,0.2)",
-              backdropFilter: "blur(10px)",
-            }}
-          >
-            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </Link>
-          <div>
-            <h1 className="text-white text-xl font-bold">Usulan Kegiatan</h1>
-            <p className="text-white/60 text-xs">Ajukan & kelola usulan</p>
-          </div>
-        </div>
+      <AppHeader
+        variant="default"
+        title="Usulan Kegiatan"
+        icon={
+          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+        }
+        notificationCount={usulans.length}
+      />
 
-        {/* Tab Navigation for Admin */}
-        {isAdmin && (
-          <div className="mt-4 bg-white/15 backdrop-blur-sm rounded-2xl p-1 flex gap-1">
+      {/* Filter tabs for admin */}
+      {isAdmin && (
+        <div className="px-5 py-3 bg-white border-b border-gray-100">
+          <div className="flex gap-2">
             {["all", "pending", "approved", "rejected"].map((status) => (
               <button
                 key={status}
                 onClick={() => setFilterStatus(status)}
-                className={`flex-1 py-2 px-3 rounded-xl text-xs font-semibold transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
                   filterStatus === status
-                    ? "bg-white text-gray-900 shadow-md"
-                    : "text-white/80 hover:text-white"
+                    ? "bg-indigo-500 text-white"
+                    : "bg-gray-100 text-gray-600"
                 }`}
               >
                 {status === "all" ? "Semua" : status === "pending" ? "Menunggu" : status === "approved" ? "Disetujui" : "Ditolak"}
               </button>
             ))}
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
-      {/* Content Section - White Container */}
-      <div className="-mt-3 px-4 py-4 space-y-3">
+      {/* List */}
+      <div className="p-4 space-y-3">
         {loading ? (
           <div className="flex justify-center py-12">
             <div className="animate-spin w-8 h-8 border-3 border-indigo-500 border-t-transparent rounded-full"></div>
@@ -243,36 +228,23 @@ export default function UsulanPage() {
         )}
       </div>
 
-      {/* Submit Form Modal - Centered */}
+      {/* Submit Form Modal */}
       {showForm && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowForm(false)}>
-          <div
-            className="w-full sm:max-w-[390px] bg-white rounded-3xl shadow-2xl overflow-hidden animate-slideDown"
-            style={{ maxHeight: "92vh" }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex justify-center pt-4 pb-3">
+        <div className="fixed inset-0 z-50" onClick={() => setShowForm(false)}>
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+          <div className="absolute bottom-0 left-0 right-0 max-h-[92vh] bg-white rounded-t-[28px] shadow-2xl flex flex-col animate-slideUp" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-center pt-3 pb-2">
               <div className="w-10 h-1 bg-gray-300 rounded-full" />
             </div>
-            <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "linear-gradient(135deg, #f59e0b, #d97706)" }}>
-                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                </div>
-                <div>
-                  <h2 className="text-lg font-bold text-gray-900">Ajukan Usulan</h2>
-                  <p className="text-xs text-gray-500">Formulir usulan kegiatan</p>
-                </div>
-              </div>
-              <button onClick={() => setShowForm(false)} className="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-gray-100 active:bg-gray-200 transition-all">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+              <h2 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Ajukan Usulan</h2>
+              <button onClick={() => setShowForm(false)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 active:bg-gray-200 transition-colors">
                 <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
-            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-5 py-6 space-y-5 overscroll-contain">
+            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-5 py-6 space-y-6">
               {/* Section: JENIS */}
               <section>
                 <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Jenis Usulan</h3>
@@ -280,14 +252,14 @@ export default function UsulanPage() {
                   <button
                     type="button"
                     onClick={() => setJenis("kegiatan")}
-                    className={`py-3.5 rounded-2xl text-sm font-semibold transition-all ${
+                    className={`py-4 rounded-2xl text-sm font-semibold transition-all ${
                       jenis === "kegiatan"
-                        ? "bg-gradient-to-br from-blue-500 to-indigo-500 text-white shadow-md"
-                        : "bg-gradient-to-br from-gray-50 to-slate-50 text-gray-700 border border-gray-200"
+                        ? "bg-blue-500 text-white shadow-lg"
+                        : "bg-gray-50/80 text-gray-700 border border-gray-300/60"
                     }`}
                   >
                     <span className="flex items-center justify-center gap-2">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                       Kegiatan
@@ -296,14 +268,14 @@ export default function UsulanPage() {
                   <button
                     type="button"
                     onClick={() => setJenis("audiensi")}
-                    className={`py-3.5 rounded-2xl text-sm font-semibold transition-all ${
+                    className={`py-4 rounded-2xl text-sm font-semibold transition-all ${
                       jenis === "audiensi"
-                        ? "bg-gradient-to-br from-purple-500 to-pink-500 text-white shadow-md"
-                        : "bg-gradient-to-br from-gray-50 to-slate-50 text-gray-700 border border-gray-200"
+                        ? "bg-purple-500 text-white shadow-lg"
+                        : "bg-gray-50/80 text-gray-700 border border-gray-300/60"
                     }`}
                   >
                     <span className="flex items-center justify-center gap-2">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
                       Audiensi
@@ -313,67 +285,73 @@ export default function UsulanPage() {
               </section>
 
               {/* Section: DETAIL */}
-              <section className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-gray-700">Judul Usulan</label>
-                  <input
-                    type="text"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Masukkan judul kegiatan"
-                    required
-                    className="w-full px-4 py-3.5 bg-gradient-to-br from-gray-50 to-slate-50 border border-gray-200/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 transition-all placeholder:text-gray-400"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-gray-700">Deskripsi</label>
-                  <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Jelaskan kegiatan yang diusulkan"
-                    rows={3}
-                    className="w-full px-4 py-3.5 bg-gradient-to-br from-gray-50 to-slate-50 border border-gray-200/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 transition-all resize-none placeholder:text-gray-400"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-gray-700">Lokasi <span className="text-xs font-normal text-gray-500">(opsional)</span></label>
-                  <div className="relative">
+              <section>
+                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Detail Usulan</h3>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-gray-800">Judul Usulan</label>
                     <input
                       type="text"
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
-                      placeholder="Masukkan lokasi kegiatan"
-                      className="w-full px-4 py-3.5 bg-gradient-to-br from-gray-50 to-slate-50 border border-gray-200/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 transition-all placeholder:text-gray-400 pl-11"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      placeholder="Masukkan judul kegiatan"
+                      required
+                      className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all placeholder:text-gray-500"
                     />
-                    <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    </svg>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-gray-800">Deskripsi</label>
+                    <textarea
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      placeholder="Jelaskan kegiatan yang diusulkan"
+                      rows={4}
+                      className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all resize-none placeholder:text-gray-500"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold text-gray-800">Lokasi <span className="text-xs font-normal text-gray-500">(opsional)</span></label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={location}
+                        onChange={(e) => setLocation(e.target.value)}
+                        placeholder="Masukkan lokasi kegiatan"
+                        className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all placeholder:text-gray-500 pl-11"
+                      />
+                      <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      </svg>
+                    </div>
                   </div>
                 </div>
               </section>
+
+              {/* Bottom spacing */}
+              <div className="h-20" />
             </form>
 
             {/* Sticky Submit Button */}
-            <div className="sticky bottom-0 bg-white border-t border-gray-100 px-5 py-4" style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom)" }}>
+            <div className="sticky bottom-0 bg-white border-t border-gray-100 px-5 py-4">
               <button
                 type="submit"
                 disabled={submitting || !title}
                 onClick={handleSubmit}
-                className="w-full py-3.5 rounded-2xl font-semibold text-sm text-white shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+                className="w-full py-4 rounded-2xl font-semibold text-base text-white shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
                 style={{
                   background: submitting || !title
                     ? '#94a3b8'
                     : 'linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #7c3aed 100%)',
                   boxShadow: submitting || !title
                     ? 'none'
-                    : '0 4px 16px rgba(37, 99, 235, 0.35)'
+                    : '0 4px 20px rgba(37, 99, 235, 0.35)'
                 }}
               >
                 {submitting ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <span className="flex items-center justify-center gap-3">
+                    <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                     </svg>
@@ -381,7 +359,7 @@ export default function UsulanPage() {
                   </span>
                 ) : (
                   <span className="flex items-center justify-center gap-2">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                     </svg>
                     Kirim Usulan
@@ -393,29 +371,23 @@ export default function UsulanPage() {
         </div>
       )}
 
-      {/* Detail Modal - Centered */}
+      {/* Detail Modal */}
       {selectedUsulan && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setSelectedUsulan(null)}>
-          <div
-            className="w-full sm:max-w-[390px] bg-white rounded-3xl shadow-2xl overflow-hidden animate-slideDown"
-            style={{ maxHeight: "85vh" }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex justify-center pt-4 pb-3">
+        <div className="fixed inset-0 z-50" onClick={() => setSelectedUsulan(null)}>
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+          <div className="absolute bottom-0 left-0 right-0 max-h-[85vh] bg-white rounded-t-[28px] shadow-2xl flex flex-col animate-slideUp" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-center pt-3 pb-2">
               <div className="w-10 h-1 bg-gray-300 rounded-full" />
             </div>
-            <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
-              <div>
-                <h2 className="text-lg font-bold text-gray-900">Detail Usulan</h2>
-                <p className="text-xs text-gray-500">Informasi lengkap usulan</p>
-              </div>
-              <button onClick={() => setSelectedUsulan(null)} className="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-gray-100 active:bg-gray-200 transition-all">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+              <h2 className="text-lg font-bold text-gray-900">Detail Usulan</h2>
+              <button onClick={() => setSelectedUsulan(null)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 active:bg-gray-200 transition-colors">
                 <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto px-5 py-6 space-y-4 overscroll-contain">
+            <div className="flex-1 overflow-y-auto px-5 py-6 space-y-4">
               {/* Header */}
               <div className="flex items-center gap-2">
                 <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
@@ -503,28 +475,12 @@ export default function UsulanPage() {
       )}
 
       <style jsx>{`
-        @keyframes slideDown {
-          from {
-            opacity: 0;
-            transform: translateY(20px) scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-          }
+        @keyframes slideUp {
+          from { transform: translateY(100%); }
+          to { transform: translateY(0); }
         }
-        .animate-slideDown {
-          animation: slideDown 0.25s cubic-bezier(0.32, 0.72, 0, 1) forwards;
-        }
-        .overscroll-contain::-webkit-scrollbar {
-          width: 4px;
-        }
-        .overscroll-contain::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .overscroll-contain::-webkit-scrollbar-thumb {
-          background: rgba(0,0,0,0.15);
-          border-radius: 4px;
+        .animate-slideUp {
+          animation: slideUp 0.4s cubic-bezier(0.32, 0.72, 0, 1);
         }
       `}</style>
     </div>
