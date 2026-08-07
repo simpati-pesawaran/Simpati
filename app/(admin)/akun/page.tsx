@@ -3,6 +3,7 @@
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import AppHeader from "@/components/AppHeader";
 
 interface UserProfile {
   id: string;
