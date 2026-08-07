@@ -155,10 +155,11 @@ export default function LogPage() {
       <div className="-mt-3 px-4 py-4">
         {/* Filters Card */}
         <div className="bg-white rounded-2xl shadow-sm p-4 mb-4">
+          <div className="flex gap-2 mb-3">
             <select
               value={filterEntity}
               onChange={(e) => setFilterEntity(e.target.value)}
-              className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="flex-1 px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               <option value="all">Semua Entitas</option>
               <option value="agenda">Agenda</option>
@@ -170,7 +171,7 @@ export default function LogPage() {
             <select
               value={filterAction}
               onChange={(e) => setFilterAction(e.target.value)}
-              className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="flex-1 px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               <option value="all">Semua Aksi</option>
               <option value="create">Create</option>
@@ -183,35 +184,34 @@ export default function LogPage() {
               <option value="sync">Sync</option>
             </select>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 mb-3">
             <input
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="flex-1 px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
             <span className="text-gray-400 flex items-center">-</span>
             <input
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="flex-1 px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
           <button
             onClick={resetFilters}
-            className="w-full py-2 bg-gray-100 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-200 transition"
+            className="w-full py-2.5 bg-gray-100 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-200 transition-all"
           >
             Reset Filter
           </button>
         </div>
       </div>
 
-      {/* Log List */}
       <div className="p-4">
         {loading && logs.length === 0 ? (
           <div className="flex justify-center py-12">
-            <div className="animate-spin w-8 h-8 border-3 border-indigo-500 border-t-transparent rounded-full"></div>
+            <div className="animate-spin w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full"></div>
           </div>
         ) : dates.length === 0 ? (
           <div className="text-center py-12">
@@ -221,31 +221,27 @@ export default function LogPage() {
             <p className="text-gray-500">Tidak ada aktivitas</p>
           </div>
         ) : (
-          <>
+          <div className="space-y-4">
             {dates.map((date) => (
-              <div key={date} className="mb-6">
-                <h3 className="text-xs font-semibold text-gray-500 uppercase mb-3">{date}</h3>
-                <div className="space-y-2">
+              <div key={date} className="bg-white rounded-2xl shadow-sm overflow-hidden">
+                <div className="px-4 py-3 border-b border-gray-100">
+                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{date}</h3>
+                </div>
+                <div className="divide-y divide-gray-50">
                   {groupedLogs[date].map((log) => {
-                    const actionStyle = ACTION_COLORS[log.action] || { bg: "bg-gray-100 text-gray-700", icon: "M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" };
+                    const actionStyle = ACTION_COLORS[log.action] || { bg: "bg-gray-100 text-gray-600", icon: "M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" };
                     return (
-                      <div key={log.id} className="bg-white rounded-xl p-4 shadow-sm">
-                        <div className="flex items-start gap-3">
-                          <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${actionStyle.bg}`}>
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={actionStyle.icon} />
-                            </svg>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs font-medium">
-                                {ENTITY_LABELS[log.entity_type] || log.entity_type}
-                              </span>
-                              <span className="text-xs text-gray-400">{formatTime(log.created_at)}</span>
-                            </div>
-                            <p className="text-sm text-gray-900">{log.description}</p>
-                            <p className="text-xs text-gray-500 mt-1">oleh {log.user_name}</p>
-                          </div>
+                      <div key={log.id} className="p-4 flex items-start gap-3">
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${actionStyle.bg}`}>
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={actionStyle.icon} />
+                          </svg>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-900">{log.description}</p>
+                          <p className="text-xs text-gray-500 mt-0.5">
+                            {log.user_name} &bull; {ENTITY_LABELS[log.entity_type] || log.entity_type} &bull; {formatTime(log.created_at)}
+                          </p>
                         </div>
                       </div>
                     );
@@ -258,24 +254,14 @@ export default function LogPage() {
               <button
                 onClick={loadMore}
                 disabled={loading}
-                className="w-full py-3 bg-white text-indigo-600 text-sm font-semibold rounded-xl shadow-sm disabled:opacity-50"
+                className="w-full py-3 text-center text-sm text-indigo-600 font-semibold hover:bg-indigo-50 rounded-xl disabled:opacity-50"
               >
                 {loading ? "Memuat..." : "Lihat Lebih Banyak"}
               </button>
             )}
-          </>
+          </div>
         )}
       </div>
-
-      <style jsx>{`
-        @keyframes slideUp {
-          from { transform: translateY(100%); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
-        }
-        .animate-slideUp {
-          animation: slideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1);
-        }
-      `}</style>
     </div>
   );
 }

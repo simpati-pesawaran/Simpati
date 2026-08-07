@@ -167,14 +167,13 @@ export default function KalenderPage() {
 
   return (
     <div className="min-h-screen" style={{ background: "#f1f5f9" }}>
-      {/* Header Section - Gradient Theme */}
+      {/* Header Section */}
       <div
         className="px-5 pb-5"
         style={{
           background: "linear-gradient(135deg, #1e3a5f 0%, #2563eb 55%, #7c3aed 100%)",
         }}
       >
-        {/* Back Button + Title */}
         <div className="flex items-center gap-4 pt-2">
           <Link
             href="/dashboard"
@@ -195,90 +194,89 @@ export default function KalenderPage() {
         </div>
       </div>
 
-      {/* Content Section - White Container */}
-      <div className="-mt-3">
-        {/* Calendar Card */}
-        <div className="p-4">
-          <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-        {/* Month Navigation */}
-        <div className="flex items-center justify-between mb-4">
-          <button onClick={prevMonth} className="p-2 hover:bg-gray-100 rounded-lg">
-            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <h2 className="text-lg font-bold text-gray-900">{formatMonthYear()}</h2>
-          <button onClick={nextMonth} className="p-2 hover:bg-gray-100 rounded-lg">
-            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
+      {/* Calendar Card */}
+      <div className="-mt-3 px-4">
+        <div className="bg-white rounded-2xl shadow-sm overflow-hidden p-4">
+          {/* Month Navigation */}
+          <div className="flex items-center justify-between mb-4">
+            <button onClick={prevMonth} className="p-2 hover:bg-gray-100 rounded-lg">
+              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <h2 className="text-lg font-bold text-gray-900">{formatMonthYear()}</h2>
+            <button onClick={nextMonth} className="p-2 hover:bg-gray-100 rounded-lg">
+              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
 
-        {/* Week Days Header */}
-        <div className="grid grid-cols-7 gap-1 mb-2">
-          {weekDays.map((day) => (
-            <div key={day} className="text-center text-xs font-semibold text-gray-500 py-2">
-              {day}
+          {/* Week Days Header */}
+          <div className="grid grid-cols-7 gap-1 mb-2">
+            {weekDays.map((day) => (
+              <div key={day} className="text-center text-xs font-semibold text-gray-500 py-2">
+                {day}
+              </div>
+            ))}
+          </div>
+
+          {/* Calendar Grid */}
+          {loading ? (
+            <div className="flex justify-center py-8">
+              <div className="animate-spin w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full"></div>
             </div>
-          ))}
-        </div>
+          ) : (
+            <div className="grid grid-cols-7 gap-1">
+              {days.map((day, index) => {
+                if (day === null) {
+                  return <div key={`empty-${index}`} className="aspect-square"></div>;
+                }
 
-        {/* Calendar Grid */}
-        {loading ? (
-          <div className="flex justify-center py-8">
-            <div className="animate-spin w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full"></div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-7 gap-1">
-            {days.map((day, index) => {
-              if (day === null) {
-                return <div key={`empty-${index}`} className="aspect-square"></div>;
-              }
+                const dayAgendas = getAgendasForDate(day);
+                const hasAgenda = dayAgendas.length > 0;
+                const kegiatanCount = dayAgendas.filter((a) => a.jenis === "kegiatan").length;
+                const audiensiCount = dayAgendas.filter((a) => a.jenis === "audiensi").length;
 
-              const dayAgendas = getAgendasForDate(day);
-              const hasAgenda = dayAgendas.length > 0;
-              const kegiatanCount = dayAgendas.filter((a) => a.jenis === "kegiatan").length;
-              const audiensiCount = dayAgendas.filter((a) => a.jenis === "audiensi").length;
+                return (
+                  <button
+                    key={day}
+                    onClick={() => handleDateClick(day)}
+                    className={`aspect-square flex flex-col items-center justify-center rounded-lg relative transition ${
+                      hasAgenda ? "hover:bg-gray-50" : ""
+                    } ${isToday(day) ? "bg-indigo-100" : ""}`}
+                  >
+                    <span className={`text-sm font-medium ${
+                      isToday(day) ? "text-indigo-700 font-bold" : "text-gray-700"
+                    }`}>
+                      {day}
+                    </span>
+                    {hasAgenda && (
+                      <div className="flex gap-0.5 mt-0.5">
+                        {kegiatanCount > 0 && (
+                          <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                        )}
+                        {audiensiCount > 0 && (
+                          <div className="w-1.5 h-1.5 rounded-full bg-purple-500"></div>
+                        )}
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
 
-              return (
-                <button
-                  key={day}
-                  onClick={() => handleDateClick(day)}
-                  className={`aspect-square flex flex-col items-center justify-center rounded-lg relative transition ${
-                    hasAgenda ? "hover:bg-gray-50" : ""
-                  } ${isToday(day) ? "bg-indigo-100" : ""}`}
-                >
-                  <span className={`text-sm font-medium ${
-                    isToday(day) ? "text-indigo-700 font-bold" : "text-gray-700"
-                  }`}>
-                    {day}
-                  </span>
-                  {hasAgenda && (
-                    <div className="flex gap-0.5 mt-0.5">
-                      {kegiatanCount > 0 && (
-                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
-                      )}
-                      {audiensiCount > 0 && (
-                        <div className="w-1.5 h-1.5 rounded-full bg-purple-500"></div>
-                      )}
-                    </div>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        )}
-
-        {/* Legend */}
-        <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t border-gray-100">
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-            <span className="text-xs text-gray-600">Kegiatan</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-purple-500"></div>
-            <span className="text-xs text-gray-600">Audiensi</span>
+          {/* Legend */}
+          <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t border-gray-100">
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+              <span className="text-xs text-gray-600">Kegiatan</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-3 rounded-full bg-purple-500"></div>
+              <span className="text-xs text-gray-600">Audiensi</span>
+            </div>
           </div>
         </div>
       </div>
@@ -302,7 +300,7 @@ export default function KalenderPage() {
                   <div>
                     <p className="font-medium text-gray-900 text-sm">{agenda.title}</p>
                     <p className="text-xs text-gray-600 mt-0.5 font-medium">
-                      {new Date(agenda.date).toLocaleDateString("id-ID", { day: "numeric", month: "short" })} • {formatTime(agenda.time_start)}
+                      {new Date(agenda.date).toLocaleDateString("id-ID", { day: "numeric", month: "short" })} - {formatTime(agenda.time_start)}
                     </p>
                   </div>
                   <span className={`px-2 py-0.5 rounded text-xs font-medium ${
@@ -319,7 +317,7 @@ export default function KalenderPage() {
         </div>
       </div>
 
-      {/* Selected Date Modal - Centered */}
+      {/* Selected Date Modal */}
       {selectedDate && selectedAgendas.length > 0 && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setSelectedDate(null)}>
           <div
@@ -382,7 +380,7 @@ export default function KalenderPage() {
         </div>
       )}
 
-      {/* Detail Modal - Centered */}
+      {/* Detail Modal */}
       {showDetail && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowDetail(null)}>
           <div
@@ -440,32 +438,6 @@ export default function KalenderPage() {
           </div>
         </div>
       )}
-
-      <style jsx>{`
-        @keyframes slideDown {
-          from {
-            opacity: 0;
-            transform: translateY(20px) scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-          }
-        }
-        .animate-slideDown {
-          animation: slideDown 0.25s cubic-bezier(0.32, 0.72, 0, 1) forwards;
-        }
-        .overscroll-contain::-webkit-scrollbar {
-          width: 4px;
-        }
-        .overscroll-contain::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .overscroll-contain::-webkit-scrollbar-thumb {
-          background: rgba(0,0,0,0.15);
-          border-radius: 4px;
-        }
-      `}</style>
     </div>
   );
 }

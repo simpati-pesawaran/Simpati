@@ -440,6 +440,28 @@ html, body {
 }
 
 /* ========================================
+   OVERSCROLL CONTAINER
+   ======================================== */
+
+.overscroll-contain {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,0.15) transparent;
+}
+
+.overscroll-contain::-webkit-scrollbar {
+  width: 4px;
+}
+
+.overscroll-contain::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.overscroll-contain::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.15);
+  border-radius: 4px;
+}
+
+/* ========================================
    REDUCED MOTION
    ======================================== */
 
