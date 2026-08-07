@@ -17,7 +17,6 @@ interface Agenda {
 }
 
 export default function KalenderPage() {
-  const { data: session } = useSession();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [agendas, setAgendas] = useState<Agenda[]>([]);
   const [loading, setLoading] = useState(true);
@@ -143,8 +142,11 @@ export default function KalenderPage() {
         </div>
       </div>
 
+      {/* Spacer between header and calendar */}
+      <div className="h-6" />
+
       {/* Calendar Card */}
-      <div className="mx-4 -mt-6">
+      <div className="mx-4">
         <div className="bg-white rounded-3xl shadow-lg overflow-hidden">
           {/* Month Navigation */}
           <div className="flex items-center justify-between px-5 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-gray-100">
@@ -304,9 +306,9 @@ export default function KalenderPage() {
 
       {/* Selected Date Modal */}
       {selectedDate && selectedAgendas.length > 0 && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setSelectedDate(null)}>
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setSelectedDate(null)}>
           <div
-            className="w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden animate-slideUp"
+            className="w-full sm:max-w-[390px] bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden animate-slideUp"
             style={{ maxHeight: "80vh" }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -330,9 +332,9 @@ export default function KalenderPage() {
               </button>
             </div>
 
-            {/* Content - Scrollable */}
-            <div className="overflow-y-auto overscroll-contain" style={{ maxHeight: "calc(80vh - 80px)" }}>
-              <div className="p-4 space-y-3">
+            {/* Content */}
+            <div className="overflow-y-auto overscroll-contain px-4 py-4">
+              <div className="space-y-3">
                 {selectedAgendas.map((agenda) => (
                   <button
                     key={agenda.id}
@@ -344,18 +346,18 @@ export default function KalenderPage() {
                     }`}
                   >
                     <div className="flex items-start gap-3">
-                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
                         agenda.jenis === "agenda"
                           ? "bg-blue-100 text-blue-600"
                           : "bg-purple-100 text-purple-600"
                       }`}>
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-gray-900">{agenda.title}</p>
-                        <p className="text-sm text-gray-500 mt-0.5">
+                        <p className="font-semibold text-gray-900 text-sm">{agenda.title}</p>
+                        <p className="text-xs text-gray-500 mt-0.5">
                           {formatTime(agenda.time_start)} - {formatTime(agenda.time_end)}
                         </p>
                         {agenda.location && (
@@ -367,7 +369,7 @@ export default function KalenderPage() {
                           </p>
                         )}
                       </div>
-                      <span className={`px-2 py-0.5 rounded-lg text-xs font-bold ${
+                      <span className={`px-2 py-0.5 rounded-lg text-xs font-bold flex-shrink-0 ${
                         agenda.jenis === "agenda"
                           ? "bg-blue-100 text-blue-700"
                           : "bg-purple-100 text-purple-700"
@@ -383,12 +385,12 @@ export default function KalenderPage() {
         </div>
       )}
 
-      {/* Detail Modal */}
+      {/* Detail Modal - Compact like notification modal */}
       {showDetail && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setShowDetail(null)}>
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setShowDetail(null)}>
           <div
-            className="w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden animate-slideUp"
-            style={{ maxHeight: "90vh" }}
+            className="w-full sm:max-w-[390px] bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden animate-slideUp"
+            style={{ maxHeight: "85vh" }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Handle */}
@@ -396,61 +398,69 @@ export default function KalenderPage() {
               <div className="w-10 h-1 bg-gray-300 rounded-full"></div>
             </div>
 
-            {/* Header */}
-            <div className="flex items-start justify-between px-5 py-4 border-b border-gray-100">
-              <div className="flex-1">
-                <span className={`inline-block px-3 py-1 rounded-xl text-xs font-bold mb-2 ${
+            {/* Header - Compact like notification modal */}
+            <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                   showDetail.jenis === "agenda"
-                    ? "bg-blue-100 text-blue-700"
-                    : "bg-purple-100 text-purple-700"
+                    ? "bg-gradient-to-br from-blue-500 to-indigo-600"
+                    : "bg-gradient-to-br from-purple-500 to-pink-500"
                 }`}>
-                  {showDetail.jenis === "agenda" ? "Kegiatan" : "Audiensi"}
-                </span>
-                <h2 className="text-lg font-bold text-gray-900 pr-4">{showDetail.title}</h2>
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <span className={`inline-block px-2 py-0.5 rounded text-xs font-bold ${
+                    showDetail.jenis === "agenda"
+                      ? "bg-blue-100 text-blue-700"
+                      : "bg-purple-100 text-purple-700"
+                  }`}>
+                    {showDetail.jenis === "agenda" ? "Kegiatan" : "Audiensi"}
+                  </span>
+                  <h2 className="text-base font-bold text-gray-900 mt-1">{showDetail.title}</h2>
+                </div>
               </div>
-              <button onClick={() => setShowDetail(null)} className="w-10 h-10 rounded-2xl flex items-center justify-center hover:bg-gray-100 active:scale-95 transition-all flex-shrink-0">
+              <button onClick={() => setShowDetail(null)} className="w-10 h-10 rounded-2xl flex items-center justify-center hover:bg-gray-100 active:scale-95 transition-all">
                 <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
 
-            {/* Content - Scrollable */}
-            <div className="overflow-y-auto overscroll-contain" style={{ maxHeight: "calc(90vh - 120px)" }}>
-              <div className="p-5 space-y-4">
-                {/* Date & Time */}
-                <div className="flex items-start gap-4 p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl">
-                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
-                    showDetail.jenis === "agenda"
-                      ? "bg-gradient-to-br from-blue-500 to-indigo-600"
-                      : "bg-gradient-to-br from-purple-500 to-pink-500"
-                  }`}>
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            {/* Content - Compact */}
+            <div className="overflow-y-auto overscroll-contain px-5 py-4">
+              {/* Date & Time */}
+              <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl mb-3">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                  showDetail.jenis === "agenda"
+                    ? "bg-blue-100 text-blue-600"
+                    : "bg-purple-100 text-purple-600"
+                }`}>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 font-medium">{formatDate(showDetail.date)}</p>
+                  <p className="text-sm font-semibold text-gray-900">{formatTime(showDetail.time_start)} - {formatTime(showDetail.time_end)}</p>
+                </div>
+              </div>
+
+              {/* Location */}
+              {showDetail.location && (
+                <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center flex-shrink-0">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     </svg>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Tanggal & Waktu</p>
-                    <p className="font-bold text-gray-900 mt-1">{formatDate(showDetail.date)}</p>
-                    <p className="text-sm text-gray-600 mt-0.5">{formatTime(showDetail.time_start)} - {formatTime(showDetail.time_end)}</p>
+                    <p className="text-xs text-gray-500 font-medium">Lokasi</p>
+                    <p className="text-sm font-semibold text-gray-900">{showDetail.location}</p>
                   </div>
                 </div>
-
-                {/* Location */}
-                {showDetail.location && (
-                  <div className="flex items-start gap-4 p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center">
-                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Lokasi</p>
-                      <p className="font-bold text-gray-900 mt-1">{showDetail.location}</p>
-                    </div>
-                  </div>
-                )}
-              </div>
+              )}
             </div>
           </div>
         </div>
