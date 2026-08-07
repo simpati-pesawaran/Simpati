@@ -104,7 +104,7 @@ export function Header() {
             </div>
             <div className="leading-tight">
               <h1 className="text-white font-bold text-base">SIMPATI</h1>
-              <p className="text-white/60 text-[11px]">Protokol & Agenda</p>
+              <p className="text-white/60 text-[11px]">Sistem Informasi Manajemen</p>
             </div>
           </Link>
 

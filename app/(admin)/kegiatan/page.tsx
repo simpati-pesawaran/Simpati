@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 interface Agenda {
   id: string;
@@ -184,77 +185,113 @@ export default function KegiatanPage() {
 
   return (
     <div className="min-h-screen" style={{ background: "#f1f5f9" }}>
-      {/* Tab Navigation - positioned below header */}
-      <div className="px-5 bg-white border-b border-gray-100 sticky top-0 z-10" style={{ marginTop: "-1px" }}>
-        <div className="flex gap-1">
-          <button onClick={() => setActiveTab("kegiatan")}
-            className={`flex-1 py-3 text-sm font-semibold border-b-2 transition ${activeTab === "kegiatan" ? "border-blue-500 text-blue-600" : "border-transparent text-gray-500"}`}>
+      {/* Header Section - Gradient Theme */}
+      <div
+        className="px-5 pb-5"
+        style={{
+          background: "linear-gradient(135deg, #1e3a5f 0%, #2563eb 55%, #7c3aed 100%)",
+        }}
+      >
+        {/* Back Button + Title */}
+        <div className="flex items-center gap-4 pt-2">
+          <Link
+            href="/dashboard"
+            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-95"
+            style={{
+              background: "rgba(255,255,255,0.2)",
+              backdropFilter: "blur(10px)",
+            }}
+          >
+            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </Link>
+          <div>
+            <h1 className="text-white text-xl font-bold">Agenda</h1>
+            <p className="text-white/60 text-xs">Kelola jadwal kegiatan & audiensi</p>
+          </div>
+        </div>
+
+        {/* Tab Navigation */}
+        <div className="mt-4 bg-white/15 backdrop-blur-sm rounded-2xl p-1 flex">
+          <button
+            onClick={() => setActiveTab("kegiatan")}
+            className={`flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition-all ${
+              activeTab === "kegiatan"
+                ? "bg-white text-gray-900 shadow-md"
+                : "text-white/80 hover:text-white"
+            }`}
+          >
             Kegiatan
           </button>
-          <button onClick={() => setActiveTab("audiensi")}
-            className={`flex-1 py-3 text-sm font-semibold border-b-2 transition ${activeTab === "audiensi" ? "border-purple-500 text-purple-600" : "border-transparent text-gray-500"}`}>
+          <button
+            onClick={() => setActiveTab("audiensi")}
+            className={`flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition-all ${
+              activeTab === "audiensi"
+                ? "bg-white text-gray-900 shadow-md"
+                : "text-white/80 hover:text-white"
+            }`}
+          >
             Audiensi
           </button>
         </div>
       </div>
 
-      <form onSubmit={(e) => { e.preventDefault(); fetchAgendas(); }} className="p-4 bg-white">
-        <div className="relative">
-          <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Cari agenda..." className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-        </div>
-      </form>
+      {/* Content Section - White Container */}
+      <div className="-mt-3">
+        {/* Search Bar */}
+        <form onSubmit={(e) => { e.preventDefault(); fetchAgendas(); }} className="px-4 pt-4 pb-2">
+          <div className="relative">
+            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Cari agenda..."
+              className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 shadow-sm" />
+          </div>
+        </form>
 
-      <div className="px-4 pb-24 space-y-3">
-        {loading ? (
-          <div className="text-center py-12">
-            <div className="animate-spin w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full mx-auto"></div>
-            <p className="text-gray-500 text-sm mt-3">Memuat...</p>
-          </div>
-        ) : agendas.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
+        {/* List Agenda */}
+        <div className="px-4 pb-24 space-y-3">
+          {loading ? (
+            <div className="bg-white rounded-2xl p-8 text-center shadow-sm">
+              <div className="animate-spin w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full mx-auto"></div>
+              <p className="text-gray-500 text-sm mt-3">Memuat...</p>
             </div>
-            <h3 className="text-gray-700 font-semibold">Belum ada {activeTab}</h3>
-            <p className="text-gray-500 text-sm mt-1">Tekan + untuk menambah</p>
-          </div>
-        ) : agendas.map((agenda) => (
-          <button key={agenda.id} onClick={() => setShowDetail(agenda)}
-            className={`w-full text-left bg-white rounded-2xl border-2 p-4 transition active:scale-[0.98] ${activeTab === "kegiatan" ? "border-blue-100 hover:border-blue-300" : "border-purple-100 hover:border-purple-300"}`}>
-            <div className="flex items-start gap-3">
-              <div className={`flex-shrink-0 w-14 h-16 rounded-xl flex flex-col items-center justify-center ${activeTab === "kegiatan" ? "bg-gradient-to-br from-blue-500 to-indigo-500" : "bg-gradient-to-br from-purple-500 to-pink-500"}`}>
-                <span className="text-white/80 text-[10px] font-semibold uppercase">{new Date(agenda.date).toLocaleDateString("id-ID", { weekday: "short" })}</span>
-                <span className="text-white text-xl font-bold">{new Date(agenda.date).getDate()}</span>
+          ) : agendas.length === 0 ? (
+            <div className="bg-white rounded-2xl p-8 text-center shadow-sm">
+              <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
               </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-gray-900 line-clamp-1">{agenda.title}</h3>
-                <div className="flex items-center gap-1.5 mt-1.5">
-                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span className="text-sm text-gray-500">{formatTime(agenda.time_start)} - {formatTime(agenda.time_end)}</span>
+              <h3 className="text-gray-700 font-semibold">Belum ada {activeTab}</h3>
+              <p className="text-gray-500 text-sm mt-1">Tekan + untuk menambah</p>
+            </div>
+          ) : agendas.map((agenda) => (
+            <button key={agenda.id} onClick={() => setShowDetail(agenda)}
+              className={`w-full text-left bg-white rounded-2xl border-2 p-4 transition active:scale-[0.98] shadow-sm ${activeTab === "kegiatan" ? "border-blue-100 hover:border-blue-300" : "border-purple-100 hover:border-purple-300"}`}>
+              <div className="flex items-start gap-3">
+                <div className={`flex-shrink-0 w-14 h-16 rounded-xl flex flex-col items-center justify-center ${activeTab === "kegiatan" ? "bg-gradient-to-br from-blue-500 to-indigo-500" : "bg-gradient-to-br from-purple-500 to-pink-500"}`}>
+                  <span className="text-white/80 text-[10px] font-semibold uppercase">{new Date(agenda.date).toLocaleDateString("id-ID", { weekday: "short" })}</span>
+                  <span className="text-white text-xl font-bold">{new Date(agenda.date).getDate()}</span>
                 </div>
-                {agenda.location && (
-                  <div className="flex items-center gap-1.5 mt-1">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-gray-900 line-clamp-1">{agenda.title}</h3>
+                  <div className="flex items-center gap-1.5 mt-1.5">
                     <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span className="text-sm text-gray-500 line-clamp-1">{agenda.location}</span>
+                    <span className="text-sm text-gray-500">{formatTime(agenda.time_start)} - {formatTime(agenda.time_end)}</span>
                   </div>
-                )}
+                </div>
+                <span className={`flex-shrink-0 px-2.5 py-1 rounded-full text-xs font-semibold ${agenda.status === "published" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
+                  {agenda.status === "published" ? "Published" : "Draft"}
+                </span>
               </div>
-              <span className={`flex-shrink-0 px-2.5 py-1 rounded-full text-xs font-semibold ${agenda.status === "published" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>
-                {agenda.status === "published" ? "Published" : "Draft"}
-              </span>
-            </div>
-          </button>
-        ))}
+            </button>
+          ))}
+        </div>
       </div>
 
       <button onClick={() => handleOpenModal()}
