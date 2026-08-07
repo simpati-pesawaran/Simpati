@@ -232,132 +232,172 @@ export default function UsulanPage() {
 
       {/* Submit Form Modal */}
       {showForm && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center" onClick={() => setShowForm(false)}>
+        <div className="fixed inset-0 z-50" onClick={() => setShowForm(false)}>
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
-          <div className="relative w-full bg-white rounded-t-3xl max-h-[90vh] overflow-y-auto animate-slideUp" onClick={(e) => e.stopPropagation()}>
-            <div className="sticky top-0 bg-white px-5 pt-5 pb-3 border-b border-gray-100">
-              <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-4" />
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold text-gray-900">Ajukan Usulan</h2>
-                <button onClick={() => setShowForm(false)} className="p-2 hover:bg-gray-100 rounded-full">
-                  <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
+          <div className="absolute bottom-0 left-0 right-0 max-h-[92vh] bg-white rounded-t-[28px] shadow-2xl flex flex-col animate-slideUp" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-center pt-3 pb-2">
+              <div className="w-10 h-1 bg-gray-300 rounded-full" />
             </div>
-            <form onSubmit={handleSubmit} className="px-5 pb-8 space-y-4">
-              {/* Jenis */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Jenis</label>
-                <div className="grid grid-cols-2 gap-2">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+              <h2 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Ajukan Usulan</h2>
+              <button onClick={() => setShowForm(false)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 active:bg-gray-200 transition-colors">
+                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-5 py-6 space-y-6">
+              {/* Section: JENIS */}
+              <section>
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Jenis Usulan</h3>
+                <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
                     onClick={() => setJenis("kegiatan")}
-                    className={`py-3 rounded-xl text-sm font-semibold transition ${
+                    className={`py-4 rounded-2xl text-sm font-semibold transition-all ${
                       jenis === "kegiatan"
-                        ? "bg-blue-500 text-white"
-                        : "bg-gray-100 text-gray-600"
+                        ? "bg-blue-500 text-white shadow-lg"
+                        : "bg-gray-50/80 text-gray-500 border border-gray-200/60"
                     }`}
                   >
-                    Kegiatan
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      Kegiatan
+                    </span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setJenis("audiensi")}
-                    className={`py-3 rounded-xl text-sm font-semibold transition ${
+                    className={`py-4 rounded-2xl text-sm font-semibold transition-all ${
                       jenis === "audiensi"
-                        ? "bg-purple-500 text-white"
-                        : "bg-gray-100 text-gray-600"
+                        ? "bg-purple-500 text-white shadow-lg"
+                        : "bg-gray-50/80 text-gray-500 border border-gray-200/60"
                     }`}
                   >
-                    Audiensi
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      Audiensi
+                    </span>
                   </button>
                 </div>
-              </div>
+              </section>
 
-              {/* Title */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Judul Usulan</label>
-                <input
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Masukkan judul kegiatan"
-                  required
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
+              {/* Section: DETAIL */}
+              <section>
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Detail Usulan</h3>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">Judul Usulan</label>
+                    <input
+                      type="text"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      placeholder="Masukkan judul kegiatan"
+                      required
+                      className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all placeholder:text-gray-400"
+                    />
+                  </div>
 
-              {/* Description */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Deskripsi</label>
-                <textarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Jelaskan kegiatan yang diusulkan"
-                  rows={4}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
-                />
-              </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">Deskripsi</label>
+                    <textarea
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      placeholder="Jelaskan kegiatan yang diusulkan"
+                      rows={4}
+                      className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all resize-none placeholder:text-gray-400"
+                    />
+                  </div>
 
-              {/* Location */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Lokasi (opsional)</label>
-                <input
-                  type="text"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  placeholder="Masukkan lokasi kegiatan"
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">Lokasi (opsional)</label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={location}
+                        onChange={(e) => setLocation(e.target.value)}
+                        placeholder="Masukkan lokasi kegiatan"
+                        className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all placeholder:text-gray-400 pl-11"
+                      />
+                      <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </section>
 
-              {/* Submit */}
+              {/* Bottom spacing */}
+              <div className="h-20" />
+            </form>
+
+            {/* Sticky Submit Button */}
+            <div className="sticky bottom-0 bg-white border-t border-gray-100 px-5 py-4">
               <button
                 type="submit"
                 disabled={submitting || !title}
-                className="w-full py-3 bg-indigo-600 text-white font-semibold rounded-xl disabled:opacity-50 flex items-center justify-center gap-2"
+                onClick={handleSubmit}
+                className="w-full py-4 rounded-2xl font-semibold text-base text-white shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+                style={{
+                  background: submitting || !title
+                    ? '#94a3b8'
+                    : 'linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #7c3aed 100%)',
+                  boxShadow: submitting || !title
+                    ? 'none'
+                    : '0 4px 20px rgba(37, 99, 235, 0.35)'
+                }}
               >
                 {submitting ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span className="flex items-center justify-center gap-3">
+                    <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
                     Mengirim...
-                  </>
+                  </span>
                 ) : (
-                  "Kirim Usulan"
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                    </svg>
+                    Kirim Usulan
+                  </span>
                 )}
               </button>
-            </form>
+            </div>
           </div>
         </div>
       )}
 
       {/* Detail Modal */}
       {selectedUsulan && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center" onClick={() => setSelectedUsulan(null)}>
+        <div className="fixed inset-0 z-50" onClick={() => setSelectedUsulan(null)}>
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
-          <div className="relative w-full bg-white rounded-t-3xl max-h-[85vh] overflow-y-auto animate-slideUp" onClick={(e) => e.stopPropagation()}>
-            <div className="sticky top-0 bg-white px-5 pt-5 pb-3 border-b border-gray-100">
-              <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-4" />
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold text-gray-900">Detail Usulan</h2>
-                <button onClick={() => setSelectedUsulan(null)} className="p-2 hover:bg-gray-100 rounded-full">
-                  <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
+          <div className="absolute bottom-0 left-0 right-0 max-h-[85vh] bg-white rounded-t-[28px] shadow-2xl flex flex-col animate-slideUp" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-center pt-3 pb-2">
+              <div className="w-10 h-1 bg-gray-300 rounded-full" />
             </div>
-            <div className="px-5 pb-8 space-y-4">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+              <h2 className="text-lg font-bold text-gray-900">Detail Usulan</h2>
+              <button onClick={() => setSelectedUsulan(null)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 active:bg-gray-200 transition-colors">
+                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto px-5 py-6 space-y-4">
               {/* Header */}
               <div className="flex items-center gap-2">
-                <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
+                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
                   selectedUsulan.jenis === "kegiatan" ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700"
                 }`}>
                   {selectedUsulan.jenis === "kegiatan" ? "Kegiatan" : "Audiensi"}
                 </span>
-                <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusBadge(selectedUsulan.status).bg} ${getStatusBadge(selectedUsulan.status).text}`}>
+                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadge(selectedUsulan.status).bg} ${getStatusBadge(selectedUsulan.status).text}`}>
                   {getStatusBadge(selectedUsulan.status).label}
                 </span>
               </div>
@@ -365,16 +405,16 @@ export default function UsulanPage() {
               <h3 className="text-xl font-bold text-gray-900">{selectedUsulan.title}</h3>
 
               {selectedUsulan.description && (
-                <div className="p-4 bg-gray-50 rounded-xl">
-                  <p className="text-sm text-gray-500 mb-1">Deskripsi</p>
+                <div className="p-4 bg-gray-50/80 rounded-2xl">
+                  <p className="text-xs text-gray-500 mb-1">Deskripsi</p>
                   <p className="text-gray-900">{selectedUsulan.description}</p>
                 </div>
               )}
 
               {selectedUsulan.location && (
-                <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex items-center gap-4 p-4 bg-gray-50/80 rounded-2xl">
+                  <div className="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center shadow-sm">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     </svg>
                   </div>
@@ -385,10 +425,10 @@ export default function UsulanPage() {
                 </div>
               )}
 
-              <div className="p-4 bg-gray-50 rounded-xl">
+              <div className="p-4 bg-gray-50/80 rounded-2xl">
                 <p className="text-xs text-gray-500">Diajukan oleh</p>
                 <p className="font-semibold text-gray-900">{selectedUsulan.submitter_name}</p>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 mt-1">
                   {new Date(selectedUsulan.date_proposed).toLocaleDateString("id-ID", {
                     weekday: "long",
                     day: "numeric",
@@ -399,7 +439,7 @@ export default function UsulanPage() {
               </div>
 
               {selectedUsulan.status === "rejected" && selectedUsulan.rejection_reason && (
-                <div className="p-4 bg-red-50 rounded-xl border border-red-100">
+                <div className="p-4 bg-red-50/80 rounded-2xl border border-red-100">
                   <p className="text-xs text-red-500 mb-1">Alasan Penolakan</p>
                   <p className="text-gray-900">{selectedUsulan.rejection_reason}</p>
                 </div>
@@ -410,7 +450,7 @@ export default function UsulanPage() {
                 <div className="flex gap-3 pt-4">
                   <button
                     onClick={() => handleApprove(selectedUsulan.id)}
-                    className="flex-1 py-3 bg-emerald-500 text-white font-semibold rounded-xl flex items-center justify-center gap-2"
+                    className="flex-1 py-4 rounded-2xl bg-emerald-500 text-white font-semibold text-base flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] transition-transform"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -422,7 +462,7 @@ export default function UsulanPage() {
                       const reason = prompt("Alasan penolakan:");
                       if (reason) handleReject(selectedUsulan.id, reason);
                     }}
-                    className="flex-1 py-3 bg-red-500 text-white font-semibold rounded-xl flex items-center justify-center gap-2"
+                    className="flex-1 py-4 rounded-2xl bg-red-500 text-white font-semibold text-base flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] transition-transform"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -438,11 +478,11 @@ export default function UsulanPage() {
 
       <style jsx>{`
         @keyframes slideUp {
-          from { transform: translateY(100%); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
+          from { transform: translateY(100%); }
+          to { transform: translateY(0); }
         }
         .animate-slideUp {
-          animation: slideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+          animation: slideUp 0.4s cubic-bezier(0.32, 0.72, 0, 1);
         }
       `}</style>
     </div>
