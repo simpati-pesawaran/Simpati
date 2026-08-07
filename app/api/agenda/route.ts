@@ -72,14 +72,10 @@ export async function GET(request: NextRequest) {
       .order("time_start", { ascending: true })
       .range(offset, offset + limit - 1);
 
-    // Filter by jenis (kegiatan/audiensi)
-    if (jenis && (jenis === "kegiatan" || jenis === "audiensi")) {
-      query = query.eq("jenis", jenis);
-    }
-
-    // Filter by sub_jenis
-    if (sub_jenis) {
-      query = query.eq("sub_jenis", sub_jenis);
+    // Filter by jenis (kegiatan/audiensi) - convert to DB enum
+    if (jenis) {
+      const dbJenis = jenis === "kegiatan" ? "agenda" : jenis;
+      query = query.eq("jenis", dbJenis);
     }
 
     // Search by title
@@ -193,24 +189,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Convert frontend jenis to DB enum
+    const dbJenis = jenis === "kegiatan" ? "agenda" : jenis;
+
     // Create agenda
     const { data: newAgenda, error } = await supabaseAdmin
       .from("agenda")
       .insert({
-        jenis,
-        sub_jenis: sub_jenis || null,
+        jenis: dbJenis,
         title,
         description: description || null,
         date,
         time_start,
         time_end,
         location: location || null,
-        pic_name: pic_name || null,
-        pic_phone: pic_phone || null,
-        participants_count: participants_count || null,
-        dresscode: dresscode || null,
-        attachments: attachments || [],
-        notes: notes || null,
+        target_audience: location || null,
         status,
         created_by: profile.id,
       })
