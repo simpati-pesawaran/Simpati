@@ -167,7 +167,7 @@ export default function GaleriPage() {
             <svg className="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            <p className="text-gray-500">Belum ada {activeTab === "dokumentasi" ? "dokumentasi" : "arsip digital"}</p>
+            <p className="text-gray-600 font-medium">Belum ada {activeTab === "dokumentasi" ? "dokumentasi" : "arsip digital"}</p>
             {isAdmin && (
               <button
                 onClick={() => setShowUpload(true)}
@@ -221,7 +221,7 @@ export default function GaleriPage() {
             <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-5 py-6 space-y-6">
               {/* Image Upload */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Gambar</label>
+                <label className="text-sm font-semibold text-gray-800">Gambar</label>
                 <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-2xl cursor-pointer hover:border-blue-400 hover:bg-blue-50/30 transition-all">
                   {imagePreview ? (
                     <div className="relative w-full h-full">
@@ -229,7 +229,7 @@ export default function GaleriPage() {
                       <button
                         type="button"
                         onClick={() => { setImageFile(null); setImagePreview(null); }}
-                        className="absolute top-2 right-2 p-2 bg-black/50 text-white rounded-full active:scale-90 transition-transform"
+                        className="absolute top-2 right-2 p-2 bg-black/60 text-white rounded-full active:scale-90 transition-transform"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -239,11 +239,11 @@ export default function GaleriPage() {
                   ) : (
                     <div className="flex flex-col items-center justify-center">
                       <div className="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center mb-3">
-                        <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                       </div>
-                      <p className="text-sm text-gray-500">Ketuk untuk upload gambar</p>
+                      <p className="text-sm text-gray-600 font-medium">Ketuk untuk upload gambar</p>
                     </div>
                   )}
                   <input type="file" className="hidden" accept="image/*" onChange={handleImageSelect} />
@@ -252,26 +252,26 @@ export default function GaleriPage() {
 
               {/* Title */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Judul</label>
+                <label className="text-sm font-semibold text-gray-800">Judul</label>
                 <input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Masukkan judul"
                   required
-                  className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all placeholder:text-gray-400"
+                  className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all placeholder:text-gray-500"
                 />
               </div>
 
               {/* Description */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Deskripsi (opsional)</label>
+                <label className="text-sm font-semibold text-gray-800">Deskripsi <span className="text-xs font-normal text-gray-500">(opsional)</span></label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Masukkan deskripsi"
                   rows={3}
-                  className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all resize-none placeholder:text-gray-400"
+                  className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all resize-none placeholder:text-gray-500"
                 />
               </div>
 
@@ -337,9 +337,9 @@ export default function GaleriPage() {
               </div>
               <h2 className="text-xl font-bold text-gray-900">{selectedItem.title}</h2>
               {selectedItem.description && (
-                <p className="text-gray-600 mt-2">{selectedItem.description}</p>
+                <p className="text-gray-700 mt-2 font-medium">{selectedItem.description}</p>
               )}
-              <p className="text-sm text-gray-400 mt-4">
+              <p className="text-sm text-gray-500 mt-4 font-medium">
                 {new Date(selectedItem.created_at).toLocaleDateString("id-ID", {
                   day: "numeric",
                   month: "long",

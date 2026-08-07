@@ -180,10 +180,10 @@ export default function UsulanPage() {
           </div>
         ) : filteredUsulans.length === 0 ? (
           <div className="text-center py-12">
-            <svg className="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <p className="text-gray-500">Belum ada usulan</p>
+            <p className="text-gray-600 font-medium">Belum ada usulan</p>
             <button
               onClick={() => setShowForm(true)}
               className="mt-4 px-4 py-2 text-indigo-600 text-sm font-semibold"
@@ -214,9 +214,9 @@ export default function UsulanPage() {
                     </div>
                     <h3 className="font-semibold text-gray-900">{usulan.title}</h3>
                     {usulan.description && (
-                      <p className="text-sm text-gray-500 mt-1 line-clamp-2">{usulan.description}</p>
+                      <p className="text-sm text-gray-600 mt-1 line-clamp-2">{usulan.description}</p>
                     )}
-                    <p className="text-xs text-gray-400 mt-2">
+                    <p className="text-xs text-gray-500 mt-2 font-medium">
                       oleh {usulan.submitter_name} • {new Date(usulan.date_proposed).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
                     </p>
                   </div>
@@ -249,7 +249,7 @@ export default function UsulanPage() {
             <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-5 py-6 space-y-6">
               {/* Section: JENIS */}
               <section>
-                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Jenis Usulan</h3>
+                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Jenis Usulan</h3>
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
@@ -257,7 +257,7 @@ export default function UsulanPage() {
                     className={`py-4 rounded-2xl text-sm font-semibold transition-all ${
                       jenis === "kegiatan"
                         ? "bg-blue-500 text-white shadow-lg"
-                        : "bg-gray-50/80 text-gray-500 border border-gray-200/60"
+                        : "bg-gray-50/80 text-gray-700 border border-gray-300/60"
                     }`}
                   >
                     <span className="flex items-center justify-center gap-2">
@@ -273,7 +273,7 @@ export default function UsulanPage() {
                     className={`py-4 rounded-2xl text-sm font-semibold transition-all ${
                       jenis === "audiensi"
                         ? "bg-purple-500 text-white shadow-lg"
-                        : "bg-gray-50/80 text-gray-500 border border-gray-200/60"
+                        : "bg-gray-50/80 text-gray-700 border border-gray-300/60"
                     }`}
                   >
                     <span className="flex items-center justify-center gap-2">
@@ -288,42 +288,42 @@ export default function UsulanPage() {
 
               {/* Section: DETAIL */}
               <section>
-                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Detail Usulan</h3>
+                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Detail Usulan</h3>
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Judul Usulan</label>
+                    <label className="text-sm font-semibold text-gray-800">Judul Usulan</label>
                     <input
                       type="text"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                       placeholder="Masukkan judul kegiatan"
                       required
-                      className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all placeholder:text-gray-400"
+                      className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all placeholder:text-gray-500"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Deskripsi</label>
+                    <label className="text-sm font-semibold text-gray-800">Deskripsi</label>
                     <textarea
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       placeholder="Jelaskan kegiatan yang diusulkan"
                       rows={4}
-                      className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all resize-none placeholder:text-gray-400"
+                      className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all resize-none placeholder:text-gray-500"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Lokasi (opsional)</label>
+                    <label className="text-sm font-semibold text-gray-800">Lokasi <span className="text-xs font-normal text-gray-500">(opsional)</span></label>
                     <div className="relative">
                       <input
                         type="text"
                         value={location}
                         onChange={(e) => setLocation(e.target.value)}
                         placeholder="Masukkan lokasi kegiatan"
-                        className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all placeholder:text-gray-400 pl-11"
+                        className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all placeholder:text-gray-500 pl-11"
                       />
-                      <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       </svg>
                     </div>

@@ -388,7 +388,7 @@ export default function KegiatanPage() {
 
               {/* Section: INFORMASI */}
               <section>
-                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4 flex items-center gap-2">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
@@ -397,24 +397,24 @@ export default function KegiatanPage() {
 
                 {/* Title */}
                 <div className="space-y-2 mb-5">
-                  <label className="text-sm font-medium text-gray-700">Judul Agenda</label>
+                  <label className="text-sm font-semibold text-gray-800">Judul Agenda</label>
                   <input type="text" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     placeholder="Masukkan judul agenda"
-                    className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all placeholder:text-gray-400" />
+                    className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all placeholder:text-gray-500" />
                 </div>
 
                 {/* Sub Jenis - Select */}
                 <div className="space-y-2 mb-5">
-                  <label className="text-sm font-medium text-gray-700">Sub Jenis</label>
+                  <label className="text-sm font-semibold text-gray-800">Sub Jenis</label>
                   <div className="relative">
                     <select value={formData.sub_jenis} onChange={(e) => setFormData({ ...formData, sub_jenis: e.target.value })}
-                      className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all appearance-none cursor-pointer">
+                      className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all appearance-none cursor-pointer">
                       <option value="">Pilih Sub Jenis</option>
                       {subJenisOptions.map((opt) => (
                         <option key={opt.value} value={opt.value}>{opt.label}</option>
                       ))}
                     </select>
-                    <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </div>
@@ -423,17 +423,17 @@ export default function KegiatanPage() {
                 {/* Custom Sub Jenis - Conditional */}
                 {formData.sub_jenis === "lainnya" && (
                   <div className="space-y-2 mb-5 animate-fadeIn">
-                    <label className="text-sm font-medium text-gray-700">Nama Sub Jenis <span className="text-red-500">*</span></label>
+                    <label className="text-sm font-semibold text-gray-800">Nama Sub Jenis <span className="text-red-500">*</span></label>
                     <input type="text" value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                       placeholder="Masukkan nama sub jenis"
-                      className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all placeholder:text-gray-400" />
+                      className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all placeholder:text-gray-500" />
                   </div>
                 )}
               </section>
 
               {/* Section: WAKTU */}
               <section>
-                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4 flex items-center gap-2">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
@@ -442,11 +442,11 @@ export default function KegiatanPage() {
 
                 {/* Date - Modern Picker */}
                 <div className="space-y-2 mb-5">
-                  <label className="text-sm font-medium text-gray-700">Tanggal</label>
+                  <label className="text-sm font-semibold text-gray-800">Tanggal</label>
                   <div className="relative">
                     <input type="date" value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                      className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all" />
-                    <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all" />
+                    <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                   </div>
@@ -455,21 +455,21 @@ export default function KegiatanPage() {
                 {/* Time Range */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Jam Mulai</label>
+                    <label className="text-sm font-semibold text-gray-800">Jam Mulai</label>
                     <div className="relative">
                       <input type="time" value={formData.time_start} onChange={(e) => setFormData({ ...formData, time_start: e.target.value })}
-                        className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all" />
-                      <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all" />
+                      <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Jam Selesai</label>
+                    <label className="text-sm font-semibold text-gray-800">Jam Selesai</label>
                     <div className="relative">
                       <input type="time" value={formData.time_end} onChange={(e) => setFormData({ ...formData, time_end: e.target.value })}
-                        className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all" />
-                      <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all" />
+                      <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
@@ -479,7 +479,7 @@ export default function KegiatanPage() {
 
               {/* Section: LOKASI */}
               <section>
-                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4 flex items-center gap-2">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -488,31 +488,31 @@ export default function KegiatanPage() {
                 </h3>
 
                 <div className="space-y-2 mb-5">
-                  <label className="text-sm font-medium text-gray-700">Tempat / Lokasi</label>
+                  <label className="text-sm font-semibold text-gray-800">Tempat / Lokasi</label>
                   <input type="text" value={formData.location} onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                     placeholder="Masukkan lokasi kegiatan"
-                    className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all placeholder:text-gray-400" />
+                    className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all placeholder:text-gray-500" />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Penanggung Jawab</label>
+                    <label className="text-sm font-semibold text-gray-800">Penanggung Jawab</label>
                     <input type="text" value={formData.pic_name} onChange={(e) => setFormData({ ...formData, pic_name: e.target.value })}
                       placeholder="Nama PIC"
-                      className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all placeholder:text-gray-400" />
+                      className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all placeholder:text-gray-500" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Nomor HP</label>
+                    <label className="text-sm font-semibold text-gray-800">Nomor HP</label>
                     <input type="tel" value={formData.pic_phone} onChange={(e) => setFormData({ ...formData, pic_phone: e.target.value })}
                       placeholder="08xxxxxxxxxx"
-                      className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all placeholder:text-gray-400" />
+                      className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all placeholder:text-gray-500" />
                   </div>
                 </div>
               </section>
 
               {/* Section: KETERANGAN */}
               <section>
-                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4 flex items-center gap-2">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
@@ -520,22 +520,22 @@ export default function KegiatanPage() {
                 </h3>
 
                 <div className="space-y-2 mb-5">
-                  <label className="text-sm font-medium text-gray-700">Deskripsi</label>
+                  <label className="text-sm font-semibold text-gray-800">Deskripsi</label>
                   <textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     placeholder="Jelaskan detail agenda..."
                     rows={3}
-                    className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all resize-none placeholder:text-gray-400" />
+                    className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all resize-none placeholder:text-gray-500" />
                 </div>
 
                 {/* Status Toggle */}
                 <div className="space-y-3">
-                  <label className="text-sm font-medium text-gray-700">Status</label>
+                  <label className="text-sm font-semibold text-gray-800">Status</label>
                   <div className="flex gap-3">
                     <button type="button" onClick={() => setFormData({ ...formData, status: "draft" })}
                       className={`flex-1 py-3.5 rounded-2xl text-sm font-semibold border-2 transition-all ${
                         formData.status === "draft"
-                          ? "border-yellow-400 bg-yellow-50 text-yellow-700 shadow-sm"
-                          : "border-gray-200 text-gray-500 bg-gray-50/50"
+                          ? "border-yellow-400 bg-yellow-50 text-yellow-800 shadow-sm"
+                          : "border-gray-300 text-gray-600 bg-gray-50/50"
                       }`}>
                       <span className="flex items-center justify-center gap-2">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -547,8 +547,8 @@ export default function KegiatanPage() {
                     <button type="button" onClick={() => setFormData({ ...formData, status: "published" })}
                       className={`flex-1 py-3.5 rounded-2xl text-sm font-semibold border-2 transition-all ${
                         formData.status === "published"
-                          ? "border-green-400 bg-green-50 text-green-700 shadow-sm"
-                          : "border-gray-200 text-gray-500 bg-gray-50/50"
+                          ? "border-green-400 bg-green-50 text-green-800 shadow-sm"
+                          : "border-gray-300 text-gray-600 bg-gray-50/50"
                       }`}>
                       <span className="flex items-center justify-center gap-2">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
