@@ -1,5 +1,5 @@
 // ============================================================================
-// Agenda API
+// Agenda API - Enhanced with Activity Logging
 // ============================================================================
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -8,8 +8,39 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { supabaseAdmin } from "@/app/lib/supabase";
 
 /**
+ * Log activity helper
+ */
+async function logActivity(
+  userId: string,
+  userName: string,
+  action: string,
+  entityType: string,
+  entityId: string,
+  oldData: any,
+  newData: any,
+  description: string
+) {
+  const { error } = await supabaseAdmin.from("activity_logs").insert({
+    user_id: userId,
+    user_name: userName,
+    action: action,
+    entity_type: entityType,
+    entity_id: entityId,
+    old_data: oldData,
+    new_data: newData,
+    description: description,
+  });
+
+  if (error) {
+    console.error("Error logging activity:", error);
+  }
+
+  return !error;
+}
+
+/**
  * GET /api/agenda
- * Get agenda list
+ * Get agenda list with filters
  */
 export async function GET(request: NextRequest) {
   try {
@@ -23,24 +54,72 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "20");
     const offset = parseInt(searchParams.get("offset") || "0");
     const jenis = searchParams.get("jenis");
+    const sub_jenis = searchParams.get("sub_jenis");
+    const search = searchParams.get("search");
     const upcoming = searchParams.get("upcoming") === "true";
+    const date = searchParams.get("date");
+    const status = searchParams.get("status");
+    const today = searchParams.get("today") === "true";
 
     let query = supabaseAdmin
       .from("agenda")
-      .select("*", { count: "exact" })
+      .select(`
+        *,
+        creator:profiles!agenda_created_by_fkey(id, name, role)
+      `, { count: "exact" })
       .is("deleted_at", null)
-      .order("date", { ascending: !upcoming })
+      .order("date", { ascending: true })
+      .order("time_start", { ascending: true })
       .range(offset, offset + limit - 1);
 
-    // Filter by jenis
-    if (jenis && (jenis === "agenda" || jenis === "audiensi")) {
+    // Filter by jenis (kegiatan/audiensi)
+    if (jenis && (jenis === "kegiatan" || jenis === "audiensi")) {
       query = query.eq("jenis", jenis);
     }
 
-    // Filter upcoming (date >= today and published)
+    // Filter by sub_jenis
+    if (sub_jenis) {
+      query = query.eq("sub_jenis", sub_jenis);
+    }
+
+    // Search by title
+    if (search) {
+      query = query.ilike("title", `%${search}%`);
+    }
+
+    // Filter upcoming (date >= today, not finished)
     if (upcoming) {
-      const today = new Date().toISOString().split("T")[0];
-      query = query.eq("status", "published").gte("date", today);
+      const now = new Date();
+      const currentTime = now.toTimeString().slice(0, 5);
+      const todayDate = now.toISOString().split("T")[0];
+
+      query = query
+        .eq("status", "published")
+        .or(`date.gt.${todayDate},and(date.eq.${todayDate},time_end.gt.${currentTime})`);
+    }
+
+    // Filter by specific date
+    if (date) {
+      query = query.eq("date", date);
+    }
+
+    // Filter by status
+    if (status) {
+      query = query.eq("status", status);
+    }
+
+    // Today's agenda for dashboard widget
+    if (today) {
+      const now = new Date();
+      const currentTime = now.toTimeString().slice(0, 5);
+      const todayDate = now.toISOString().split("T")[0];
+
+      query = query
+        .eq("date", todayDate)
+        .or(`time_end.gt.${currentTime},and(date.gt.${todayDate})`)
+        .eq("status", "published")
+        .order("date", { ascending: true })
+        .order("time_start", { ascending: true });
     }
 
     const { data, error, count } = await query;
@@ -82,38 +161,34 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const {
       jenis,
+      sub_jenis,
       title,
       description,
       date,
       time_start,
       time_end,
       location,
-      category,
-      target_audience,
+      pic_name,
+      pic_phone,
+      participants_count,
+      dresscode,
+      attachments,
+      notes,
       status = "draft",
     } = body;
 
     // Validate required fields
     if (!jenis || !title || !date || !time_start || !time_end) {
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { error: "Field wajib: jenis, title, date, time_start, time_end" },
         { status: 400 }
       );
     }
 
-    // Check for time collision
-    const { data: collision } = await supabaseAdmin.rpc(
-      "check_agenda_collision",
-      {
-        p_date: date,
-        p_time_start: time_start,
-        p_time_end: time_end,
-      }
-    );
-
-    if (collision) {
+    // Validate jenis
+    if (!["kegiatan", "audiensi"].includes(jenis)) {
       return NextResponse.json(
-        { error: "Terjadi bentrokan jadwal dengan agenda lain" },
+        { error: "jenis harus 'kegiatan' atau 'audiensi'" },
         { status: 400 }
       );
     }
@@ -123,47 +198,69 @@ export async function POST(request: NextRequest) {
       .from("agenda")
       .insert({
         jenis,
+        sub_jenis: sub_jenis || null,
         title,
-        description,
+        description: description || null,
         date,
         time_start,
         time_end,
-        location,
-        category,
-        target_audience,
+        location: location || null,
+        pic_name: pic_name || null,
+        pic_phone: pic_phone || null,
+        participants_count: participants_count || null,
+        dresscode: dresscode || null,
+        attachments: attachments || [],
+        notes: notes || null,
         status,
         created_by: profile.id,
       })
-      .select()
+      .select(`
+        *,
+        creator:profiles!agenda_created_by_fkey(id, name)
+      `)
       .single();
 
     if (error) {
       console.error("Error creating agenda:", error);
-      return NextResponse.json({ error: "Creation failed" }, { status: 500 });
+      return NextResponse.json({ error: "Creation failed: " + error.message }, { status: 500 });
     }
+
+    // Log activity
+    await logActivity(
+      profile.id,
+      profile.name || session.user.name,
+      "create",
+      "agenda",
+      newAgenda.id,
+      null,
+      newAgenda,
+      `${profile.name} membuat ${jenis === "kegiatan" ? "kegiatan" : "audiensi"}: ${title}`
+    );
 
     // Create notification for superadmin if published
     if (status === "published") {
-      const { data: superadmin } = await supabaseAdmin
+      const { data: superadmins } = await supabaseAdmin
         .from("profiles")
         .select("id")
-        .eq("role", "superadmin")
-        .single();
+        .eq("role", "superadmin");
 
-      if (superadmin) {
-        await supabaseAdmin.from("notifications").insert({
-          user_id: superadmin.id,
+      if (superadmins && superadmins.length > 0) {
+        const notifications = superadmins.map((sa: any) => ({
+          user_id: sa.id,
           type: "agenda_created",
-          title: `Agenda Baru: ${title}`,
-          message: `Agenda ${jenis === "agenda" ? "kegiatan" : "audiensi"} baru telah dibuat`,
-          data: { agenda_id: newAgenda.id },
-        });
+          title: `${jenis === "kegiatan" ? "Kegiatan" : "Audiensi"} Baru: ${title}`,
+          message: `Dibuat oleh ${profile.name}`,
+          data: { agenda_id: newAgenda.id, jenis },
+        }));
+
+        await supabaseAdmin.from("notifications").insert(notifications);
       }
     }
 
     return NextResponse.json({
       success: true,
       data: newAgenda,
+      message: `${jenis === "kegiatan" ? "Kegiatan" : "Audiensi"} berhasil dibuat`,
     });
   } catch (error) {
     console.error("POST /api/agenda error:", error);

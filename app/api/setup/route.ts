@@ -36,17 +36,22 @@ EXCEPTION WHEN duplicate_object THEN null;
 END $$;
 
 DO $$ BEGIN
-    CREATE TYPE action_type AS ENUM ('create', 'update', 'delete', 'approve', 'reject', 'login', 'logout');
+    CREATE TYPE action_type AS ENUM ('create', 'update', 'delete', 'approve', 'reject', 'login', 'logout', 'submit', 'sync');
 EXCEPTION WHEN duplicate_object THEN null;
 END $$;
 
 DO $$ BEGIN
-    CREATE TYPE entity_type AS ENUM ('profile', 'agenda', 'notification', 'gallery');
+    CREATE TYPE entity_type AS ENUM ('profile', 'agenda', 'notification', 'gallery', 'usulan');
 EXCEPTION WHEN duplicate_object THEN null;
 END $$;
 
 DO $$ BEGIN
     CREATE TYPE file_type AS ENUM ('image', 'document');
+EXCEPTION WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+    CREATE TYPE gallery_category AS ENUM ('dokumentasi', 'arsip');
 EXCEPTION WHEN duplicate_object THEN null;
 END $$;
 
@@ -118,6 +123,7 @@ CREATE TABLE IF NOT EXISTS gallery (
     agenda_id UUID REFERENCES agenda(id) ON DELETE SET NULL,
     title TEXT,
     description TEXT,
+    category gallery_category NOT NULL DEFAULT 'dokumentasi',
     file_type file_type NOT NULL,
     file_name TEXT NOT NULL,
     storage_path TEXT NOT NULL,
@@ -128,6 +134,23 @@ CREATE TABLE IF NOT EXISTS gallery (
     width INTEGER,
     height INTEGER,
     uploaded_by UUID NOT NULL REFERENCES profiles(id),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- usulan table
+CREATE TABLE IF NOT EXISTS usulan (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title TEXT NOT NULL,
+    description TEXT,
+    jenis agenda_jenis NOT NULL,
+    date_proposed TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    location TEXT,
+    status approval_status NOT NULL DEFAULT 'pending',
+    submitted_by UUID NOT NULL REFERENCES profiles(id),
+    submitter_name TEXT NOT NULL,
+    reviewed_by UUID REFERENCES profiles(id),
+    reviewed_at TIMESTAMPTZ,
+    rejection_reason TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -167,6 +190,9 @@ CREATE INDEX IF NOT EXISTS idx_agenda_deleted_at ON agenda(deleted_at) WHERE del
 CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON notifications(user_id);
 CREATE INDEX IF NOT EXISTS idx_notifications_user_unread ON notifications(user_id, is_read) WHERE NOT is_read;
 CREATE INDEX IF NOT EXISTS idx_activity_logs_user_id ON activity_logs(user_id);
+CREATE INDEX IF NOT EXISTS idx_gallery_category ON gallery(category);
+CREATE INDEX IF NOT EXISTS idx_usulan_status ON usulan(status);
+CREATE INDEX IF NOT EXISTS idx_usulan_submitted_by ON usulan(submitted_by);
 
 -- RLS
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
@@ -200,6 +226,12 @@ CREATE POLICY "gallery_insert" ON gallery FOR INSERT WITH CHECK (true);
 CREATE POLICY "gallery_update" ON gallery FOR UPDATE USING (true);
 CREATE POLICY "gallery_delete" ON gallery FOR DELETE USING (true);
 
+-- Usulan policies
+CREATE POLICY "usulan_select" ON usulan FOR SELECT USING (true);
+CREATE POLICY "usulan_insert" ON usulan FOR INSERT WITH CHECK (true);
+CREATE POLICY "usulan_update" ON usulan FOR UPDATE USING (true);
+CREATE POLICY "usulan_delete" ON usulan FOR DELETE USING (true);
+
 -- Activity logs policies
 CREATE POLICY "activity_logs_select" ON activity_logs FOR SELECT USING (true);
 CREATE POLICY "activity_logs_insert" ON activity_logs FOR INSERT WITH CHECK (true);
@@ -209,9 +241,24 @@ CREATE POLICY "settings_select" ON settings FOR SELECT USING (true);
 CREATE POLICY "settings_update" ON settings FOR UPDATE USING (true);
 CREATE POLICY "settings_insert" ON settings FOR INSERT WITH CHECK (true);
 
+-- Add gallery category column if not exists (for existing tables)
+DO $$
+BEGIN
+    -- Add category column only if it doesn't exist
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'gallery' AND column_name = 'category') THEN
+        ALTER TABLE gallery ADD COLUMN category TEXT NOT NULL DEFAULT 'dokumentasi';
+    END IF;
+END $$;
+
+-- Add indexes if not exist
+CREATE INDEX IF NOT EXISTS idx_gallery_category ON gallery(category);
+CREATE INDEX IF NOT EXISTS idx_usulan_status ON usulan(status);
+CREATE INDEX IF NOT EXISTS idx_usulan_submitted_by ON usulan(submitted_by);
+CREATE INDEX IF NOT EXISTS idx_activity_logs_user_id ON activity_logs(user_id);
+
 -- Seed superadmin
 INSERT INTO profiles (email, name, role, status, approved_at)
-VALUES ('siagapesawaran@gmail.com@gmail.com', 'Superadmin', 'superadmin', 'approved', NOW())
+VALUES ('siagapesawaran@gmail.com', 'Superadmin', 'superadmin', 'approved', NOW())
 ON CONFLICT (email) DO NOTHING;
 `;
 

@@ -69,7 +69,6 @@ export function Header() {
         WebkitBackdropFilter: "blur(20px)",
         borderBottom: "1px solid rgba(17,24,39,0.08)",
         boxShadow: "0 4px 16px rgba(15,23,42,0.04)",
-        paddingTop: "env(safe-area-inset-top)"
       }}
     >
       <div className="max-w-md mx-auto px-4">
