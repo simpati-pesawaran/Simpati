@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import AppHeader from "@/components/AppHeader";
 
 interface Agenda {
   id: string;
@@ -20,6 +19,7 @@ interface Agenda {
   dresscode: string | null;
   notes: string | null;
   status: string;
+  created_by?: string;
   creator?: { id: string; name: string; };
 }
 
@@ -184,17 +184,7 @@ export default function KegiatanPage() {
 
   return (
     <div className="min-h-screen" style={{ background: "#f1f5f9" }}>
-      <AppHeader
-        variant="default"
-        title={activeTab === "kegiatan" ? "Kegiatan" : "Audiensi"}
-        icon={
-          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-        }
-        notificationCount={agendas.filter(a => a.status === "published").length}
-      />
-
+      {/* Tab Navigation - positioned below header */}
       <div className="px-5 bg-white border-b border-gray-100 sticky top-0 z-10" style={{ marginTop: "-1px" }}>
         <div className="flex gap-1">
           <button onClick={() => setActiveTab("kegiatan")}
@@ -275,90 +265,156 @@ export default function KegiatanPage() {
       </button>
 
       {showDetail && (
-        <div className="fixed inset-0 z-50" onClick={() => setShowDetail(null)}>
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
-          <div className="absolute bottom-0 left-0 right-0 max-h-[85vh] bg-white rounded-t-[28px] shadow-2xl flex flex-col animate-slideUp" onClick={(e) => e.stopPropagation()}>
-            <div className="flex justify-center pt-3 pb-2">
-              <div className="w-10 h-1 bg-gray-300 rounded-full" />
+        <div className="fixed inset-0 z-50 flex items-end justify-center" onClick={() => setShowDetail(null)}>
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+          <div
+            className="relative w-full bg-white rounded-t-3xl shadow-2xl animate-slideUp overflow-hidden"
+            style={{ maxWidth: "430px", maxHeight: "85vh" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Premium Header with Gradient Accent */}
+            <div className="relative">
+              <div
+                className="h-1.5 w-full"
+                style={{
+                  background: showDetail.jenis === "kegiatan"
+                    ? "linear-gradient(90deg, #3b82f6, #6366f1)"
+                    : "linear-gradient(90deg, #8b5cf6, #ec4899)"
+                }}
+              />
+              <div className="flex justify-center pt-3 pb-2">
+                <div className="w-10 h-1 bg-gray-300 rounded-full" />
+              </div>
             </div>
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100/80">
               <div>
-                <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold mb-2 ${showDetail.jenis === "kegiatan" ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700"}`}>
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold mb-2 ${
+                  showDetail.jenis === "kegiatan"
+                    ? "bg-blue-50 text-blue-600"
+                    : "bg-purple-50 text-purple-600"
+                }`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${
+                    showDetail.jenis === "kegiatan" ? "bg-blue-500" : "bg-purple-500"
+                  }`} />
                   {showDetail.jenis === "kegiatan" ? "Kegiatan" : "Audiensi"}
                 </span>
-                <h2 className="text-lg font-bold text-gray-900">{showDetail.title}</h2>
+                <h2 className="text-lg font-bold text-gray-900 leading-tight">{showDetail.title}</h2>
               </div>
-              <button onClick={() => setShowDetail(null)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 active:bg-gray-200 transition-colors">
+              <button
+                onClick={() => setShowDetail(null)}
+                className="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-gray-100 active:bg-gray-200 transition-all"
+              >
                 <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto px-5 py-6 space-y-4">
-              <div className="flex items-start gap-4 p-4 bg-gray-50/80 rounded-2xl">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-sm ${showDetail.jenis === "kegiatan" ? "bg-blue-100 text-blue-600" : "bg-purple-100 text-purple-600"}`}>
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+            <div className="flex-1 overflow-y-auto px-5 py-5 space-y-4">
+              <div className="flex items-start gap-4 p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl border border-gray-100">
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-sm ${
+                  showDetail.jenis === "kegiatan"
+                    ? "bg-gradient-to-br from-blue-500 to-indigo-500"
+                    : "bg-gradient-to-br from-purple-500 to-pink-500"
+                }`}>
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500">Tanggal & Waktu</p>
+                  <p className="text-xs text-gray-500 font-medium">Tanggal & Waktu</p>
                   <p className="font-semibold text-gray-900">{formatDate(showDetail.date)}</p>
                   <p className="text-sm text-gray-600 mt-0.5">{formatTime(showDetail.time_start)} - {formatTime(showDetail.time_end)}</p>
                 </div>
               </div>
               {showDetail.location && (
-                <div className="flex items-start gap-4 p-4 bg-gray-50/80 rounded-2xl">
-                  <div className="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center shadow-sm">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /></svg>
+                <div className="flex items-start gap-4 p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl border border-gray-100">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-sm">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    </svg>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Lokasi</p>
+                    <p className="text-xs text-gray-500 font-medium">Lokasi</p>
                     <p className="font-semibold text-gray-900">{showDetail.location}</p>
                   </div>
                 </div>
               )}
               {showDetail.pic_name && (
-                <div className="flex items-start gap-4 p-4 bg-gray-50/80 rounded-2xl">
-                  <div className="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center shadow-sm">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                <div className="flex items-start gap-4 p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl border border-gray-100">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center shadow-sm">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Penanggung Jawab</p>
+                    <p className="text-xs text-gray-500 font-medium">Penanggung Jawab</p>
                     <p className="font-semibold text-gray-900">{showDetail.pic_name}</p>
-                    {showDetail.pic_phone && <a href={`tel:${showDetail.pic_phone}`} className="text-sm text-indigo-600">{showDetail.pic_phone}</a>}
+                    {showDetail.pic_phone && (
+                      <a href={`tel:${showDetail.pic_phone}`} className="text-sm text-indigo-600 hover:text-indigo-700">{showDetail.pic_phone}</a>
+                    )}
                   </div>
                 </div>
               )}
               {showDetail.description && (
-                <div className="p-4 bg-gray-50/80 rounded-2xl">
-                  <p className="text-xs text-gray-500 mb-1">Deskripsi</p>
-                  <p className="text-sm text-gray-700">{showDetail.description}</p>
+                <div className="p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl border border-gray-100">
+                  <p className="text-xs text-gray-500 font-medium mb-2">Deskripsi</p>
+                  <p className="text-sm text-gray-700 leading-relaxed">{showDetail.description}</p>
                 </div>
               )}
               {showDetail.participants_count && (
-                <div className="flex items-center gap-3 p-4 bg-gray-50/80 rounded-2xl">
-                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                <div className="flex items-center gap-3 p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl border border-gray-100">
+                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
                   <span className="text-sm text-gray-500">Peserta:</span>
                   <span className="text-sm font-semibold text-gray-900">{showDetail.participants_count} orang</span>
                 </div>
               )}
               {showDetail.dresscode && (
-                <div className="flex items-center gap-3 p-4 bg-gray-50/80 rounded-2xl">
-                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" /></svg>
+                <div className="flex items-center gap-3 p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl border border-gray-100">
+                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                  </svg>
                   <span className="text-sm text-gray-500">Dresscode:</span>
                   <span className="text-sm font-semibold text-gray-900">{showDetail.dresscode}</span>
                 </div>
               )}
-              <div className="flex items-center gap-3 p-4 bg-gray-50/80 rounded-2xl">
-                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <div className="flex items-center gap-3 p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl border border-gray-100">
+                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
                 <span className="text-sm text-gray-500">Status:</span>
-                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${showDetail.status === "published" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>{showDetail.status === "published" ? "Published" : "Draft"}</span>
+                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                  showDetail.status === "published"
+                    ? "bg-emerald-50 text-emerald-600"
+                    : "bg-amber-50 text-amber-600"
+                }`}>
+                  {showDetail.status === "published" ? "Published" : "Draft"}
+                </span>
               </div>
-              {showDetail.creator && <p className="text-xs text-gray-400 text-center">Dibuat oleh {showDetail.creator.name}</p>}
+              {showDetail.creator && (
+                <p className="text-xs text-gray-400 text-center">Dibuat oleh {showDetail.creator.name}</p>
+              )}
               <div className="flex gap-3 pt-4">
-                <button onClick={() => handleOpenModal(showDetail)} className="flex-1 py-4 bg-indigo-600 text-white font-semibold rounded-2xl text-sm shadow-lg active:scale-[0.98] transition-transform">Edit</button>
+                <button
+                  onClick={() => handleOpenModal(showDetail)}
+                  className="flex-1 py-4 rounded-2xl font-semibold text-sm text-white shadow-lg active:scale-[0.98] transition-all"
+                  style={{
+                    background: "linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #7c3aed 100%)",
+                    boxShadow: "0 4px 16px rgba(37, 99, 235, 0.35)"
+                  }}
+                >
+                  Edit Agenda
+                </button>
                 {(isSuperadmin || profile?.id === showDetail.created_by) && (
-                  <button onClick={() => setShowDeleteConfirm(showDetail.id)} className="px-4 py-4 border-2 border-red-200 text-red-600 font-semibold rounded-2xl text-sm hover:bg-red-50 active:scale-[0.98] transition-transform">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                  <button
+                    onClick={() => setShowDeleteConfirm(showDetail.id)}
+                    className="px-4 py-4 bg-red-50 border border-red-200 text-red-600 font-semibold rounded-2xl hover:bg-red-100 active:scale-[0.98] transition-all"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
                   </button>
                 )}
               </div>
@@ -368,23 +424,58 @@ export default function KegiatanPage() {
       )}
 
       {showModal && (
-        <div className="fixed inset-0 z-50" onClick={() => setShowModal(false)}>
+        <div className="fixed inset-0 z-50 flex items-end justify-center" onClick={() => setShowModal(false)}>
           {/* Backdrop */}
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity" />
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" />
 
-          {/* Bottom Sheet */}
-          <div className="absolute bottom-0 left-0 right-0 max-h-[92vh] bg-white rounded-t-[28px] shadow-2xl flex flex-col animate-slideUp" onClick={(e) => e.stopPropagation()}>
-            {/* Handle */}
-            <div className="flex justify-center pt-3 pb-2">
-              <div className="w-10 h-1 bg-gray-300 rounded-full" />
+          {/* Bottom Sheet - Premium Style */}
+          <div
+            className="relative w-full bg-white rounded-t-3xl shadow-2xl animate-slideUp overflow-hidden"
+            style={{ maxWidth: "430px", maxHeight: "92vh" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Premium Header Accent */}
+            <div className="relative">
+              <div
+                className="h-1.5 w-full"
+                style={{
+                  background: activeTab === "kegiatan"
+                    ? "linear-gradient(90deg, #3b82f6, #6366f1)"
+                    : "linear-gradient(90deg, #8b5cf6, #ec4899)"
+                }}
+              />
+              <div className="flex justify-center pt-3 pb-2">
+                <div className="w-10 h-1 bg-gray-300 rounded-full" />
+              </div>
             </div>
 
-            {/* Header - Sticky */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-              <h2 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                {editingId ? "Edit" : "Tambah"} {activeTab === "kegiatan" ? "Kegiatan" : "Audiensi"}
-              </h2>
-              <button onClick={() => setShowModal(false)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 active:bg-gray-200 transition-colors">
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100/80">
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center"
+                  style={{
+                    background: activeTab === "kegiatan"
+                      ? "linear-gradient(135deg, #3b82f6, #6366f1)"
+                      : "linear-gradient(135deg, #8b5cf6, #ec4899)",
+                    boxShadow: "0 4px 12px rgba(37, 99, 235, 0.25)"
+                  }}
+                >
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">
+                    {editingId ? "Edit" : "Tambah"}
+                  </h2>
+                  <p className="text-xs text-gray-500">{activeTab === "kegiatan" ? "Kegiatan" : "Audiensi"}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowModal(false)}
+                className="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-gray-100 active:bg-gray-200 transition-all"
+              >
                 <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -405,24 +496,24 @@ export default function KegiatanPage() {
 
                 {/* Title */}
                 <div className="space-y-2 mb-5">
-                  <label className="text-sm font-semibold text-gray-800">Judul Agenda</label>
+                  <label className="text-sm font-semibold text-gray-700">Judul Agenda <span className="text-red-500">*</span></label>
                   <input type="text" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     placeholder="Masukkan judul agenda"
-                    className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all placeholder:text-gray-500" />
+                    className="w-full px-4 py-3.5 bg-gradient-to-br from-gray-50 to-slate-50 border border-gray-200/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 focus:bg-white transition-all placeholder:text-gray-400" />
                 </div>
 
                 {/* Sub Jenis - Select */}
                 <div className="space-y-2 mb-5">
-                  <label className="text-sm font-semibold text-gray-800">Sub Jenis</label>
+                  <label className="text-sm font-semibold text-gray-700">Sub Jenis</label>
                   <div className="relative">
                     <select value={formData.sub_jenis} onChange={(e) => setFormData({ ...formData, sub_jenis: e.target.value })}
-                      className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all appearance-none cursor-pointer">
+                      className="w-full px-4 py-3.5 bg-gradient-to-br from-gray-50 to-slate-50 border border-gray-200/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 focus:bg-white transition-all appearance-none cursor-pointer">
                       <option value="">Pilih Sub Jenis</option>
                       {subJenisOptions.map((opt) => (
                         <option key={opt.value} value={opt.value}>{opt.label}</option>
                       ))}
                     </select>
-                    <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </div>
@@ -431,10 +522,10 @@ export default function KegiatanPage() {
                 {/* Custom Sub Jenis - Conditional */}
                 {formData.sub_jenis === "lainnya" && (
                   <div className="space-y-2 mb-5 animate-fadeIn">
-                    <label className="text-sm font-semibold text-gray-800">Nama Sub Jenis <span className="text-red-500">*</span></label>
+                    <label className="text-sm font-semibold text-gray-700">Nama Sub Jenis <span className="text-red-500">*</span></label>
                     <input type="text" value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                       placeholder="Masukkan nama sub jenis"
-                      className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all placeholder:text-gray-500" />
+                      className="w-full px-4 py-3.5 bg-gradient-to-br from-gray-50 to-slate-50 border border-gray-200/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 focus:bg-white transition-all placeholder:text-gray-400" />
                   </div>
                 )}
               </section>
@@ -450,11 +541,11 @@ export default function KegiatanPage() {
 
                 {/* Date - Modern Picker */}
                 <div className="space-y-2 mb-5">
-                  <label className="text-sm font-semibold text-gray-800">Tanggal</label>
+                  <label className="text-sm font-semibold text-gray-700">Tanggal <span className="text-red-500">*</span></label>
                   <div className="relative">
                     <input type="date" value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                      className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all" />
-                    <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      className="w-full px-4 py-3.5 bg-gradient-to-br from-gray-50 to-slate-50 border border-gray-200/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 focus:bg-white transition-all" />
+                    <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                   </div>
@@ -463,21 +554,21 @@ export default function KegiatanPage() {
                 {/* Time Range */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold text-gray-800">Jam Mulai</label>
+                    <label className="text-sm font-semibold text-gray-700">Jam Mulai</label>
                     <div className="relative">
                       <input type="time" value={formData.time_start} onChange={(e) => setFormData({ ...formData, time_start: e.target.value })}
-                        className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all" />
-                      <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        className="w-full px-4 py-3.5 bg-gradient-to-br from-gray-50 to-slate-50 border border-gray-200/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 focus:bg-white transition-all" />
+                      <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold text-gray-800">Jam Selesai</label>
+                    <label className="text-sm font-semibold text-gray-700">Jam Selesai</label>
                     <div className="relative">
                       <input type="time" value={formData.time_end} onChange={(e) => setFormData({ ...formData, time_end: e.target.value })}
-                        className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all" />
-                      <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        className="w-full px-4 py-3.5 bg-gradient-to-br from-gray-50 to-slate-50 border border-gray-200/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 focus:bg-white transition-all" />
+                      <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
@@ -496,24 +587,24 @@ export default function KegiatanPage() {
                 </h3>
 
                 <div className="space-y-2 mb-5">
-                  <label className="text-sm font-semibold text-gray-800">Tempat / Lokasi</label>
+                  <label className="text-sm font-semibold text-gray-700">Tempat / Lokasi</label>
                   <input type="text" value={formData.location} onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                     placeholder="Masukkan lokasi kegiatan"
-                    className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all placeholder:text-gray-500" />
+                    className="w-full px-4 py-3.5 bg-gradient-to-br from-gray-50 to-slate-50 border border-gray-200/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 focus:bg-white transition-all placeholder:text-gray-400" />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold text-gray-800">Penanggung Jawab</label>
+                    <label className="text-sm font-semibold text-gray-700">Penanggung Jawab</label>
                     <input type="text" value={formData.pic_name} onChange={(e) => setFormData({ ...formData, pic_name: e.target.value })}
                       placeholder="Nama PIC"
-                      className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all placeholder:text-gray-500" />
+                      className="w-full px-4 py-3.5 bg-gradient-to-br from-gray-50 to-slate-50 border border-gray-200/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 focus:bg-white transition-all placeholder:text-gray-400" />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold text-gray-800">Nomor HP</label>
+                    <label className="text-sm font-semibold text-gray-700">Nomor HP</label>
                     <input type="tel" value={formData.pic_phone} onChange={(e) => setFormData({ ...formData, pic_phone: e.target.value })}
                       placeholder="08xxxxxxxxxx"
-                      className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all placeholder:text-gray-500" />
+                      className="w-full px-4 py-3.5 bg-gradient-to-br from-gray-50 to-slate-50 border border-gray-200/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 focus:bg-white transition-all placeholder:text-gray-400" />
                   </div>
                 </div>
               </section>
@@ -528,22 +619,22 @@ export default function KegiatanPage() {
                 </h3>
 
                 <div className="space-y-2 mb-5">
-                  <label className="text-sm font-semibold text-gray-800">Deskripsi</label>
+                  <label className="text-sm font-semibold text-gray-700">Deskripsi</label>
                   <textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     placeholder="Jelaskan detail agenda..."
                     rows={3}
-                    className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-300/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all resize-none placeholder:text-gray-500" />
+                    className="w-full px-4 py-3.5 bg-gradient-to-br from-gray-50 to-slate-50 border border-gray-200/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 focus:bg-white transition-all resize-none placeholder:text-gray-400" />
                 </div>
 
                 {/* Status Toggle */}
                 <div className="space-y-3">
-                  <label className="text-sm font-semibold text-gray-800">Status</label>
+                  <label className="text-sm font-semibold text-gray-700">Status</label>
                   <div className="flex gap-3">
                     <button type="button" onClick={() => setFormData({ ...formData, status: "draft" })}
                       className={`flex-1 py-3.5 rounded-2xl text-sm font-semibold border-2 transition-all ${
                         formData.status === "draft"
-                          ? "border-yellow-400 bg-yellow-50 text-yellow-800 shadow-sm"
-                          : "border-gray-300 text-gray-600 bg-gray-50/50"
+                          ? "border-amber-400 bg-amber-50 text-amber-800 shadow-sm"
+                          : "border-gray-200 text-gray-600 bg-gray-50/50 hover:bg-gray-100"
                       }`}>
                       <span className="flex items-center justify-center gap-2">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -555,8 +646,8 @@ export default function KegiatanPage() {
                     <button type="button" onClick={() => setFormData({ ...formData, status: "published" })}
                       className={`flex-1 py-3.5 rounded-2xl text-sm font-semibold border-2 transition-all ${
                         formData.status === "published"
-                          ? "border-green-400 bg-green-50 text-green-800 shadow-sm"
-                          : "border-gray-300 text-gray-600 bg-gray-50/50"
+                          ? "border-emerald-400 bg-emerald-50 text-emerald-800 shadow-sm"
+                          : "border-gray-200 text-gray-600 bg-gray-50/50 hover:bg-gray-100"
                       }`}>
                       <span className="flex items-center justify-center gap-2">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -574,7 +665,7 @@ export default function KegiatanPage() {
             </div>
 
             {/* Save Button - Sticky */}
-            <div className="sticky bottom-0 bg-white border-t border-gray-100 px-5 py-4">
+            <div className="sticky bottom-0 bg-white/95 backdrop-blur-md border-t border-gray-100/80 px-5 py-4">
               <button
                 type="submit"
                 disabled={submitting || !formData.title || !formData.date}
@@ -612,21 +703,45 @@ export default function KegiatanPage() {
       )}
 
       {showDeleteConfirm && (
-        <div className="fixed inset-0 z-[60]" onClick={() => setShowDeleteConfirm(null)}>
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
-          <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-[28px] shadow-2xl animate-slideUp" onClick={(e) => e.stopPropagation()}>
-            <div className="flex justify-center pt-3 pb-2">
-              <div className="w-10 h-1 bg-gray-300 rounded-full" />
+        <div className="fixed inset-0 z-[60] flex items-end justify-center" onClick={() => setShowDeleteConfirm(null)}>
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+          <div
+            className="relative w-full bg-white rounded-t-3xl shadow-2xl animate-slideUp overflow-hidden"
+            style={{ maxWidth: "430px" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Premium Header Accent */}
+            <div className="relative">
+              <div className="h-1.5 w-full bg-gradient-to-r from-red-500 to-rose-500" />
+              <div className="flex justify-center pt-3 pb-2">
+                <div className="w-10 h-1 bg-gray-300 rounded-full" />
+              </div>
             </div>
             <div className="px-5 py-6 text-center">
-              <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                <svg className="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+              <div className="w-20 h-20 bg-gradient-to-br from-red-50 to-rose-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <svg className="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">Hapus Agenda?</h3>
               <p className="text-sm text-gray-500 mb-8">Aksi ini tidak bisa dibatalkan dan data akan hilang permanen.</p>
               <div className="flex gap-3">
-                <button onClick={() => setShowDeleteConfirm(null)} className="flex-1 py-4 bg-gray-100 text-gray-700 font-semibold rounded-2xl text-base active:scale-[0.98] transition-transform">Batal</button>
-                <button onClick={() => handleDelete(showDeleteConfirm)} className="flex-1 py-4 bg-red-600 text-white font-semibold rounded-2xl text-base shadow-lg active:scale-[0.98] transition-transform">Hapus</button>
+                <button
+                  onClick={() => setShowDeleteConfirm(null)}
+                  className="flex-1 py-4 bg-gray-100 text-gray-700 font-semibold rounded-2xl text-base active:scale-[0.98] transition-all hover:bg-gray-200"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={() => handleDelete(showDeleteConfirm)}
+                  className="flex-1 py-4 rounded-2xl font-semibold text-base text-white shadow-lg active:scale-[0.98] transition-all"
+                  style={{
+                    background: "linear-gradient(135deg, #ef4444, #dc2626)",
+                    boxShadow: "0 4px 16px rgba(239, 68, 68, 0.35)"
+                  }}
+                >
+                  Hapus
+                </button>
               </div>
             </div>
           </div>
