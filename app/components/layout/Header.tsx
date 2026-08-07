@@ -18,10 +18,19 @@ interface Notification {
 export function Header() {
   const { data: session } = useSession();
   const [showNotifications, setShowNotifications] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const profile = (session?.user as any)?.profile;
   const isSuperadmin = profile?.role === "superadmin";
+
+  const handleCloseNotifications = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setShowNotifications(false);
+      setIsClosing(false);
+    }, 200);
+  };
 
   useEffect(() => {
     if (session?.user) {
@@ -130,10 +139,10 @@ export function Header() {
       {showNotifications && (
         <div
           className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4"
-          onClick={() => setShowNotifications(false)}
+          onClick={handleCloseNotifications}
         >
           <div
-            className="w-full sm:max-w-[390px] bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl animate-slideDown overflow-hidden"
+            className={`w-full sm:max-w-[390px] bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden ${isClosing ? 'closing' : 'animate-slideDown'}`}
             style={{ maxHeight: "75vh" }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -156,7 +165,7 @@ export function Header() {
                 </div>
               </div>
               <button
-                onClick={() => setShowNotifications(false)}
+                onClick={handleCloseNotifications}
                 className="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-gray-100 active:bg-gray-200 transition-all"
               >
                 <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -230,7 +239,7 @@ export function Header() {
               <div className="px-4 py-4 border-t border-gray-100 bg-gray-50/50">
                 <Link
                   href="/akun"
-                  onClick={() => setShowNotifications(false)}
+                  onClick={handleCloseNotifications}
                   className="flex items-center justify-center gap-2 w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl font-semibold hover:shadow-lg transition-all text-sm"
                 >
                   Lihat semua permintaan
@@ -248,11 +257,7 @@ export function Header() {
       )}
 
       <style jsx>{`
-        @keyframes slideUp {
-          from { transform: translateY(100%); }
-          to { transform: translateY(0); }
-        }
-        @keyframes slideDown {
+        @keyframes slideDownIn {
           from {
             opacity: 0;
             transform: translateY(20px) scale(0.95);
@@ -262,13 +267,21 @@ export function Header() {
             transform: translateY(0) scale(1);
           }
         }
-        .animate-slideDown {
-          animation: slideDown 0.3s cubic-bezier(0.32, 0.72, 0, 1);
-        }
-        @media (min-width: 640px) {
-          .animate-slideDown {
-            animation: slideDown 0.25s ease-out;
+        @keyframes slideDownOut {
+          from {
+            opacity: 1;
+            transform: translateY(0) scale(1);
           }
+          to {
+            opacity: 0;
+            transform: translateY(10px) scale(0.98);
+          }
+        }
+        .animate-slideDown {
+          animation: slideDownIn 0.25s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+        }
+        .animate-slideDown.closing {
+          animation: slideDownOut 0.2s cubic-bezier(0.4, 0, 1, 1) forwards;
         }
       `}</style>
     </>
