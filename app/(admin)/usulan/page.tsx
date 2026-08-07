@@ -150,8 +150,9 @@ export default function UsulanPage() {
       />
 
       {/* Filter tabs for admin */}
-        {isAdmin && (
-          <div className="flex gap-2 mt-4">
+      {isAdmin && (
+        <div className="px-5 py-3 bg-white border-b border-gray-100">
+          <div className="flex gap-2">
             {["all", "pending", "approved", "rejected"].map((status) => (
               <button
                 key={status}
@@ -166,8 +167,8 @@ export default function UsulanPage() {
               </button>
             ))}
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* List */}
       <div className="p-4 space-y-3">
