@@ -133,7 +133,7 @@ export function Header() {
           onClick={() => setShowNotifications(false)}
         >
           <div
-            className="w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl animate-slideDown overflow-hidden"
+            className="w-full sm:max-w-[390px] bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl animate-slideDown overflow-hidden"
             style={{ maxHeight: "75vh" }}
             onClick={(e) => e.stopPropagation()}
           >
