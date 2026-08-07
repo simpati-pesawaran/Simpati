@@ -209,7 +209,7 @@ export default function LogPage() {
 
       {/* Log List */}
       <div className="p-4">
-        {loading && logs.length === 0 ? (
+        {loading ? (
           <div className="flex justify-center py-12">
             <div className="animate-spin w-8 h-8 border-3 border-indigo-500 border-t-transparent rounded-full"></div>
           </div>
