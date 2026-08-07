@@ -185,7 +185,7 @@ export default function KalenderPage() {
 
                   const dayAgendas = getAgendasForDate(day);
                   const hasAgenda = dayAgendas.length > 0;
-                  const hasKegiatan = dayAgendas.some((a) => a.jenis === "kegiatan");
+                  const hasKegiatan = dayAgendas.some((a) => a.jenis === "agenda");
                   const hasAudiensi = dayAgendas.some((a) => a.jenis === "audiensi");
 
                   return (
@@ -253,14 +253,14 @@ export default function KalenderPage() {
                 key={agenda.id}
                 onClick={() => setShowDetail(agenda)}
                 className={`w-full text-left bg-white rounded-2xl p-4 shadow-sm border-l-4 transition-all active:scale-[0.98] ${
-                  agenda.jenis === "kegiatan"
+                  agenda.jenis === "agenda"
                     ? "border-blue-500 hover:shadow-md"
                     : "border-purple-500 hover:shadow-md"
                 }`}
               >
                 <div className="flex items-start gap-3">
                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm ${
-                    agenda.jenis === "kegiatan"
+                    agenda.jenis === "agenda"
                       ? "bg-gradient-to-br from-blue-500 to-indigo-600"
                       : "bg-gradient-to-br from-purple-500 to-pink-500"
                   }`}>
@@ -280,11 +280,11 @@ export default function KalenderPage() {
                     </div>
                   </div>
                   <span className={`px-2.5 py-1 rounded-xl text-xs font-bold ${
-                    agenda.jenis === "kegiatan"
+                    agenda.jenis === "agenda"
                       ? "bg-blue-100 text-blue-700"
                       : "bg-purple-100 text-purple-700"
                   }`}>
-                    {agenda.jenis === "kegiatan" ? "Keg" : "Aud"}
+                    {agenda.jenis === "agenda" ? "Keg" : "Aud"}
                   </span>
                 </div>
               </button>
@@ -338,14 +338,14 @@ export default function KalenderPage() {
                     key={agenda.id}
                     onClick={() => { setShowDetail(agenda); setSelectedDate(null); }}
                     className={`w-full text-left bg-gray-50 rounded-2xl p-4 border-l-4 transition-all active:scale-[0.99] ${
-                      agenda.jenis === "kegiatan"
+                      agenda.jenis === "agenda"
                         ? "border-blue-500 hover:bg-blue-50"
                         : "border-purple-500 hover:bg-purple-50"
                     }`}
                   >
                     <div className="flex items-start gap-3">
                       <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
-                        agenda.jenis === "kegiatan"
+                        agenda.jenis === "agenda"
                           ? "bg-blue-100 text-blue-600"
                           : "bg-purple-100 text-purple-600"
                       }`}>
@@ -368,11 +368,11 @@ export default function KalenderPage() {
                         )}
                       </div>
                       <span className={`px-2 py-0.5 rounded-lg text-xs font-bold ${
-                        agenda.jenis === "kegiatan"
+                        agenda.jenis === "agenda"
                           ? "bg-blue-100 text-blue-700"
                           : "bg-purple-100 text-purple-700"
                       }`}>
-                        {agenda.jenis === "kegiatan" ? "Keg" : "Aud"}
+                        {agenda.jenis === "agenda" ? "Keg" : "Aud"}
                       </span>
                     </div>
                   </button>
@@ -400,11 +400,11 @@ export default function KalenderPage() {
             <div className="flex items-start justify-between px-5 py-4 border-b border-gray-100">
               <div className="flex-1">
                 <span className={`inline-block px-3 py-1 rounded-xl text-xs font-bold mb-2 ${
-                  showDetail.jenis === "kegiatan"
+                  showDetail.jenis === "agenda"
                     ? "bg-blue-100 text-blue-700"
                     : "bg-purple-100 text-purple-700"
                 }`}>
-                  {showDetail.jenis === "kegiatan" ? "Kegiatan" : "Audiensi"}
+                  {showDetail.jenis === "agenda" ? "Kegiatan" : "Audiensi"}
                 </span>
                 <h2 className="text-lg font-bold text-gray-900 pr-4">{showDetail.title}</h2>
               </div>
@@ -421,7 +421,7 @@ export default function KalenderPage() {
                 {/* Date & Time */}
                 <div className="flex items-start gap-4 p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl">
                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
-                    showDetail.jenis === "kegiatan"
+                    showDetail.jenis === "agenda"
                       ? "bg-gradient-to-br from-blue-500 to-indigo-600"
                       : "bg-gradient-to-br from-purple-500 to-pink-500"
                   }`}>
