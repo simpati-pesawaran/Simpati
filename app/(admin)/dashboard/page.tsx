@@ -135,16 +135,13 @@ export default function DashboardPage() {
         </div>
       </AppHeader>
 
-      {/* White Content Sheet - Overlaps Hero */}
+      {/* White Content Sheet */}
       <div
-        className="relative z-20"
+        className="bg-white rounded-t-3xl"
         style={{
-          background: "white",
-          borderRadius: "24px 24px 0 0",
-          marginTop: "-80px",
+          marginTop: "16px",
           padding: "24px",
           paddingBottom: "calc(100px + env(safe-area-inset-bottom, 0px))",
-          boxShadow: "0 -10px 40px rgba(0,0,0,0.08)",
         }}
       >
         {/* Menu Grid - BIGGER */}
