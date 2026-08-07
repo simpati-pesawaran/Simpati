@@ -330,136 +330,245 @@ export default function KegiatanPage() {
       )}
 
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={() => setShowModal(false)} style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}>
-          <div className="bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-hidden shadow-2xl animate-scaleIn mx-4" onClick={(e) => e.stopPropagation()}>
-            <div className="bg-white px-5 py-4 border-b border-gray-100">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold text-gray-900">{editingId ? "Edit" : "Tambah"} {activeTab === "kegiatan" ? "Kegiatan" : "Audiensi"}</h2>
-                <button onClick={() => setShowModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
-                  <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
+        <div className="fixed inset-0 z-50" onClick={() => setShowModal(false)}>
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity" />
+
+          {/* Bottom Sheet */}
+          <div className="absolute bottom-0 left-0 right-0 max-h-[92vh] bg-white rounded-t-[28px] shadow-2xl flex flex-col animate-slideUp" onClick={(e) => e.stopPropagation()}>
+            {/* Handle */}
+            <div className="flex justify-center pt-3 pb-2">
+              <div className="w-10 h-1 bg-gray-300 rounded-full" />
             </div>
-            <form onSubmit={handleSubmit} className="px-5 pb-8 space-y-4">
-              <div className="pt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Sub Jenis *</label>
-                <div className="grid grid-cols-3 gap-2">
-                  {subJenisOptions.map((opt) => (
-                    <button type="button" key={opt.value}
-                      onClick={() => setFormData({ ...formData, sub_jenis: opt.value })}
-                      className={`py-2 px-3 rounded-lg text-sm font-medium border-2 transition ${formData.sub_jenis === opt.value ? (activeTab === "kegiatan" ? "border-blue-500 bg-blue-50 text-blue-700" : "border-purple-500 bg-purple-50 text-purple-700") : "border-gray-200 text-gray-600 hover:border-gray-300"}`}>
-                      {opt.label}
+
+            {/* Header - Sticky */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+              <h2 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                {editingId ? "Edit" : "Tambah"} {activeTab === "kegiatan" ? "Kegiatan" : "Audiensi"}
+              </h2>
+              <button onClick={() => setShowModal(false)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 active:bg-gray-200 transition-colors">
+                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Form Content - Scrollable */}
+            <div className="flex-1 overflow-y-auto px-5 py-6 space-y-8">
+
+              {/* Section: INFORMASI */}
+              <section>
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Informasi
+                </h3>
+
+                {/* Title */}
+                <div className="space-y-2 mb-5">
+                  <label className="text-sm font-medium text-gray-700">Judul Agenda</label>
+                  <input type="text" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    placeholder="Masukkan judul agenda"
+                    className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all placeholder:text-gray-400" />
+                </div>
+
+                {/* Sub Jenis - Select */}
+                <div className="space-y-2 mb-5">
+                  <label className="text-sm font-medium text-gray-700">Sub Jenis</label>
+                  <div className="relative">
+                    <select value={formData.sub_jenis} onChange={(e) => setFormData({ ...formData, sub_jenis: e.target.value })}
+                      className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all appearance-none cursor-pointer">
+                      <option value="">Pilih Sub Jenis</option>
+                      {subJenisOptions.map((opt) => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                    <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Custom Sub Jenis - Conditional */}
+                {formData.sub_jenis === "lainnya" && (
+                  <div className="space-y-2 mb-5 animate-fadeIn">
+                    <label className="text-sm font-medium text-gray-700">Nama Sub Jenis <span className="text-red-500">*</span></label>
+                    <input type="text" value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                      placeholder="Masukkan nama sub jenis"
+                      className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all placeholder:text-gray-400" />
+                  </div>
+                )}
+              </section>
+
+              {/* Section: WAKTU */}
+              <section>
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Waktu & Tanggal
+                </h3>
+
+                {/* Date - Modern Picker */}
+                <div className="space-y-2 mb-5">
+                  <label className="text-sm font-medium text-gray-700">Tanggal</label>
+                  <div className="relative">
+                    <input type="date" value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                      className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all" />
+                    <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Time Range */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">Jam Mulai</label>
+                    <div className="relative">
+                      <input type="time" value={formData.time_start} onChange={(e) => setFormData({ ...formData, time_start: e.target.value })}
+                        className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all" />
+                      <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">Jam Selesai</label>
+                    <div className="relative">
+                      <input type="time" value={formData.time_end} onChange={(e) => setFormData({ ...formData, time_end: e.target.value })}
+                        className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all" />
+                      <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              {/* Section: LOKASI */}
+              <section>
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  Lokasi & Kontak
+                </h3>
+
+                <div className="space-y-2 mb-5">
+                  <label className="text-sm font-medium text-gray-700">Tempat / Lokasi</label>
+                  <input type="text" value={formData.location} onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                    placeholder="Masukkan lokasi kegiatan"
+                    className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all placeholder:text-gray-400" />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">Penanggung Jawab</label>
+                    <input type="text" value={formData.pic_name} onChange={(e) => setFormData({ ...formData, pic_name: e.target.value })}
+                      placeholder="Nama PIC"
+                      className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all placeholder:text-gray-400" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700">Nomor HP</label>
+                    <input type="tel" value={formData.pic_phone} onChange={(e) => setFormData({ ...formData, pic_phone: e.target.value })}
+                      placeholder="08xxxxxxxxxx"
+                      className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all placeholder:text-gray-400" />
+                  </div>
+                </div>
+              </section>
+
+              {/* Section: KETERANGAN */}
+              <section>
+                <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  Keterangan
+                </h3>
+
+                <div className="space-y-2 mb-5">
+                  <label className="text-sm font-medium text-gray-700">Deskripsi</label>
+                  <textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    placeholder="Jelaskan detail agenda..."
+                    rows={3}
+                    className="w-full px-4 py-3.5 bg-gray-50/80 border border-gray-200/60 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all resize-none placeholder:text-gray-400" />
+                </div>
+
+                {/* Status Toggle */}
+                <div className="space-y-3">
+                  <label className="text-sm font-medium text-gray-700">Status</label>
+                  <div className="flex gap-3">
+                    <button type="button" onClick={() => setFormData({ ...formData, status: "draft" })}
+                      className={`flex-1 py-3.5 rounded-2xl text-sm font-semibold border-2 transition-all ${
+                        formData.status === "draft"
+                          ? "border-yellow-400 bg-yellow-50 text-yellow-700 shadow-sm"
+                          : "border-gray-200 text-gray-500 bg-gray-50/50"
+                      }`}>
+                      <span className="flex items-center justify-center gap-2">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                        Draft
+                      </span>
                     </button>
-                  ))}
+                    <button type="button" onClick={() => setFormData({ ...formData, status: "published" })}
+                      className={`flex-1 py-3.5 rounded-2xl text-sm font-semibold border-2 transition-all ${
+                        formData.status === "published"
+                          ? "border-green-400 bg-green-50 text-green-700 shadow-sm"
+                          : "border-gray-200 text-gray-500 bg-gray-50/50"
+                      }`}>
+                      <span className="flex items-center justify-center gap-2">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Publish
+                      </span>
+                    </button>
+                  </div>
                 </div>
-              </div>
+              </section>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Judul Agenda *</label>
-                <input type="text" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="Masukkan judul agenda" required
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-              </div>
+              {/* Bottom spacing for sticky button */}
+              <div className="h-8" />
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Tanggal *</label>
-                <input type="date" value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })} required
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Waktu Mulai</label>
-                  <input type="time" value={formData.time_start} onChange={(e) => setFormData({ ...formData, time_start: e.target.value })}
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Waktu Selesai</label>
-                  <input type="time" value={formData.time_end} onChange={(e) => setFormData({ ...formData, time_end: e.target.value })}
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Lokasi</label>
-                <input type="text" value={formData.location} onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  placeholder="Masukkan lokasi"
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Penanggung Jawab</label>
-                  <input type="text" value={formData.pic_name} onChange={(e) => setFormData({ ...formData, pic_name: e.target.value })}
-                    placeholder="Nama PIC"
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">No. Telepon PIC</label>
-                  <input type="tel" value={formData.pic_phone} onChange={(e) => setFormData({ ...formData, pic_phone: e.target.value })}
-                    placeholder="08xxxxxxxxxx"
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Jumlah Peserta</label>
-                  <input type="number" value={formData.participants_count} onChange={(e) => setFormData({ ...formData, participants_count: e.target.value })}
-                    placeholder="0"
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">Dresscode</label>
-                  <input type="text" value={formData.dresscode} onChange={(e) => setFormData({ ...formData, dresscode: e.target.value })}
-                    placeholder="cth: Batik"
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Deskripsi</label>
-                <textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Masukkan deskripsi agenda"
-                  rows={3}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none" />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Catatan</label>
-                <textarea value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  placeholder="Catatan tambahan"
-                  rows={2}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none" />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Status</label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button type="button" onClick={() => setFormData({ ...formData, status: "draft" })}
-                    className={`py-3 px-4 rounded-xl text-sm font-medium border-2 transition ${formData.status === "draft" ? "border-yellow-500 bg-yellow-50 text-yellow-700" : "border-gray-200 text-gray-600"}`}>
-                    Draft
-                  </button>
-                  <button type="button" onClick={() => setFormData({ ...formData, status: "published" })}
-                    className={`py-3 px-4 rounded-xl text-sm font-medium border-2 transition ${formData.status === "published" ? "border-green-500 bg-green-50 text-green-700" : "border-gray-200 text-gray-600"}`}>
-                    Published
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex gap-3 pt-4 pb-4">
-                <button type="button" onClick={() => setShowModal(false)}
-                  className="flex-1 py-3 bg-gray-100 text-gray-700 font-semibold rounded-xl text-sm">
-                  Batal
-                </button>
-                <button type="submit" disabled={submitting}
-                  className="flex-1 py-3 bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-semibold rounded-xl text-sm disabled:opacity-50">
-                  {submitting ? "Menyimpan..." : "Simpan"}
-                </button>
-              </div>
-            </form>
+            {/* Save Button - Sticky */}
+            <div className="sticky bottom-0 bg-white border-t border-gray-100 px-5 py-4">
+              <button
+                type="submit"
+                disabled={submitting || !formData.title || !formData.date}
+                onClick={handleSubmit}
+                className="w-full py-4 rounded-2xl font-semibold text-base text-white shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+                style={{
+                  background: submitting || !formData.title || !formData.date
+                    ? '#94a3b8'
+                    : 'linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #7c3aed 100%)',
+                  boxShadow: submitting || !formData.title || !formData.date
+                    ? 'none'
+                    : '0 4px 20px rgba(37, 99, 235, 0.35)'
+                }}
+              >
+                {submitting ? (
+                  <span className="flex items-center justify-center gap-3">
+                    <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    Menyimpan...
+                  </span>
+                ) : (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Simpan Agenda
+                  </span>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -482,8 +591,20 @@ export default function KegiatanPage() {
       )}
 
       <style jsx>{`
-        @keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .animate-scaleIn { animation: scaleIn 0.2s ease-out; }
+        @keyframes slideUp {
+          from { transform: translateY(100%); }
+          to { transform: translateY(0); }
+        }
+        .animate-slideUp {
+          animation: slideUp 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(-8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.2s ease-out;
+        }
       `}</style>
     </div>
   );
