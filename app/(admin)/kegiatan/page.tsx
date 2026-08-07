@@ -425,7 +425,7 @@ export default function KegiatanPage() {
       {showModal && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={() => setShowModal(false)}>
           <div
-            className="w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl animate-slideUp overflow-hidden"
+            className="w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl animate-slideUp flex flex-col overflow-hidden"
             style={{ maxHeight: "92vh" }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -478,7 +478,7 @@ export default function KegiatanPage() {
             </div>
 
             {/* Form Content - Scrollable */}
-            <div className="flex-1 overflow-y-auto px-5 py-6 space-y-8">
+            <div className="flex-1 overflow-y-auto px-5 py-6 space-y-6 overscroll-contain" style={{ WebkitOverflowScrolling: "touch" }}>
 
               {/* Section: INFORMASI */}
               <section>
@@ -660,7 +660,7 @@ export default function KegiatanPage() {
             </div>
 
             {/* Save Button - Sticky */}
-            <div className="sticky bottom-0 bg-white/95 backdrop-blur-md border-t border-gray-100/80 px-5 py-4">
+            <div className="sticky bottom-0 bg-white/95 backdrop-blur-md border-t border-gray-100/80 px-5 py-4" style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}>
               <button
                 type="submit"
                 disabled={submitting || !formData.title || !formData.date}
@@ -770,6 +770,20 @@ export default function KegiatanPage() {
         }
         .animate-fadeIn {
           animation: fadeIn 0.2s ease-out;
+        }
+        /* Custom Scrollbar */
+        .overscroll-contain::-webkit-scrollbar {
+          width: 4px;
+        }
+        .overscroll-contain::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .overscroll-contain::-webkit-scrollbar-thumb {
+          background: rgba(0,0,0,0.15);
+          border-radius: 4px;
+        }
+        .overscroll-contain::-webkit-scrollbar-thumb:hover {
+          background: rgba(0,0,0,0.25);
         }
       `}</style>
     </div>
