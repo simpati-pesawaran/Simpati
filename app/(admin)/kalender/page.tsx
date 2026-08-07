@@ -304,72 +304,58 @@ export default function KalenderPage() {
         </div>
       </div>
 
-      {/* Selected Date Modal */}
+      {/* Selected Date Modal - PWA Style */}
       {selectedDate && selectedAgendas.length > 0 && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setSelectedDate(null)}>
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setSelectedDate(null)}>
           <div
-            className="w-full sm:max-w-[390px] bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden animate-slideUp"
-            style={{ maxHeight: "80vh" }}
+            className="w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden animate-scaleIn"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Handle */}
-            <div className="flex justify-center pt-3 pb-2">
-              <div className="w-10 h-1 bg-gray-300 rounded-full"></div>
-            </div>
-
             {/* Header */}
-            <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
+            <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-slate-50 to-white border-b border-gray-100">
               <div>
-                <h2 className="text-lg font-bold text-gray-900">
-                  {new Date(selectedDate).toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long" })}
+                <h2 className="text-sm font-bold text-gray-900">
+                  {new Date(selectedDate).toLocaleDateString("id-ID", { weekday: "short", day: "numeric", month: "short" })}
                 </h2>
                 <p className="text-xs text-gray-500">{selectedAgendas.length} agenda</p>
               </div>
-              <button onClick={() => setSelectedDate(null)} className="w-10 h-10 rounded-2xl flex items-center justify-center hover:bg-gray-100 active:scale-95 transition-all">
-                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <button onClick={() => setSelectedDate(null)} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-gray-100 active:scale-95 transition-all">
+                <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
 
             {/* Content */}
-            <div className="overflow-y-auto overscroll-contain px-4 py-4">
-              <div className="space-y-3">
+            <div className="max-h-[60vh] overflow-y-auto overscroll-contain px-3 py-2">
+              <div className="space-y-2">
                 {selectedAgendas.map((agenda) => (
                   <button
                     key={agenda.id}
                     onClick={() => { setShowDetail(agenda); setSelectedDate(null); }}
-                    className={`w-full text-left bg-gray-50 rounded-2xl p-4 border-l-4 transition-all active:scale-[0.99] ${
+                    className={`w-full text-left bg-gray-50 rounded-xl p-3 border-l-3 transition-all active:scale-[0.99] ${
                       agenda.jenis === "agenda"
                         ? "border-blue-500 hover:bg-blue-50"
                         : "border-purple-500 hover:bg-purple-50"
                     }`}
                   >
-                    <div className="flex items-start gap-3">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                    <div className="flex items-start gap-2">
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
                         agenda.jenis === "agenda"
                           ? "bg-blue-100 text-blue-600"
                           : "bg-purple-100 text-purple-600"
                       }`}>
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-gray-900 text-sm">{agenda.title}</p>
-                        <p className="text-xs text-gray-500 mt-0.5">
+                        <p className="text-xs font-semibold text-gray-900 line-clamp-2">{agenda.title}</p>
+                        <p className="text-[10px] text-gray-500 mt-0.5">
                           {formatTime(agenda.time_start)} - {formatTime(agenda.time_end)}
                         </p>
-                        {agenda.location && (
-                          <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            </svg>
-                            {agenda.location}
-                          </p>
-                        )}
                       </div>
-                      <span className={`px-2 py-0.5 rounded-lg text-xs font-bold flex-shrink-0 ${
+                      <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold flex-shrink-0 ${
                         agenda.jenis === "agenda"
                           ? "bg-blue-100 text-blue-700"
                           : "bg-purple-100 text-purple-700"
@@ -385,40 +371,33 @@ export default function KalenderPage() {
         </div>
       )}
 
-      {/* Detail Modal - Super Compact */}
+      {/* Detail Modal - PWA Style Bottom Sheet */}
       {showDetail && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end justify-center" onClick={() => setShowDetail(null)}>
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowDetail(null)}>
           <div
-            className="w-full max-w-md bg-white rounded-t-3xl shadow-2xl animate-slideUp"
+            className="w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden animate-scaleIn"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Handle */}
-            <div className="flex justify-center pt-3 pb-2">
-              <div className="w-10 h-1 bg-gray-300 rounded-full"></div>
-            </div>
-
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-gray-100">
-              <div className="flex items-center gap-2.5">
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+            <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-slate-50 to-white border-b border-gray-100">
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
+                showDetail.jenis === "agenda"
+                  ? "bg-blue-100 text-blue-600"
+                  : "bg-purple-100 text-purple-600"
+              }`}>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div className="flex-1 min-w-0">
+                <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
                   showDetail.jenis === "agenda"
-                    ? "bg-blue-100 text-blue-600"
-                    : "bg-purple-100 text-purple-600"
+                    ? "bg-blue-100 text-blue-700"
+                    : "bg-purple-100 text-purple-700"
                 }`}>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <div>
-                  <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
-                    showDetail.jenis === "agenda"
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-purple-100 text-purple-700"
-                  }`}>
-                    {showDetail.jenis === "agenda" ? "Kegiatan" : "Audiensi"}
-                  </span>
-                  <p className="text-sm font-semibold text-gray-900 mt-0.5">{showDetail.title}</p>
-                </div>
+                  {showDetail.jenis === "agenda" ? "Kegiatan" : "Audiensi"}
+                </span>
+                <p className="text-sm font-semibold text-gray-900 truncate">{showDetail.title}</p>
               </div>
               <button onClick={() => setShowDetail(null)} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-gray-100 active:scale-95 transition-all">
                 <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -427,31 +406,31 @@ export default function KalenderPage() {
               </button>
             </div>
 
-            {/* Content - Scrollable */}
-            <div className="max-h-[55vh] overflow-y-auto overscroll-contain pb-4">
-              <div className="px-4 py-3 space-y-2">
-                {/* Date & Time */}
-                <div className="flex items-center gap-2.5 px-3 py-2.5 bg-gray-50 rounded-xl">
-                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <div>
-                    <p className="text-xs text-gray-500">{formatDate(showDetail.date)}</p>
-                    <p className="text-sm font-medium text-gray-900">{formatTime(showDetail.time_start)} - {formatTime(showDetail.time_end)}</p>
-                  </div>
-                </div>
-
-                {/* Location */}
-                {showDetail.location && (
-                  <div className="flex items-center gap-2.5 px-3 py-2.5 bg-gray-50 rounded-xl">
-                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    </svg>
-                    <p className="text-sm font-medium text-gray-900">{showDetail.location}</p>
-                  </div>
-                )}
+            {/* Content */}
+            <div className="px-4 py-3 space-y-2 text-xs">
+              {/* Date & Time */}
+              <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-xl">
+                <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="text-gray-500">{formatDate(showDetail.date)}</span>
+                <span className="text-gray-300">|</span>
+                <span className="text-gray-900 font-medium">{formatTime(showDetail.time_start)} - {formatTime(showDetail.time_end)}</span>
               </div>
+
+              {/* Location */}
+              {showDetail.location && (
+                <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-xl">
+                  <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  </svg>
+                  <span className="text-gray-900 font-medium truncate">{showDetail.location}</span>
+                </div>
+              )}
             </div>
+
+            {/* Bottom padding for safe area */}
+            <div className="h-4" />
           </div>
         </div>
       )}
