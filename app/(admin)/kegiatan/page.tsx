@@ -1,7 +1,8 @@
 ﻿"use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 interface Agenda {
@@ -75,8 +76,9 @@ const initialFormData: FormData = {
   status: "draft",
 };
 
-export default function KegiatanPage() {
+function KegiatanContent() {
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<"kegiatan" | "audiensi">("kegiatan");
   const [agendas, setAgendas] = useState<Agenda[]>([]);
   const [loading, setLoading] = useState(true);
@@ -92,6 +94,13 @@ export default function KegiatanPage() {
   const isSuperadmin = profile?.role === "superadmin";
 
   const subJenisOptions = activeTab === "kegiatan" ? SUB_JENIS_KEGIATAN : SUB_JENIS_AUDIENSI;
+
+  // Open modal when ?action=new
+  useEffect(() => {
+    if (searchParams?.get("action") === "new") {
+      handleOpenModal();
+    }
+  }, [searchParams]);
 
   useEffect(() => { fetchAgendas(); }, [activeTab]);
 
@@ -809,5 +818,17 @@ export default function KegiatanPage() {
         }
       `}</style>
     </div>
+  );
+}
+
+export default function KegiatanPage() {
+  return (
+    <Suspense fallback={
+      <div className="p-4 flex items-center justify-center min-h-[50vh]">
+        <div className="w-12 h-12 border-[3px] border-indigo-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <KegiatanContent />
+    </Suspense>
   );
 }

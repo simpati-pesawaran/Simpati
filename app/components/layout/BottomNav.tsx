@@ -67,8 +67,8 @@ export function BottomNav() {
           </div>
 
           {/* Akun */}
-          <button
-            type="button"
+          <Link
+            href="/akun"
             className={`flex flex-col items-center justify-center w-20 h-full transition-all duration-200 ${
               isActive("/akun") ? "text-indigo-600" : "text-gray-400 hover:text-gray-600"
             }`}
@@ -77,7 +77,7 @@ export function BottomNav() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={isActive("/akun") ? 2.5 : 2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
             <span className="text-[10px] font-medium">Akun</span>
-          </button>
+          </Link>
         </div>
       </div>
     </nav>
