@@ -206,7 +206,6 @@ export default function LogPage() {
           </button>
         </div>
       </div>
-
       {/* Log List */}
       <div className="p-4">
         {loading ? (
