@@ -29,15 +29,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.png" />
       </head>
       <body>
-        <div style={{
-          maxWidth: '430px',
-          margin: '0 auto',
-          minHeight: '100vh',
-          backgroundColor: '#f1f5f9',
-          boxShadow: '0 0 20px rgba(0,0,0,0.1)',
-        }}>
-          <Providers>{children}</Providers>
-        </div>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

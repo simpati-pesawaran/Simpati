@@ -267,11 +267,9 @@ export default function KegiatanPage() {
       </button>
 
       {showDetail && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center" onClick={() => setShowDetail(null)}>
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
-          <div className="relative w-full bg-white rounded-t-3xl max-h-[85vh] overflow-y-auto animate-slideUp" onClick={(e) => e.stopPropagation()}>
-            <div className="sticky top-0 bg-white px-5 pt-5 pb-3 border-b border-gray-100">
-              <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-4" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={() => setShowDetail(null)} style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}>
+          <div className="bg-white rounded-2xl w-full max-w-md max-h-[85vh] overflow-hidden shadow-2xl animate-scaleIn mx-4" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white px-5 py-4 border-b border-gray-100">
               <div className="flex items-start justify-between">
                 <div>
                   <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-semibold mb-2 ${showDetail.jenis === "kegiatan" ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700"}`}>
@@ -332,11 +330,9 @@ export default function KegiatanPage() {
       )}
 
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center" onClick={() => setShowModal(false)}>
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
-          <div className="relative w-full bg-white rounded-t-3xl max-h-[90vh] overflow-y-auto animate-slideUp" onClick={(e) => e.stopPropagation()}>
-            <div className="sticky top-0 bg-white px-5 pt-5 pb-3 border-b border-gray-100 z-10">
-              <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-4" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={() => setShowModal(false)} style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}>
+          <div className="bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-hidden shadow-2xl animate-scaleIn mx-4" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white px-5 py-4 border-b border-gray-100">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-bold text-gray-900">{editingId ? "Edit" : "Tambah"} {activeTab === "kegiatan" ? "Kegiatan" : "Audiensi"}</h2>
                 <button onClick={() => setShowModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
@@ -485,7 +481,10 @@ export default function KegiatanPage() {
         </div>
       )}
 
-      <style jsx>{`@keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } } .animate-slideUp { animation: slideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1); }`}</style>
+      <style jsx>{`
+        @keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .animate-scaleIn { animation: scaleIn 0.2s ease-out; }
+      `}</style>
     </div>
   );
 }
