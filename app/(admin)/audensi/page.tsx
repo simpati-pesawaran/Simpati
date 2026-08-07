@@ -1,25 +1,42 @@
 "use client";
 
-import AppHeader from "@/components/AppHeader";
+import Link from "next/link";
 
 export default function AudensiPage() {
   return (
     <div className="min-h-screen" style={{ background: "#f1f5f9" }}>
-      <AppHeader
-        variant="default"
-        title="Audiensi"
-        icon={
-          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-          </svg>
-        }
-        notificationCount={0}
-      />
+      {/* Header Section - Gradient Theme */}
+      <div
+        className="px-5 pb-5"
+        style={{
+          background: "linear-gradient(135deg, #1e3a5f 0%, #2563eb 55%, #7c3aed 100%)",
+        }}
+      >
+        {/* Back Button + Title */}
+        <div className="flex items-center gap-4 pt-2">
+          <Link
+            href="/dashboard"
+            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-95"
+            style={{
+              background: "rgba(255,255,255,0.2)",
+              backdropFilter: "blur(10px)",
+            }}
+          >
+            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </Link>
+          <div>
+            <h1 className="text-white text-xl font-bold">Audiensi</h1>
+            <p className="text-white/60 text-xs">Kelola audiensi</p>
+          </div>
+        </div>
+      </div>
 
-      {/* Content */}
-      <div className="p-5">
-        <div className="text-center py-12">
-          <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+      {/* Content Section - White Container */}
+      <div className="-mt-3 px-4 py-4">
+        <div className="bg-white rounded-2xl shadow-sm p-8 text-center">
+          <div className="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <span className="text-4xl">👥</span>
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Halaman Audiensi</h3>
