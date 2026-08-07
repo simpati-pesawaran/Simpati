@@ -142,103 +142,112 @@ export default function AppHeader({
         {/* Notification Bottom Sheet */}
         {showNotifications && (
           <div className="fixed inset-0 z-50" onClick={() => setShowNotifications(false)}>
-            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
-            <div
-              className="absolute bottom-0 left-0 right-0 bg-white rounded-t-[28px] shadow-2xl flex flex-col animate-slideUp"
-              style={{ maxHeight: "75vh", maxWidth: "430px", margin: "0 auto" }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Handle */}
-              <div className="flex justify-center pt-3 pb-2">
-                <div className="w-10 h-1 bg-gray-300 rounded-full" />
-              </div>
+            <div className="flex items-center justify-center">
+              <div
+                className="w-full sm:max-w-[390px] bg-white rounded-3xl shadow-2xl animate-slideDown overflow-hidden"
+                style={{ maxHeight: "75vh" }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Handle */}
+                <div className="flex justify-center pt-4 pb-3">
+                  <div className="w-10 h-1 bg-gray-300 rounded-full" />
+                </div>
 
-              {/* Header */}
-              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-                <h2 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  Notifikasi
-                </h2>
-                <button
-                  onClick={() => setShowNotifications(false)}
-                  className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 active:bg-gray-200 transition-colors"
-                >
-                  <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-
-              {/* Content - Real notifications */}
-              <div className="flex-1 overflow-y-auto px-5 py-4">
-                {notifications.length === 0 ? (
-                  <div className="text-center py-12">
-                    <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                {/* Header */}
+                <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
+                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                       </svg>
                     </div>
-                    <p className="text-gray-500 font-medium">Tidak ada notifikasi</p>
+                    <div>
+                      <h2 className="text-lg font-bold text-gray-900">Notifikasi</h2>
+                      <p className="text-xs text-gray-500">{notifications.length} notifikasi</p>
+                    </div>
                   </div>
-                ) : (
-                  <div className="space-y-3">
-                    {notifications.map((notif) => (
-                      <div
-                        key={notif.id}
-                        className={`flex items-start gap-3 p-4 rounded-2xl transition-all ${
-                          !notif.is_read
-                            ? "bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100"
-                            : "bg-gray-50"
-                        }`}
-                      >
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                          notif.type === "approval"
-                            ? "bg-emerald-100 text-emerald-600"
-                            : notif.type === "info"
-                            ? "bg-blue-100 text-blue-600"
-                            : "bg-gray-100 text-gray-600"
-                        }`}>
-                          {notif.type === "approval" ? (
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                          ) : (
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-gray-900">
-                            {notif.title}
-                          </p>
-                          {notif.message && (
-                            <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">
-                              {notif.message}
-                            </p>
-                          )}
-                          <p className="text-xs text-gray-400 mt-1">
-                            {formatTimeAgo(notif.created_at)}
-                          </p>
-                        </div>
-                        {!notif.is_read && (
-                          <div className="w-2 h-2 bg-indigo-500 rounded-full flex-shrink-0 mt-2" />
-                        )}
+                  <button
+                    onClick={() => setShowNotifications(false)}
+                    className="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-gray-100 active:bg-gray-200 transition-all"
+                  >
+                    <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+
+                {/* Content */}
+                <div className="flex-1 overflow-y-auto px-4 py-4">
+                  {notifications.length === 0 ? (
+                    <div className="text-center py-12">
+                      <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                        </svg>
                       </div>
-                    ))}
-                  </div>
-                )}
+                      <p className="text-gray-500 font-medium">Tidak ada notifikasi</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {notifications.map((notif) => (
+                        <div
+                          key={notif.id}
+                          className={`flex items-start gap-3 p-4 rounded-2xl transition-all ${
+                            !notif.is_read
+                              ? "bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100"
+                              : "bg-gray-50"
+                          }`}
+                        >
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                            notif.type === "approval"
+                              ? "bg-emerald-100 text-emerald-600"
+                              : notif.type === "info"
+                              ? "bg-blue-100 text-blue-600"
+                              : "bg-gray-100 text-gray-600"
+                          }`}>
+                            {notif.type === "approval" ? (
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                            ) : (
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-gray-900">{notif.title}</p>
+                            {notif.message && (
+                              <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{notif.message}</p>
+                            )}
+                            <p className="text-xs text-gray-400 mt-1">{formatTimeAgo(notif.created_at)}</p>
+                          </div>
+                          {!notif.is_read && (
+                            <div className="w-2 h-2 bg-indigo-500 rounded-full flex-shrink-0 mt-2" />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
         )}
 
         <style jsx>{`
-          @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
+          @keyframes slideDown {
+            from {
+              opacity: 0;
+              transform: translateY(20px) scale(0.95);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0) scale(1);
+            }
           }
-          .animate-slideUp {
-            animation: slideUp 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+          .animate-slideDown {
+            animation: slideDown 0.25s cubic-bezier(0.32, 0.72, 0, 1) forwards;
           }
         `}</style>
       </>
@@ -316,79 +325,94 @@ export default function AppHeader({
         )}
       </div>
 
-      {/* Notification Bottom Sheet */}
+      {/* Notification Modal - Centered */}
       {showNotifications && (
-        <div className="fixed inset-0 z-50" onClick={() => setShowNotifications(false)}>
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowNotifications(false)}>
           <div
-            className="absolute bottom-0 left-0 right-0 bg-white rounded-t-[28px] shadow-2xl flex flex-col animate-slideUp"
-            style={{ maxHeight: "75vh", maxWidth: "430px", margin: "0 auto" }}
+            className="w-full sm:max-w-[390px] bg-white rounded-3xl shadow-2xl animate-slideDown overflow-hidden"
+            style={{ maxHeight: "75vh" }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Handle */}
-            <div className="flex justify-center pt-3 pb-2">
+            <div className="flex justify-center pt-4 pb-3">
               <div className="w-10 h-1 bg-gray-300 rounded-full" />
             </div>
 
             {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-              <h2 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                Notifikasi
-              </h2>
+            <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                  </svg>
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">Notifikasi</h2>
+                  <p className="text-xs text-gray-500">{notifications.length} notifikasi</p>
+                </div>
+              </div>
               <button
                 onClick={() => setShowNotifications(false)}
-                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 active:bg-gray-200 transition-colors"
+                className="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-gray-100 active:bg-gray-200 transition-all"
               >
-                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-6">
-              {/* Today */}
-              {todayNotifications.length > 0 && (
-                <section>
-                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Hari ini</h3>
-                  <div className="space-y-3">
-                    {todayNotifications.map((notif) => (
-                      <button
-                        key={notif.id}
-                        onClick={() => setShowNotifications(false)}
-                        className="w-full flex items-start gap-3 p-3 bg-gray-50/80 rounded-2xl hover:bg-gray-100 transition-colors"
-                      >
-                        {getNotificationIcon(notif.type)}
-                        <div className="flex-1 text-left">
-                          <p className="text-sm font-medium text-gray-900">{notif.title}</p>
-                          <p className="text-xs text-gray-500 mt-0.5">{notif.time}</p>
-                        </div>
-                      </button>
-                    ))}
+            <div className="flex-1 overflow-y-auto px-4 py-4">
+              {notifications.length === 0 ? (
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                    </svg>
                   </div>
-                </section>
-              )}
-
-              {/* Yesterday */}
-              {yesterdayNotifications.length > 0 && (
-                <section>
-                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Kemarin</h3>
-                  <div className="space-y-3">
-                    {yesterdayNotifications.map((notif) => (
-                      <button
-                        key={notif.id}
-                        onClick={() => setShowNotifications(false)}
-                        className="w-full flex items-start gap-3 p-3 bg-gray-50/80 rounded-2xl hover:bg-gray-100 transition-colors"
-                      >
-                        {getNotificationIcon(notif.type)}
-                        <div className="flex-1 text-left">
-                          <p className="text-sm font-medium text-gray-900">{notif.title}</p>
-                          <p className="text-xs text-gray-500 mt-0.5">{notif.time}</p>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </section>
+                  <p className="text-gray-500 font-medium">Tidak ada notifikasi</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {notifications.map((notif) => (
+                    <div
+                      key={notif.id}
+                      className={`flex items-start gap-3 p-4 rounded-2xl transition-all ${
+                        !notif.is_read
+                          ? "bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100"
+                          : "bg-gray-50"
+                      }`}
+                    >
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                        notif.type === "approval"
+                          ? "bg-emerald-100 text-emerald-600"
+                          : notif.type === "info"
+                          ? "bg-blue-100 text-blue-600"
+                          : "bg-gray-100 text-gray-600"
+                      }`}>
+                        {notif.type === "approval" ? (
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        ) : (
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-gray-900">{notif.title}</p>
+                        {notif.message && (
+                          <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{notif.message}</p>
+                        )}
+                        <p className="text-xs text-gray-400 mt-1">{formatTimeAgo(notif.created_at)}</p>
+                      </div>
+                      {!notif.is_read && (
+                        <div className="w-2 h-2 bg-indigo-500 rounded-full flex-shrink-0 mt-2" />
+                      )}
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           </div>
@@ -396,12 +420,18 @@ export default function AppHeader({
       )}
 
       <style jsx>{`
-        @keyframes slideUp {
-          from { transform: translateY(100%); }
-          to { transform: translateY(0); }
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
         }
-        .animate-slideUp {
-          animation: slideUp 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+        .animate-slideDown {
+          animation: slideDown 0.25s cubic-bezier(0.32, 0.72, 0, 1) forwards;
         }
       `}</style>
     </>
