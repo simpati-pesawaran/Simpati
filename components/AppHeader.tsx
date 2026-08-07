@@ -141,13 +141,12 @@ export default function AppHeader({
 
         {/* Notification Bottom Sheet */}
         {showNotifications && (
-          <div className="fixed inset-0 z-50" onClick={() => setShowNotifications(false)}>
-            <div className="flex items-center justify-center">
-              <div
-                className="w-full sm:max-w-[390px] bg-white rounded-3xl shadow-2xl animate-slideDown overflow-hidden"
-                style={{ maxHeight: "75vh" }}
-                onClick={(e) => e.stopPropagation()}
-              >
+          <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowNotifications(false)}>
+            <div
+              className="w-full sm:max-w-[390px] bg-white rounded-3xl shadow-2xl animate-slideDown overflow-hidden"
+              style={{ maxHeight: "75vh" }}
+              onClick={(e) => e.stopPropagation()}
+            >
                 {/* Handle */}
                 <div className="flex justify-center pt-4 pb-3">
                   <div className="w-10 h-1 bg-gray-300 rounded-full" />
@@ -231,7 +230,6 @@ export default function AppHeader({
                   )}
                 </div>
               </div>
-            </div>
           </div>
         )}
 
@@ -453,3 +451,4 @@ function formatTimeAgo(dateString: string): string {
   if (days < 7) return `${days} hari lalu`;
   return date.toLocaleDateString("id-ID");
 }
+
