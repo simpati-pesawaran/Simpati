@@ -21,27 +21,13 @@ export default function KalenderPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [agendas, setAgendas] = useState<Agenda[]>([]);
   const [loading, setLoading] = useState(true);
-  const [calendarConnected, setCalendarConnected] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedAgendas, setSelectedAgendas] = useState<Agenda[]>([]);
   const [showDetail, setShowDetail] = useState<Agenda | null>(null);
 
-  const profile = (session?.user as any)?.profile;
-
   useEffect(() => {
-    checkCalendarConnection();
     fetchMonthAgendas();
   }, [currentDate]);
-
-  const checkCalendarConnection = async () => {
-    try {
-      const res = await fetch("/api/calendar");
-      const data = await res.json();
-      setCalendarConnected(data.connected || false);
-    } catch {
-      setCalendarConnected(false);
-    }
-  };
 
   const fetchMonthAgendas = async () => {
     setLoading(true);
@@ -69,38 +55,6 @@ export default function KalenderPage() {
     }
   };
 
-  const connectGoogleCalendar = async () => {
-    try {
-      const res = await fetch("/api/calendar", { method: "POST" });
-      const data = await res.json();
-      if (data.authUrl) {
-        window.location.href = data.authUrl;
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const syncAll = async () => {
-    try {
-      const res = await fetch("/api/calendar/sync", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "sync_all" }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        alert(data.message);
-        fetchMonthAgendas();
-      } else {
-        alert(data.error || "Gagal sinkron");
-      }
-    } catch (error) {
-      alert("Terjadi kesalahan");
-    }
-  };
-
-  // Calendar helpers
   const getDaysInMonth = () => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
@@ -108,19 +62,14 @@ export default function KalenderPage() {
     const lastDay = new Date(year, month + 1, 0);
     const daysInMonth = lastDay.getDate();
     const startingDay = firstDay.getDay();
-
     const days: (number | null)[] = [];
 
-    // Add empty cells for days before the first day
     for (let i = 0; i < startingDay; i++) {
       days.push(null);
     }
-
-    // Add days of the month
     for (let i = 1; i <= daysInMonth; i++) {
       days.push(i);
     }
-
     return days;
   };
 
@@ -166,18 +115,18 @@ export default function KalenderPage() {
   const weekDays = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
 
   return (
-    <div className="min-h-screen" style={{ background: "#f1f5f9" }}>
-      {/* Header Section */}
+    <div className="min-h-screen pb-24" style={{ background: "#f1f5f9" }}>
+      {/* Header */}
       <div
-        className="px-5 pb-5"
+        className="px-5 pt-4 pb-8"
         style={{
           background: "linear-gradient(135deg, #1e3a5f 0%, #2563eb 55%, #7c3aed 100%)",
         }}
       >
-        <div className="flex items-center gap-4 pt-2">
+        <div className="flex items-center gap-4">
           <Link
             href="/dashboard"
-            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-95"
+            className="w-11 h-11 rounded-2xl flex items-center justify-center transition-all active:scale-95"
             style={{
               background: "rgba(255,255,255,0.2)",
               backdropFilter: "blur(10px)",
@@ -189,145 +138,184 @@ export default function KalenderPage() {
           </Link>
           <div>
             <h1 className="text-white text-xl font-bold">Kalender</h1>
-            <p className="text-white/60 text-xs">Agenda bulan ini</p>
+            <p className="text-white/60 text-xs">Agenda kegiatan & audiensi</p>
           </div>
         </div>
       </div>
 
       {/* Calendar Card */}
-      <div className="-mt-3 px-4">
-        <div className="bg-white rounded-2xl shadow-sm overflow-hidden p-4">
+      <div className="mx-4 -mt-6">
+        <div className="bg-white rounded-3xl shadow-lg overflow-hidden">
           {/* Month Navigation */}
-          <div className="flex items-center justify-between mb-4">
-            <button onClick={prevMonth} className="p-2 hover:bg-gray-100 rounded-lg">
+          <div className="flex items-center justify-between px-5 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-gray-100">
+            <button onClick={prevMonth} className="w-10 h-10 rounded-xl flex items-center justify-center hover:bg-gray-100 active:scale-95 transition-all">
               <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
             <h2 className="text-lg font-bold text-gray-900">{formatMonthYear()}</h2>
-            <button onClick={nextMonth} className="p-2 hover:bg-gray-100 rounded-lg">
+            <button onClick={nextMonth} className="w-10 h-10 rounded-xl flex items-center justify-center hover:bg-gray-100 active:scale-95 transition-all">
               <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
           </div>
 
-          {/* Week Days Header */}
-          <div className="grid grid-cols-7 gap-1 mb-2">
+          {/* Week Days */}
+          <div className="grid grid-cols-7 px-2 pt-4 pb-2">
             {weekDays.map((day) => (
-              <div key={day} className="text-center text-xs font-semibold text-gray-500 py-2">
+              <div key={day} className="text-center text-xs font-semibold text-gray-400 py-2">
                 {day}
               </div>
             ))}
           </div>
 
           {/* Calendar Grid */}
-          {loading ? (
-            <div className="flex justify-center py-8">
-              <div className="animate-spin w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full"></div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-7 gap-1">
-              {days.map((day, index) => {
-                if (day === null) {
-                  return <div key={`empty-${index}`} className="aspect-square"></div>;
-                }
+          <div className="px-2 pb-4">
+            {loading ? (
+              <div className="flex justify-center py-12">
+                <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-7 gap-1">
+                {days.map((day, index) => {
+                  if (day === null) {
+                    return <div key={`empty-${index}`} className="aspect-square"></div>;
+                  }
 
-                const dayAgendas = getAgendasForDate(day);
-                const hasAgenda = dayAgendas.length > 0;
-                const kegiatanCount = dayAgendas.filter((a) => a.jenis === "kegiatan").length;
-                const audiensiCount = dayAgendas.filter((a) => a.jenis === "audiensi").length;
+                  const dayAgendas = getAgendasForDate(day);
+                  const hasAgenda = dayAgendas.length > 0;
+                  const hasKegiatan = dayAgendas.some((a) => a.jenis === "kegiatan");
+                  const hasAudiensi = dayAgendas.some((a) => a.jenis === "audiensi");
 
-                return (
-                  <button
-                    key={day}
-                    onClick={() => handleDateClick(day)}
-                    className={`aspect-square flex flex-col items-center justify-center rounded-lg relative transition ${
-                      hasAgenda ? "hover:bg-gray-50" : ""
-                    } ${isToday(day) ? "bg-indigo-100" : ""}`}
-                  >
-                    <span className={`text-sm font-medium ${
-                      isToday(day) ? "text-indigo-700 font-bold" : "text-gray-700"
-                    }`}>
-                      {day}
-                    </span>
-                    {hasAgenda && (
-                      <div className="flex gap-0.5 mt-0.5">
-                        {kegiatanCount > 0 && (
-                          <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
-                        )}
-                        {audiensiCount > 0 && (
-                          <div className="w-1.5 h-1.5 rounded-full bg-purple-500"></div>
-                        )}
-                      </div>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          )}
+                  return (
+                    <button
+                      key={day}
+                      onClick={() => handleDateClick(day)}
+                      className={`aspect-square flex flex-col items-center justify-center rounded-2xl transition-all active:scale-95 ${
+                        isToday(day)
+                          ? "bg-gradient-to-br from-indigo-500 to-purple-600 shadow-md"
+                          : hasAgenda
+                          ? "bg-gray-50 hover:bg-gray-100"
+                          : ""
+                      }`}
+                    >
+                      <span className={`text-sm font-medium ${
+                        isToday(day) ? "text-white font-bold" : "text-gray-700"
+                      }`}>
+                        {day}
+                      </span>
+                      {hasAgenda && (
+                        <div className="flex gap-0.5 mt-1">
+                          {hasKegiatan && (
+                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                          )}
+                          {hasAudiensi && (
+                            <div className="w-1.5 h-1.5 rounded-full bg-purple-500"></div>
+                          )}
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
 
           {/* Legend */}
-          <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t border-gray-100">
-            <div className="flex items-center gap-1.5">
+          <div className="flex items-center justify-center gap-6 px-5 py-4 bg-gradient-to-r from-slate-50 to-white border-t border-gray-100">
+            <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-              <span className="text-xs text-gray-600">Kegiatan</span>
+              <span className="text-xs text-gray-600 font-medium">Kegiatan</span>
             </div>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-purple-500"></div>
-              <span className="text-xs text-gray-600">Audiensi</span>
+              <span className="text-xs text-gray-600 font-medium">Audiensi</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Upcoming Events */}
-      <div className="p-4">
-        <h3 className="text-sm font-semibold text-gray-700 mb-3">Agenda Mendatang</h3>
-        <div className="space-y-2">
+      <div className="mx-4 mt-6">
+        <h3 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          </svg>
+          Agenda Mendatang
+        </h3>
+        <div className="space-y-3">
           {agendas
-            .filter((a) => new Date(a.date) >= new Date())
+            .filter((a) => new Date(a.date) >= new Date(new Date().setHours(0, 0, 0, 0)))
             .slice(0, 5)
             .map((agenda) => (
               <button
                 key={agenda.id}
                 onClick={() => setShowDetail(agenda)}
-                className={`w-full text-left bg-white rounded-xl p-3 border-l-4 ${
-                  agenda.jenis === "kegiatan" ? "border-blue-500" : "border-purple-500"
+                className={`w-full text-left bg-white rounded-2xl p-4 shadow-sm border-l-4 transition-all active:scale-[0.98] ${
+                  agenda.jenis === "kegiatan"
+                    ? "border-blue-500 hover:shadow-md"
+                    : "border-purple-500 hover:shadow-md"
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium text-gray-900 text-sm">{agenda.title}</p>
-                    <p className="text-xs text-gray-600 mt-0.5 font-medium">
-                      {new Date(agenda.date).toLocaleDateString("id-ID", { day: "numeric", month: "short" })} - {formatTime(agenda.time_start)}
-                    </p>
+                <div className="flex items-start gap-3">
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm ${
+                    agenda.jenis === "kegiatan"
+                      ? "bg-gradient-to-br from-blue-500 to-indigo-600"
+                      : "bg-gradient-to-br from-purple-500 to-pink-500"
+                  }`}>
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
                   </div>
-                  <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                    agenda.jenis === "kegiatan" ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700"
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-gray-900 text-sm line-clamp-2">{agenda.title}</p>
+                    <div className="flex items-center gap-2 mt-1.5">
+                      <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <span className="text-xs text-gray-500 font-medium">
+                        {new Date(agenda.date).toLocaleDateString("id-ID", { day: "numeric", month: "short" })} - {formatTime(agenda.time_start)}
+                      </span>
+                    </div>
+                  </div>
+                  <span className={`px-2.5 py-1 rounded-xl text-xs font-bold ${
+                    agenda.jenis === "kegiatan"
+                      ? "bg-blue-100 text-blue-700"
+                      : "bg-purple-100 text-purple-700"
                   }`}>
                     {agenda.jenis === "kegiatan" ? "Keg" : "Aud"}
                   </span>
                 </div>
               </button>
             ))}
-          {agendas.filter((a) => new Date(a.date) >= new Date()).length === 0 && (
-            <p className="text-center text-gray-600 text-sm py-4 font-medium">Tidak ada agenda mendatang</p>
+          {agendas.filter((a) => new Date(a.date) >= new Date(new Date().setHours(0, 0, 0, 0))).length === 0 && (
+            <div className="bg-white rounded-2xl p-8 text-center shadow-sm">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <p className="text-gray-500 font-medium">Tidak ada agenda mendatang</p>
+            </div>
           )}
         </div>
       </div>
 
       {/* Selected Date Modal */}
       {selectedDate && selectedAgendas.length > 0 && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setSelectedDate(null)}>
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setSelectedDate(null)}>
           <div
-            className="w-full sm:max-w-[390px] bg-white rounded-3xl shadow-2xl overflow-hidden animate-slideDown"
-            style={{ maxHeight: "75vh" }}
+            className="w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden animate-slideUp"
+            style={{ maxHeight: "80vh" }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex justify-center pt-4 pb-3">
-              <div className="w-10 h-1 bg-gray-300 rounded-full" />
+            {/* Handle */}
+            <div className="flex justify-center pt-3 pb-2">
+              <div className="w-10 h-1 bg-gray-300 rounded-full"></div>
             </div>
+
+            {/* Header */}
             <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
               <div>
                 <h2 className="text-lg font-bold text-gray-900">
@@ -335,46 +323,61 @@ export default function KalenderPage() {
                 </h2>
                 <p className="text-xs text-gray-500">{selectedAgendas.length} agenda</p>
               </div>
-              <button onClick={() => setSelectedDate(null)} className="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-gray-100 active:bg-gray-200 transition-all">
+              <button onClick={() => setSelectedDate(null)} className="w-10 h-10 rounded-2xl flex items-center justify-center hover:bg-gray-100 active:scale-95 transition-all">
                 <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 overscroll-contain">
-              {selectedAgendas.map((agenda) => (
-                <button
-                  key={agenda.id}
-                  onClick={() => { setShowDetail(agenda); setSelectedDate(null); }}
-                  className={`w-full text-left bg-gray-50/80 rounded-2xl p-4 border-l-4 shadow-sm transition-all hover:shadow-md active:scale-[0.99] ${
-                    agenda.jenis === "kegiatan" ? "border-blue-500" : "border-purple-500"
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-sm ${
-                      agenda.jenis === "kegiatan" ? "bg-blue-100 text-blue-600" : "bg-purple-100 text-purple-600"
-                    }`}>
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-semibold text-gray-900">{agenda.title}</p>
-                      <p className="text-sm text-gray-500 mt-0.5">
-                        {formatTime(agenda.time_start)} - {formatTime(agenda.time_end)}
-                      </p>
-                      {agenda.location && (
-                        <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          </svg>
-                          {agenda.location}
+
+            {/* Content - Scrollable */}
+            <div className="overflow-y-auto overscroll-contain" style={{ maxHeight: "calc(80vh - 80px)" }}>
+              <div className="p-4 space-y-3">
+                {selectedAgendas.map((agenda) => (
+                  <button
+                    key={agenda.id}
+                    onClick={() => { setShowDetail(agenda); setSelectedDate(null); }}
+                    className={`w-full text-left bg-gray-50 rounded-2xl p-4 border-l-4 transition-all active:scale-[0.99] ${
+                      agenda.jenis === "kegiatan"
+                        ? "border-blue-500 hover:bg-blue-50"
+                        : "border-purple-500 hover:bg-purple-50"
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
+                        agenda.jenis === "kegiatan"
+                          ? "bg-blue-100 text-blue-600"
+                          : "bg-purple-100 text-purple-600"
+                      }`}>
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-gray-900">{agenda.title}</p>
+                        <p className="text-sm text-gray-500 mt-0.5">
+                          {formatTime(agenda.time_start)} - {formatTime(agenda.time_end)}
                         </p>
-                      )}
+                        {agenda.location && (
+                          <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            </svg>
+                            {agenda.location}
+                          </p>
+                        )}
+                      </div>
+                      <span className={`px-2 py-0.5 rounded-lg text-xs font-bold ${
+                        agenda.jenis === "kegiatan"
+                          ? "bg-blue-100 text-blue-700"
+                          : "bg-purple-100 text-purple-700"
+                      }`}>
+                        {agenda.jenis === "kegiatan" ? "Keg" : "Aud"}
+                      </span>
                     </div>
-                  </div>
-                </button>
-              ))}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -382,58 +385,72 @@ export default function KalenderPage() {
 
       {/* Detail Modal */}
       {showDetail && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowDetail(null)}>
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setShowDetail(null)}>
           <div
-            className="w-full sm:max-w-[390px] bg-white rounded-3xl shadow-2xl overflow-hidden animate-slideDown"
-            style={{ maxHeight: "85vh" }}
+            className="w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden animate-slideUp"
+            style={{ maxHeight: "90vh" }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex justify-center pt-4 pb-3">
-              <div className="w-10 h-1 bg-gray-300 rounded-full" />
+            {/* Handle */}
+            <div className="flex justify-center pt-3 pb-2">
+              <div className="w-10 h-1 bg-gray-300 rounded-full"></div>
             </div>
-            <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
-              <div>
-                <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold mb-2 ${
-                  showDetail.jenis === "kegiatan" ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700"
+
+            {/* Header */}
+            <div className="flex items-start justify-between px-5 py-4 border-b border-gray-100">
+              <div className="flex-1">
+                <span className={`inline-block px-3 py-1 rounded-xl text-xs font-bold mb-2 ${
+                  showDetail.jenis === "kegiatan"
+                    ? "bg-blue-100 text-blue-700"
+                    : "bg-purple-100 text-purple-700"
                 }`}>
                   {showDetail.jenis === "kegiatan" ? "Kegiatan" : "Audiensi"}
                 </span>
-                <h2 className="text-lg font-bold text-gray-900">{showDetail.title}</h2>
+                <h2 className="text-lg font-bold text-gray-900 pr-4">{showDetail.title}</h2>
               </div>
-              <button onClick={() => setShowDetail(null)} className="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-gray-100 active:bg-gray-200 transition-all">
+              <button onClick={() => setShowDetail(null)} className="w-10 h-10 rounded-2xl flex items-center justify-center hover:bg-gray-100 active:scale-95 transition-all flex-shrink-0">
                 <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto px-5 py-6 space-y-4">
-              <div className="flex items-start gap-4 p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl border border-gray-100">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                  showDetail.jenis === "kegiatan" ? "bg-gradient-to-br from-blue-500 to-indigo-500" : "bg-gradient-to-br from-purple-500 to-pink-500"
-                }`}>
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 font-medium">Tanggal & Waktu</p>
-                  <p className="font-semibold text-gray-900">{formatDate(showDetail.date)}</p>
-                  <p className="text-sm text-gray-600 mt-0.5">{formatTime(showDetail.time_start)} - {formatTime(showDetail.time_end)}</p>
-                </div>
-              </div>
-              {showDetail.location && (
-                <div className="flex items-start gap-4 p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl border border-gray-100">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center">
+
+            {/* Content - Scrollable */}
+            <div className="overflow-y-auto overscroll-contain" style={{ maxHeight: "calc(90vh - 120px)" }}>
+              <div className="p-5 space-y-4">
+                {/* Date & Time */}
+                <div className="flex items-start gap-4 p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl">
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
+                    showDetail.jenis === "kegiatan"
+                      ? "bg-gradient-to-br from-blue-500 to-indigo-600"
+                      : "bg-gradient-to-br from-purple-500 to-pink-500"
+                  }`}>
                     <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500 font-medium">Lokasi</p>
-                    <p className="font-semibold text-gray-900">{showDetail.location}</p>
+                    <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Tanggal & Waktu</p>
+                    <p className="font-bold text-gray-900 mt-1">{formatDate(showDetail.date)}</p>
+                    <p className="text-sm text-gray-600 mt-0.5">{formatTime(showDetail.time_start)} - {formatTime(showDetail.time_end)}</p>
                   </div>
                 </div>
-              )}
+
+                {/* Location */}
+                {showDetail.location && (
+                  <div className="flex items-start gap-4 p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide">Lokasi</p>
+                      <p className="font-bold text-gray-900 mt-1">{showDetail.location}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
