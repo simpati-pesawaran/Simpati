@@ -423,29 +423,19 @@ export default function KegiatanPage() {
       )}
 
       {showModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={() => setShowModal(false)}>
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={() => setShowModal(false)}>
           <div
-            className="w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl animate-slideUp flex flex-col overflow-hidden"
+            className="w-full sm:max-w-[390px] bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden"
             style={{ maxHeight: "92vh" }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Premium Header Accent */}
-            <div className="relative">
-              <div
-                className="h-1.5 w-full"
-                style={{
-                  background: activeTab === "kegiatan"
-                    ? "linear-gradient(90deg, #3b82f6, #6366f1)"
-                    : "linear-gradient(90deg, #8b5cf6, #ec4899)"
-                }}
-              />
-              <div className="flex justify-center pt-3 pb-2">
-                <div className="w-10 h-1 bg-gray-300 rounded-full" />
-              </div>
+            {/* Handle */}
+            <div className="flex justify-center pt-3 pb-2 sm:pt-4 sm:pb-3">
+              <div className="w-10 h-1 bg-gray-300 rounded-full" />
             </div>
 
             {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100/80">
+            <div className="flex items-center justify-between px-5 py-3 sm:py-4 border-b border-gray-100">
               <div className="flex items-center gap-3">
                 <div
                   className="w-10 h-10 rounded-xl flex items-center justify-center"
@@ -478,7 +468,7 @@ export default function KegiatanPage() {
             </div>
 
             {/* Form Content - Scrollable */}
-            <div className="flex-1 overflow-y-auto px-5 py-6 space-y-6 overscroll-contain" style={{ WebkitOverflowScrolling: "touch" }}>
+            <div className="flex-1 overflow-y-auto px-4 py-4 space-y-5 overscroll-contain" style={{ WebkitOverflowScrolling: "touch" }}>
 
               {/* Section: INFORMASI */}
               <section>
@@ -660,24 +650,24 @@ export default function KegiatanPage() {
             </div>
 
             {/* Save Button - Sticky */}
-            <div className="sticky bottom-0 bg-white/95 backdrop-blur-md border-t border-gray-100/80 px-5 py-4" style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}>
+            <div className="sticky bottom-0 bg-white border-t border-gray-100 px-4 py-4" style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}>
               <button
                 type="submit"
                 disabled={submitting || !formData.title || !formData.date}
                 onClick={handleSubmit}
-                className="w-full py-4 rounded-2xl font-semibold text-base text-white shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+                className="w-full py-3.5 rounded-2xl font-semibold text-sm text-white shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
                 style={{
                   background: submitting || !formData.title || !formData.date
                     ? '#94a3b8'
                     : 'linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #7c3aed 100%)',
                   boxShadow: submitting || !formData.title || !formData.date
                     ? 'none'
-                    : '0 4px 20px rgba(37, 99, 235, 0.35)'
+                    : '0 4px 16px rgba(37, 99, 235, 0.35)'
                 }}
               >
                 {submitting ? (
-                  <span className="flex items-center justify-center gap-3">
-                    <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                     </svg>
@@ -685,7 +675,7 @@ export default function KegiatanPage() {
                   </span>
                 ) : (
                   <span className="flex items-center justify-center gap-2">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                     Simpan Agenda
@@ -746,7 +736,7 @@ export default function KegiatanPage() {
           from { transform: translateY(100%); }
           to { transform: translateY(0); }
         }
-        @keyframes slideUpDesktop {
+        @keyframes fadeIn {
           from {
             opacity: 0;
             transform: translateY(20px) scale(0.95);
@@ -761,15 +751,8 @@ export default function KegiatanPage() {
         }
         @media (min-width: 640px) {
           .animate-slideUp {
-            animation: slideUpDesktop 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+            animation: fadeIn 0.25s cubic-bezier(0.32, 0.72, 0, 1) forwards;
           }
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(-8px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fadeIn {
-          animation: fadeIn 0.2s ease-out;
         }
         /* Custom Scrollbar */
         .overscroll-contain::-webkit-scrollbar {
