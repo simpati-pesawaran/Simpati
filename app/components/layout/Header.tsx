@@ -103,8 +103,8 @@ export function Header() {
               <Image src="/logo/logo-master.png" alt="SIMPATI" width={44} height={44} className="w-full h-full object-cover" />
             </div>
             <div className="leading-tight">
-              <h1 className="text-white font-bold text-base">SIMPATI</h1>
-              <p className="text-white/60 text-[11px]">Sistem Informasi Manajemen</p>
+              <h1 className="text-white text-sm font-medium">Sistem Informasi Manajemen</h1>
+              <p className="text-white/60 text-[11px]">Protokol & Agenda Terintegrasi</p>
             </div>
           </Link>
 
