@@ -452,7 +452,7 @@ export default function KegiatanPage() {
                 </div>
                 <div>
                   <h2 className="text-lg font-bold text-gray-900">
-                    {editingId ? "Edit" : "Tambah"}
+                    {editingId ? "Edit" : ""} Agenda
                   </h2>
                   <p className="text-xs text-gray-500">{activeTab === "kegiatan" ? "Kegiatan" : "Audiensi"}</p>
                 </div>
@@ -618,9 +618,10 @@ export default function KegiatanPage() {
                     <button type="button" onClick={() => setFormData({ ...formData, status: "draft" })}
                       className={`flex-1 py-3.5 rounded-2xl text-sm font-semibold border-2 transition-all ${
                         formData.status === "draft"
-                          ? "border-amber-400 bg-amber-50 text-amber-800 shadow-sm"
+                          ? "border-indigo-500 text-white shadow-md"
                           : "border-gray-200 text-gray-600 bg-gray-50/50 hover:bg-gray-100"
-                      }`}>
+                      }`}
+                      style={formData.status === "draft" ? { background: "linear-gradient(135deg, #6366f1, #8b5cf6)" } : {}}>
                       <span className="flex items-center justify-center gap-2">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -631,9 +632,10 @@ export default function KegiatanPage() {
                     <button type="button" onClick={() => setFormData({ ...formData, status: "published" })}
                       className={`flex-1 py-3.5 rounded-2xl text-sm font-semibold border-2 transition-all ${
                         formData.status === "published"
-                          ? "border-emerald-400 bg-emerald-50 text-emerald-800 shadow-sm"
+                          ? "border-emerald-500 text-white shadow-md"
                           : "border-gray-200 text-gray-600 bg-gray-50/50 hover:bg-gray-100"
-                      }`}>
+                      }`}
+                      style={formData.status === "published" ? { background: "linear-gradient(135deg, #10b981, #059669)" } : {}}>
                       <span className="flex items-center justify-center gap-2">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
