@@ -80,7 +80,9 @@ function KegiatanContent() {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<"kegiatan" | "audiensi">("kegiatan");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [agendas, setAgendas] = useState<Agenda[]>([]);
+  const [filteredAgendas, setFilteredAgendas] = useState<Agenda[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [showDetail, setShowDetail] = useState<Agenda | null>(null);
@@ -95,6 +97,51 @@ function KegiatanContent() {
 
   const subJenisOptions = activeTab === "kegiatan" ? SUB_JENIS_KEGIATAN : SUB_JENIS_AUDIENSI;
 
+  // Auto-determine status based on date/time
+  const getComputedStatus = (agenda: Agenda): "today" | "upcoming" | "finished" | "cancelled" => {
+    if (agenda.status === "cancelled") return "cancelled";
+
+    const now = new Date();
+    const today = now.toISOString().split("T")[0];
+    const currentTime = now.toTimeString().slice(0, 5);
+
+    if (agenda.date < today) {
+      return "finished";
+    } else if (agenda.date === today) {
+      if (agenda.time_end <= currentTime) {
+        return "finished";
+      }
+      return "today";
+    }
+    return "upcoming";
+  };
+
+  // Apply status filter
+  useEffect(() => {
+    let filtered = [...agendas];
+
+    // Apply search
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(a =>
+        a.title.toLowerCase().includes(query) ||
+        (a.location?.toLowerCase() || "").includes(query) ||
+        (a.pic_name?.toLowerCase() || "").includes(query) ||
+        (a.jenis.toLowerCase().includes(query))
+      );
+    }
+
+    // Apply status filter
+    if (statusFilter !== "all") {
+      filtered = filtered.filter(a => {
+        const computedStatus = getComputedStatus(a);
+        return computedStatus === statusFilter;
+      });
+    }
+
+    setFilteredAgendas(filtered);
+  }, [agendas, searchQuery, statusFilter]);
+
   // Open modal when ?action=new
   useEffect(() => {
     if (searchParams?.get("action") === "new") {
@@ -107,8 +154,7 @@ function KegiatanContent() {
   const fetchAgendas = async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams({ jenis: activeTab, limit: "50" });
-      if (searchQuery) params.append("search", searchQuery);
+      const params = new URLSearchParams({ jenis: activeTab, limit: "100" });
       const res = await fetch(`/api/agenda?${params}`);
       const data = await res.json();
       if (data.success) setAgendas(data.data || []);
@@ -252,16 +298,44 @@ function KegiatanContent() {
       {/* Content Section - White Container */}
       <div className="-mt-3">
         {/* Search Bar */}
-        <form onSubmit={(e) => { e.preventDefault(); fetchAgendas(); }} className="px-4 pt-4 pb-2">
+        <form onSubmit={(e) => { e.preventDefault(); }} className="px-4 pt-4 pb-2">
           <div className="relative">
             <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cari agenda..."
+              placeholder="Cari agenda, lokasi, atau PIC..."
               className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-400 shadow-sm" />
           </div>
         </form>
+
+        {/* Status Filter Tabs */}
+        <div className="px-4 pb-3 overflow-x-auto">
+          <div className="flex gap-2 min-w-max">
+            {(["all", "today", "upcoming", "finished", "cancelled"] as StatusFilter[]).map((filter) => {
+              const labels: Record<StatusFilter, string> = {
+                all: "Semua",
+                today: "Hari Ini",
+                upcoming: "Mendatang",
+                finished: "Selesai",
+                cancelled: "Dibatalkan",
+              };
+              return (
+                <button
+                  key={filter}
+                  onClick={() => setStatusFilter(filter)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
+                    statusFilter === filter
+                      ? "bg-indigo-500 text-white shadow-sm"
+                      : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
+                  }`}
+                >
+                  {labels[filter]}
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
         {/* List Agenda */}
         <div className="px-4 pb-24 space-y-3">
@@ -270,49 +344,98 @@ function KegiatanContent() {
               <div className="animate-spin w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full mx-auto"></div>
               <p className="text-gray-500 text-sm mt-3">Memuat...</p>
             </div>
-          ) : agendas.length === 0 ? (
+          ) : filteredAgendas.length === 0 ? (
             <div className="bg-white rounded-2xl p-8 text-center shadow-sm">
               <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
-              <h3 className="text-gray-700 font-semibold">Belum ada {activeTab}</h3>
-              <p className="text-gray-500 text-sm mt-1">Tekan + untuk menambah</p>
+              <h3 className="text-gray-700 font-semibold">Belum ada agenda</h3>
+              <p className="text-gray-500 text-sm mt-1">Tekan tombol + untuk menambah</p>
             </div>
-          ) : agendas.map((agenda) => (
-            <button key={agenda.id} onClick={() => setShowDetail(agenda)}
-              className={`w-full text-left bg-white rounded-2xl border-2 p-4 transition active:scale-[0.98] shadow-sm ${activeTab === "kegiatan" ? "border-blue-100 hover:border-blue-300" : "border-purple-100 hover:border-purple-300"}`}>
-              <div className="flex items-start gap-3">
-                <div className={`flex-shrink-0 w-14 h-16 rounded-xl flex flex-col items-center justify-center ${activeTab === "kegiatan" ? "bg-gradient-to-br from-blue-500 to-indigo-500" : "bg-gradient-to-br from-purple-500 to-pink-500"}`}>
-                  <span className="text-white/80 text-[10px] font-semibold uppercase">{new Date(agenda.date).toLocaleDateString("id-ID", { weekday: "short" })}</span>
-                  <span className="text-white text-xl font-bold">{new Date(agenda.date).getDate()}</span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-gray-900 line-clamp-1">{agenda.title}</h3>
-                  <div className="flex items-center gap-1.5 mt-1.5">
-                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span className="text-sm text-gray-500">{formatTime(agenda.time_start)} - {formatTime(agenda.time_end)}</span>
+          ) : filteredAgendas.map((agenda) => {
+            const computedStatus = getComputedStatus(agenda);
+            const isFinished = computedStatus === "finished";
+            const isCancelled = computedStatus === "cancelled";
+            const isToday = computedStatus === "today";
+            const isKegiatan = agenda.jenis === "kegiatan" || agenda.jenis === "agenda";
+
+            return (
+              <button
+                key={agenda.id}
+                onClick={() => setShowDetail(agenda)}
+                className={`w-full text-left bg-white rounded-2xl border-2 p-4 transition active:scale-[0.98] shadow-sm ${
+                  isCancelled ? "border-gray-200 opacity-70" :
+                  isFinished ? "border-gray-200" :
+                  isKegiatan ? "border-blue-100 hover:border-blue-300" : "border-purple-100 hover:border-purple-300"
+                }`}
+              >
+                <div className="flex items-start gap-3">
+                  <div className={`flex-shrink-0 w-14 h-16 rounded-xl flex flex-col items-center justify-center ${
+                    isCancelled ? "bg-gray-400" :
+                    isFinished ? "bg-gray-500" :
+                    isKegiatan ? "bg-gradient-to-br from-blue-500 to-indigo-500" : "bg-gradient-to-br from-purple-500 to-pink-500"
+                  }`}>
+                    <span className="text-white/80 text-[10px] font-semibold uppercase">{new Date(agenda.date).toLocaleDateString("id-ID", { weekday: "short" })}</span>
+                    <span className="text-white text-xl font-bold">{new Date(agenda.date).getDate()}</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className={`font-semibold line-clamp-1 ${isFinished || isCancelled ? "text-gray-500" : "text-gray-900"}`}>{agenda.title}</h3>
+                      {isToday && !isCancelled && (
+                        <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700">Hari Ini</span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <svg className={`w-4 h-4 ${isFinished || isCancelled ? "text-gray-400" : "text-gray-400"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span className={`text-sm ${isFinished || isCancelled ? "text-gray-400" : "text-gray-500"}`}>{formatTime(agenda.time_start)} - {formatTime(agenda.time_end)}</span>
+                    </div>
+                    {agenda.location && !isFinished && !isCancelled && (
+                      <div className="flex items-center gap-1 mt-1">
+                        <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        </svg>
+                        <span className="text-xs text-gray-400 truncate">{agenda.location}</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex flex-col items-end gap-1">
+                    {isCancelled ? (
+                      <span className="px-2 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">Dibatalkan</span>
+                    ) : isFinished ? (
+                      <span className="px-2 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">Selesai</span>
+                    ) : agenda.status === "draft" ? (
+                      <span className="px-2 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">Draft</span>
+                    ) : (
+                      <span className="px-2 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">Published</span>
+                    )}
+                    {agenda.google_event_id && !isCancelled && (
+                      <div className="w-5 h-5 rounded bg-emerald-100 flex items-center justify-center" title="Tersinkron Google Calendar">
+                        <svg className="w-3 h-3 text-emerald-600" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                      </div>
+                    )}
                   </div>
                 </div>
-                <span className={`flex-shrink-0 px-2.5 py-1 rounded-full text-xs font-semibold ${agenda.status === "published" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
-                  {agenda.status === "published" ? "Published" : "Draft"}
-                </span>
-              </div>
-            </button>
-          ))}
+              </button>
+            );
+          })}
         </div>
-      </div>
-    </div>
+        </div>
 
-      <button onClick={() => handleOpenModal()}
-        className="fixed bottom-24 right-5 w-14 h-14 bg-gradient-to-br from-indigo-600 to-blue-600 text-white rounded-full shadow-lg shadow-indigo-500/40 flex items-center justify-center active:scale-95 transition-transform z-20">
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-        </svg>
-      </button>
+        {/* FAB - Inside Container */}
+        <button onClick={() => handleOpenModal()}
+          className="fixed bottom-24 right-4 w-14 h-14 bg-gradient-to-br from-indigo-600 to-blue-600 text-white rounded-full shadow-lg shadow-indigo-500/40 flex items-center justify-center active:scale-95 transition-transform z-20 max-w-md"
+          style={{ right: "max(1rem, calc((100vw - 448px)/2 + 1rem))" }}>
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+        </button>
+      </div>
 
       {showDetail && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowDetail(null)}>
@@ -341,7 +464,7 @@ function KegiatanContent() {
             </div>
 
             {/* Content */}
-            <div className="p-4 space-y-2">
+            <div className="p-4 space-y-2 max-h-[60vh] overflow-y-auto">
               <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
                 <svg className="w-4 h-4 text-indigo-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -366,16 +489,54 @@ function KegiatanContent() {
                   <svg className="w-4 h-4 text-purple-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
-                  <p className="text-sm font-medium text-gray-800">{showDetail.pic_name}</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-800">{showDetail.pic_name}</p>
+                    {showDetail.pic_phone && (
+                      <p className="text-xs text-gray-500">{showDetail.pic_phone}</p>
+                    )}
+                  </div>
                 </div>
               )}
+
+              {showDetail.description && (
+                <div className="p-3 bg-gray-50 rounded-xl">
+                  <p className="text-xs text-gray-500 mb-1">Deskripsi</p>
+                  <p className="text-sm text-gray-800">{showDetail.description}</p>
+                </div>
+              )}
+
+              {/* Status */}
+              <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl">
+                <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
+                  showDetail.status === "cancelled" ? "bg-red-100 text-red-700" :
+                  showDetail.status === "published" ? "bg-emerald-100 text-emerald-700" :
+                  "bg-amber-100 text-amber-700"
+                }`}>
+                  {showDetail.status === "cancelled" ? "Dibatalkan" :
+                   showDetail.status === "published" ? "Dipublikasi" : "Draft"}
+                </span>
+                {showDetail.google_event_id && (
+                  <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 flex items-center gap-1">
+                    <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    Google Calendar
+                  </span>
+                )}
+              </div>
             </div>
 
             {/* Footer */}
-            <div className="px-4 pb-4">
-              <Link href={`/agenda/${showDetail.id}`} className="block w-full py-3 text-center bg-gradient-to-r from-indigo-600 to-blue-600 text-white text-sm font-semibold rounded-xl shadow-lg shadow-indigo-500/30 active:scale-[0.98] transition-all">
-                Lihat Detail
-              </Link>
+            <div className="px-4 pb-4 pt-2 border-t border-gray-100">
+              <div className="flex gap-2">
+                <Link href={`/agenda/${showDetail.id}`} className="flex-1 py-3 text-center bg-gradient-to-r from-indigo-600 to-blue-600 text-white text-sm font-semibold rounded-xl shadow-lg shadow-indigo-500/30 active:scale-[0.98] transition-all">
+                  Lihat Detail
+                </Link>
+                <button onClick={() => { setShowDetail(null); handleOpenModal(showDetail); }}
+                  className="px-4 py-3 bg-gray-100 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-200 transition-all">
+                  Edit
+                </button>
+              </div>
             </div>
           </div>
         </div>
