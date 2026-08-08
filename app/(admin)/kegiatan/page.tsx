@@ -91,6 +91,8 @@ function KegiatanContent() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [submitting, setSubmitting] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+  const [syncMessage, setSyncMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
 
   const profile = (session?.user as any)?.profile;
   const isSuperadmin = profile?.role === "superadmin";
@@ -238,6 +240,33 @@ function KegiatanContent() {
     } catch { alert("Error"); }
   };
 
+  const handleSyncToSheets = async () => {
+    setSyncing(true);
+    setSyncMessage(null);
+    try {
+      const res = await fetch("/api/sheets", { method: "POST" });
+      const data = await res.json();
+      if (data.success) {
+        setSyncMessage({ type: "success", text: data.message });
+      } else {
+        // Check if it's a configuration issue
+        if (data.requiredEnvVars) {
+          setSyncMessage({
+            type: "error",
+            text: "Google Sheets belum dikonfigurasi. Hubungi admin untuk setup."
+          });
+        } else {
+          setSyncMessage({ type: "error", text: data.message || "Gagal sinkronisasi" });
+        }
+      }
+    } catch (error) {
+      setSyncMessage({ type: "error", text: "Terjadi kesalahan saat sinkronisasi" });
+    } finally {
+      setSyncing(false);
+      setTimeout(() => setSyncMessage(null), 5000);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Page Container - matching app max-width */}
@@ -268,7 +297,37 @@ function KegiatanContent() {
             <h1 className="text-white text-xl font-bold">Agenda</h1>
             <p className="text-white/60 text-xs">Kelola jadwal kegiatan & audiensi</p>
           </div>
+          <button
+            onClick={handleSyncToSheets}
+            disabled={syncing}
+            className="ml-auto w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-95 disabled:opacity-50"
+            style={{
+              background: "rgba(255,255,255,0.2)",
+              backdropFilter: "blur(10px)",
+            }}
+            title="Sync ke Google Sheets"
+          >
+            {syncing ? (
+              <svg className="w-5 h-5 text-white animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+            ) : (
+              <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
+              </svg>
+            )}
+          </button>
         </div>
+
+        {/* Sync Message Toast */}
+        {syncMessage && (
+          <div className={`mt-2 px-3 py-2 rounded-lg text-xs font-medium ${
+            syncMessage.type === "success" ? "bg-emerald-500/20 text-emerald-200" : "bg-red-500/20 text-red-200"
+          }`}>
+            {syncMessage.text}
+          </div>
+        )}
 
         {/* Tab Navigation */}
         <div className="mt-4 bg-white/15 backdrop-blur-sm rounded-2xl p-1 flex">
