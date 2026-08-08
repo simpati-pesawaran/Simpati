@@ -3,10 +3,10 @@ import { supabaseAdmin } from "@/app/lib/supabase";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { token: string } }
+  { params }: { params: Promise<{ token: string }> }
 ) {
   try {
-    const { token } = params;
+    const { token } = await params;
 
     // Find share link
     const { data: shareLink, error: shareError } = await supabaseAdmin

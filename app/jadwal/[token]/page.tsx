@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import Link from "next/link";
 
 interface Agenda {
@@ -13,7 +13,8 @@ interface Agenda {
   location: string | null;
 }
 
-export default function SharedAgendaPage({ params }: { params: { token: string } }) {
+export default function SharedAgendaPage({ params }: { params: Promise<{ token: string }> }) {
+  const { token } = use(params);
   const [agendas, setAgendas] = useState<Agenda[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -21,7 +22,7 @@ export default function SharedAgendaPage({ params }: { params: { token: string }
   useEffect(() => {
     const fetchAgenda = async () => {
       try {
-        const res = await fetch(`/api/share/${params.token}`);
+        const res = await fetch(`/api/share/${token}`);
         const data = await res.json();
         if (data.success) {
           setAgendas(data.agendas || []);
@@ -34,8 +35,10 @@ export default function SharedAgendaPage({ params }: { params: { token: string }
         setLoading(false);
       }
     };
-    fetchAgenda();
-  }, [params.token]);
+    if (token) {
+      fetchAgenda();
+    }
+  }, [token]);
 
   const formatTime = (t: string) => t?.slice(0, 5) || "";
 
