@@ -96,6 +96,18 @@ function KegiatanContent() {
   const [showSyncMenu, setShowSyncMenu] = useState(false);
   const [syncingType, setSyncingType] = useState<'agenda' | 'usulan' | null>(null);
 
+  // WhatsApp Share Modal State
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [shareJenis, setShareJenis] = useState<'kegiatan' | 'audiensi' | 'all'>('all');
+  const [shareDateOption, setShareDateOption] = useState<'today' | 'tomorrow' | 'week' | 'custom'>('today');
+  const [shareCustomDate, setShareCustomDate] = useState("");
+  const [shareEndDate, setShareEndDate] = useState("");
+  const [shareDateRange, setShareDateRange] = useState(false);
+  const [previewAgendas, setPreviewAgendas] = useState<Agenda[]>([]);
+  const [loadingPreview, setLoadingPreview] = useState(false);
+  const [shareLoading, setShareLoading] = useState(false);
+  const [shareSuccess, setShareSuccess] = useState<{url: string, token: string} | null>(null);
+
   // Close sync menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -283,6 +295,90 @@ function KegiatanContent() {
     } catch { alert("Error"); }
   };
 
+  // WhatsApp Share Functions
+  const getDateRange = () => {
+    const today = new Date();
+    const formatDateStr = (d: Date) => d.toISOString().split('T')[0];
+
+    if (shareDateOption === 'today') {
+      return { start: formatDateStr(today), end: formatDateStr(today) };
+    } else if (shareDateOption === 'tomorrow') {
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      return { start: formatDateStr(tomorrow), end: formatDateStr(tomorrow) };
+    } else if (shareDateOption === 'week') {
+      const weekEnd = new Date(today);
+      weekEnd.setDate(weekEnd.getDate() + 7);
+      return { start: formatDateStr(today), end: formatDateStr(weekEnd) };
+    } else {
+      return { start: shareCustomDate, end: shareEndDate || shareCustomDate };
+    }
+  };
+
+  const loadPreviewAgendas = async () => {
+    setLoadingPreview(true);
+    try {
+      const { start, end } = getDateRange();
+      const params = new URLSearchParams({
+        startDate: start,
+        endDate: end,
+      });
+      if (shareJenis !== 'all') params.set('jenis', shareJenis);
+
+      const res = await fetch(`/api/agenda?${params}`);
+      const data = await res.json();
+      if (data.success) {
+        setPreviewAgendas(data.data || []);
+      }
+    } catch (error) {
+      console.error('Error loading preview:', error);
+    } finally {
+      setLoadingPreview(false);
+    }
+  };
+
+  const handleCreateShare = async () => {
+    setShareLoading(true);
+    try {
+      const { start, end } = getDateRange();
+      const res = await fetch('/api/share', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jenis: shareJenis,
+          startDate: start,
+          endDate: end,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setShareSuccess({ url: data.url, token: data.token });
+      } else {
+        alert(data.error || 'Gagal membuat link');
+      }
+    } catch {
+      alert('Terjadi kesalahan');
+    } finally {
+      setShareLoading(false);
+    }
+  };
+
+  const handleShareWhatsApp = () => {
+    if (!shareSuccess) return;
+    const message = `📅 *Jadwal Agenda SIMPATI*\n\n${previewAgendas.slice(0, 5).map((a, i) =>
+      `${i + 1}. ${a.title}\n   📆 ${new Date(a.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })} | 🕐 ${formatTime(a.time_start)} - ${formatTime(a.time_end)}\n   📍 ${a.location || '-'}`
+    ).join('\n\n')}${previewAgendas.length > 5 ? '\n\n...dan lainnya' : ''}\n\n🔗 Lihat selengkapnya: ${shareSuccess.url}`;
+
+    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+  };
+
+  const handleCopyLink = () => {
+    if (shareSuccess) {
+      navigator.clipboard.writeText(shareSuccess.url);
+      alert('Link berhasil disalin!');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Page Container - matching app max-width */}
@@ -314,29 +410,50 @@ function KegiatanContent() {
             <p className="text-white/60 text-xs">Kelola jadwal kegiatan & audiensi</p>
           </div>
 
-          {/* Sync Button with Dropdown */}
-          <div className="ml-auto relative">
+          {/* Action Buttons Group */}
+          <div className="ml-auto flex items-center gap-2">
+            {/* WhatsApp Share Button */}
             <button
-              onClick={() => setShowSyncMenu(!showSyncMenu)}
-              disabled={syncingType !== null}
-              className="w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-95 disabled:opacity-50"
+              onClick={() => {
+                setShowShareModal(true);
+                setShareSuccess(null);
+                loadPreviewAgendas();
+              }}
+              className="w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-95"
               style={{
                 background: "rgba(255,255,255,0.2)",
                 backdropFilter: "blur(10px)",
               }}
-              title="Sync ke Google Sheets"
+              title="Bagikan ke WhatsApp"
             >
-              {syncingType ? (
-                <svg className="w-5 h-5 text-white animate-spin" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
-              ) : (
-                <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
-                </svg>
-              )}
+              <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+              </svg>
             </button>
+
+            {/* Sync Button with Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setShowSyncMenu(!showSyncMenu)}
+                disabled={syncingType !== null}
+                className="w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-95 disabled:opacity-50"
+                style={{
+                  background: "rgba(255,255,255,0.2)",
+                  backdropFilter: "blur(10px)",
+                }}
+                title="Sync ke Google Sheets"
+              >
+                {syncingType ? (
+                  <svg className="w-5 h-5 text-white animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
+                  </svg>
+                )}
+              </button>
 
             {/* Dropdown Menu */}
             {showSyncMenu && (
@@ -373,6 +490,7 @@ function KegiatanContent() {
                 </a>
               </div>
             )}
+          </div>
           </div>
         </div>
 
@@ -1019,6 +1137,259 @@ function KegiatanContent() {
           background: rgba(0,0,0,0.25);
         }
       `}</style>
+
+      {/* WhatsApp Share Modal */}
+      {showShareModal && (
+        <div
+          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center"
+          onClick={() => setShowShareModal(false)}
+        >
+          <div
+            className="w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-slideUp"
+            style={{ maxHeight: "90vh" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Handle */}
+            <div className="flex justify-center pt-3 pb-2">
+              <div className="w-10 h-1 bg-gray-300 rounded-full" />
+            </div>
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "#25D366" }}>
+                  <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                  </svg>
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">Bagikan Agenda</h2>
+                  <p className="text-xs text-gray-500">via WhatsApp</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowShareModal(false)}
+                className="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-gray-100 transition-all"
+              >
+                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5 overscroll-contain" style={{ WebkitOverflowScrolling: "touch", maxHeight: "calc(90vh - 200px)" }}>
+
+              {/* Jenis Selection */}
+              <div>
+                <label className="text-sm font-semibold text-gray-700 mb-2 block">Pilih Jenis Agenda</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { value: "kegiatan", label: "📌 Kegiatan", color: "blue" },
+                    { value: "audiensi", label: "🎭 Audiensi", color: "purple" },
+                    { value: "all", label: "📋 Semua", color: "gray" },
+                  ].map((opt) => (
+                    <button
+                      key={opt.value}
+                      onClick={() => {
+                        setShareJenis(opt.value as any);
+                        setTimeout(() => loadPreviewAgendas(), 100);
+                      }}
+                      className={`py-3 px-2 rounded-xl text-xs font-semibold transition-all border-2 ${
+                        shareJenis === opt.value
+                          ? opt.color === "blue"
+                            ? "border-blue-500 bg-blue-50 text-blue-700"
+                            : opt.color === "purple"
+                            ? "border-purple-500 bg-purple-50 text-purple-700"
+                            : "border-gray-500 bg-gray-100 text-gray-700"
+                          : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Date Selection */}
+              <div>
+                <label className="text-sm font-semibold text-gray-700 mb-2 block">Pilih Tanggal</label>
+                <div className="space-y-2">
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => {
+                        setShareDateOption("today");
+                        setShareDateRange(false);
+                        setTimeout(() => loadPreviewAgendas(), 100);
+                      }}
+                      className={`py-3 px-4 rounded-xl text-sm font-medium transition-all border-2 ${
+                        shareDateOption === "today" && !shareDateRange
+                          ? "border-indigo-500 bg-indigo-50 text-indigo-700"
+                          : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+                      }`}
+                    >
+                      📅 Hari Ini
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShareDateOption("tomorrow");
+                        setShareDateRange(false);
+                        setTimeout(() => loadPreviewAgendas(), 100);
+                      }}
+                      className={`py-3 px-4 rounded-xl text-sm font-medium transition-all border-2 ${
+                        shareDateOption === "tomorrow" && !shareDateRange
+                          ? "border-indigo-500 bg-indigo-50 text-indigo-700"
+                          : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+                      }`}
+                    >
+                      📅 Besok
+                    </button>
+                  </div>
+
+                  {/* Custom Date Toggle */}
+                  <button
+                    onClick={() => {
+                      setShareDateOption("custom");
+                      setShareDateRange(!shareDateRange);
+                    }}
+                    className={`w-full py-3 px-4 rounded-xl text-sm font-medium transition-all border-2 ${
+                      shareDateOption === "custom" || shareDateRange
+                        ? "border-indigo-500 bg-indigo-50 text-indigo-700"
+                        : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+                    }`}
+                  >
+                    📅 Pilih Tanggal Sendiri
+                  </button>
+
+                  {/* Date Pickers */}
+                  {(shareDateOption === "custom" || shareDateRange) && (
+                    <div className="grid grid-cols-2 gap-2 animate-fadeIn">
+                      <div>
+                        <label className="text-xs text-gray-500 mb-1 block">Dari Tanggal</label>
+                        <input
+                          type="date"
+                          value={shareCustomDate}
+                          onChange={(e) => {
+                            setShareCustomDate(e.target.value);
+                            setShareDateOption("custom");
+                            setTimeout(() => loadPreviewAgendas(), 100);
+                          }}
+                          className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs text-gray-500 mb-1 block">Sampai Tanggal</label>
+                        <input
+                          type="date"
+                          value={shareEndDate}
+                          onChange={(e) => {
+                            setShareEndDate(e.target.value);
+                            setShareDateRange(true);
+                            setTimeout(() => loadPreviewAgendas(), 100);
+                          }}
+                          className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Preview */}
+              <div>
+                <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                  Preview Jadwal
+                  <span className="text-gray-400 font-normal ml-1">({previewAgendas.length} agenda)</span>
+                </label>
+                <div className="bg-gray-50 rounded-xl p-3 max-h-48 overflow-y-auto">
+                  {loadingPreview ? (
+                    <div className="flex justify-center py-4">
+                      <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                  ) : previewAgendas.length === 0 ? (
+                    <p className="text-sm text-gray-500 text-center py-4">Tidak ada agenda</p>
+                  ) : (
+                    previewAgendas.map((agenda) => (
+                      <div key={agenda.id} className="py-2 border-b border-gray-100 last:border-0">
+                        <p className="text-sm font-medium text-gray-800">{agenda.title}</p>
+                        <p className="text-xs text-gray-500">
+                          {new Date(agenda.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })} | {formatTime(agenda.time_start)} - {formatTime(agenda.time_end)}
+                        </p>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {/* Success State */}
+              {shareSuccess && (
+                <div className="bg-emerald-50 rounded-xl p-4 animate-fadeIn">
+                  <div className="flex items-center gap-2 mb-2">
+                    <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="text-sm font-semibold text-emerald-700">Link Berhasil Dibuat!</span>
+                  </div>
+                  <div className="bg-white rounded-lg p-3 break-all">
+                    <p className="text-xs text-gray-500 mb-1">Share Link:</p>
+                    <p className="text-xs text-indigo-600 font-mono">{shareSuccess.url}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Action Buttons */}
+            <div className="px-5 py-4 border-t border-gray-100 bg-white">
+              {!shareSuccess ? (
+                <button
+                  onClick={handleCreateShare}
+                  disabled={shareLoading || previewAgendas.length === 0}
+                  className="w-full py-3.5 rounded-2xl font-semibold text-sm text-white shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] flex items-center justify-center gap-2"
+                  style={{
+                    background: shareLoading || previewAgendas.length === 0
+                      ? "#9ca3af"
+                      : "linear-gradient(135deg, #25D366, #128C7E)",
+                    boxShadow: "0 4px 16px rgba(37, 211, 102, 0.35)"
+                  }}
+                >
+                  {shareLoading ? (
+                    <>
+                      <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      Membuat Link...
+                    </>
+                  ) : previewAgendas.length === 0 ? (
+                    "Tidak Ada Agenda"
+                  ) : (
+                    <>
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                      </svg>
+                      Bagikan ke WhatsApp
+                    </>
+                  )}
+                </button>
+              ) : (
+                <button
+                  onClick={handleShareWhatsApp}
+                  className="w-full py-3.5 rounded-2xl font-semibold text-sm text-white shadow-lg transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                  style={{
+                    background: "linear-gradient(135deg, #25D366, #128C7E)",
+                    boxShadow: "0 4px 16px rgba(37, 211, 102, 0.35)"
+                  }}
+                >
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                  </svg>
+                  Kirim ke WhatsApp
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
