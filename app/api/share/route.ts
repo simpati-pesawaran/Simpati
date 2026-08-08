@@ -6,7 +6,12 @@ import { supabaseAdmin } from "@/app/lib/supabase";
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    if (!session?.user) {
+      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+    }
+
+    const userId = (session.user as any).userId;
+    if (!userId) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
 
@@ -19,7 +24,7 @@ export async function POST(request: NextRequest) {
       .from("share_links")
       .insert({
         token,
-        created_by: session.user.id,
+        created_by: userId,
         jenis: jenis || "all",
         start_date: startDate,
         end_date: endDate,
