@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://simpati.sragency.online";
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://simpati-silk.vercel.app";
     const url = `${baseUrl}/jadwal/${token}`;
 
     return NextResponse.json({ success: true, token, url });
