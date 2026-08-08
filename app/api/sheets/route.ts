@@ -1,12 +1,12 @@
 /**
  * Google Sheets Sync API
  *
- * Syncs agenda data to Google Sheets
+ * Syncs agenda and usulan data to Google Sheets
  * Spreadsheet: https://docs.google.com/spreadsheets/d/1QISdbLzLPwwErHk23db0uC2tTTYcFLCsF59ASSh5b5E/edit
  *
  * Required Environment Variables:
- * - GOOGLE_SERVICE_ACCOUNT_EMAIL: Service account email (e.g., name@project.iam.gserviceaccount.com)
- * - GOOGLE_SERVICE_ACCOUNT_KEY: Full JSON key content from service account (not base64)
+ * - GOOGLE_SERVICE_ACCOUNT_EMAIL: Service account email
+ * - GOOGLE_SERVICE_ACCOUNT_KEY: Full JSON key content from service account
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -17,44 +17,30 @@ import { google } from 'googleapis';
 
 const SPREADSHEET_ID = "1QISdbLzLPwwErHk23db0uC2tTTYcFLCsF59ASSh5b5E";
 
-interface GoogleServiceAccount {
-  type: string;
-  project_id: string;
-  private_key_id: string;
-  private_key: string;
-  client_email: string;
-  client_id: string;
-  auth_uri: string;
-  token_uri: string;
-  auth_provider_x509_cert_url: string;
-  client_x509_cert_url: string;
-}
-
-function getServiceAccountConfig(): GoogleServiceAccount | null {
+function getServiceAccountConfig() {
   const email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
   const keyJson = process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
 
   if (!email || !keyJson) {
-    console.warn("Google Sheets credentials not configured");
     return null;
   }
 
   try {
     const key = JSON.parse(keyJson);
     return {
-      type: key.type || "service_account",
+      type: "service_account",
       project_id: key.project_id,
       private_key_id: key.private_key_id,
       private_key: key.private_key,
       client_email: key.client_email,
       client_id: key.client_id,
-      auth_uri: key.auth_uri || "https://accounts.google.com/o/oauth2/auth",
-      token_uri: key.token_uri || "https://oauth2.googleapis.com/token",
-      auth_provider_x509_cert_url: key.auth_provider_x509_cert_url || "https://www.googleapis.com/oauth2/v1/certs",
-      client_x509_cert_url: key.client_x509_cert_url,
+      auth_uri: "https://accounts.google.com/o/oauth2/auth",
+      token_uri: "https://oauth2.googleapis.com/token",
+      auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
+      client_x509_cert_url: `https://www.googleapis.com/robot/v1/metadata/x509/${encodeURIComponent(email)}`,
     };
   } catch (error) {
-    console.error("Error parsing service account key:", error);
+    console.error("Error parsing service account key");
     return null;
   }
 }
@@ -69,12 +55,19 @@ async function getGoogleSheetsClient() {
       scopes: ['https://www.googleapis.com/auth/spreadsheets'],
     });
 
-    const client = google.sheets({ version: 'v4', auth });
-    return client;
+    return google.sheets({ version: 'v4', auth });
   } catch (error) {
-    console.error("Error creating Google Sheets client:", error);
+    console.error("Error creating Google Sheets client");
     return null;
   }
+}
+
+function sanitizeError(error: any): string {
+  if (error instanceof Error) return error.message;
+  if (typeof error === 'string') return error;
+  if (error?.message) return error.message;
+  if (error?.errors?.[0]?.message) return error.errors[0].message;
+  return "Unknown error";
 }
 
 function formatAgendaForSheet(agenda: any): (string | number)[] {
@@ -97,9 +90,94 @@ function formatAgendaForSheet(agenda: any): (string | number)[] {
   ];
 }
 
+function formatUsulanForSheet(usulan: any): (string | number)[] {
+  return [
+    usulan.id,
+    usulan.name || "-",
+    usulan.email || "-",
+    usulan.phone || "-",
+    usulan.instansi || "-",
+    usulan.category || "-",
+    usulan.title,
+    usulan.description || "-",
+    usulan.status === "approved" ? "Disetujui" : usulan.status === "rejected" ? "Ditolak" : "Menunggu",
+    usulan.created_at ? new Date(usulan.created_at).toLocaleString("id-ID", { timeZone: "Asia/Jakarta" }) : "-",
+    usulan.updated_at ? new Date(usulan.updated_at).toLocaleString("id-ID", { timeZone: "Asia/Jakarta" }) : "-",
+  ];
+}
+
+async function syncSheet(
+  sheets: any,
+  sheetName: string,
+  headerRow: string[],
+  dataRows: (string | number)[][],
+  formatHeader: boolean = true
+): Promise<{ success: boolean; error?: string; rowsWritten: number }> {
+  try {
+    const allRows = [headerRow, ...dataRows];
+    const lastColumn = String.fromCharCode(65 + headerRow.length - 1);
+    const range = `${sheetName}!A1:${lastColumn}${allRows.length}`;
+
+    // Clear existing data
+    try {
+      await sheets.spreadsheets.values.clear({
+        spreadsheetId: SPREADSHEET_ID,
+        range: `${sheetName}!A:${lastColumn}`,
+      });
+    } catch (e) {
+      // Sheet might be empty, continue
+    }
+
+    // Write new data
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: SPREADSHEET_ID,
+      range: range,
+      valueInputOption: 'RAW',
+      requestBody: { values: allRows },
+    });
+
+    // Format header row
+    if (formatHeader) {
+      try {
+        await sheets.spreadsheets.values.batchUpdate({
+          spreadsheetId: SPREADSHEET_ID,
+          requests: [{
+            repeatCell: {
+              range: {
+                sheetId: 0,
+                startRowIndex: 0,
+                endRowIndex: 1,
+                startColumnIndex: 0,
+                endColumnIndex: headerRow.length,
+              },
+              cell: {
+                userEnteredFormat: {
+                  backgroundColor: { red: 0.12, green: 0.24, blue: 0.47 },
+                  textFormat: { bold: true, foregroundColor: { red: 1, green: 1, blue: 1 } },
+                },
+              },
+              fields: "userEnteredFormat",
+            },
+          }],
+        });
+      } catch (e) {
+        // Non-critical
+      }
+    }
+
+    return { success: true, rowsWritten: dataRows.length };
+  } catch (error) {
+    return {
+      success: false,
+      error: sanitizeError(error),
+      rowsWritten: 0,
+    };
+  }
+}
+
 /**
  * GET /api/sheets
- * Get sync status
+ * Get sync status and available sheets
  */
 export async function GET(request: NextRequest) {
   try {
@@ -108,61 +186,53 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const config = getServiceAccountConfig();
-    if (!config) {
-      return NextResponse.json({
-        configured: false,
-        message: "Google Sheets credentials not configured",
-        spreadsheetId: SPREADSHEET_ID,
-        spreadsheetUrl: `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/edit`,
-        requiredEnvVars: [
-          "GOOGLE_SERVICE_ACCOUNT_EMAIL",
-          "GOOGLE_SERVICE_ACCOUNT_KEY",
-        ],
-      });
-    }
-
-    // Try to read the sheet
     const sheets = await getGoogleSheetsClient();
     if (!sheets) {
       return NextResponse.json({
         configured: false,
-        message: "Failed to connect to Google Sheets",
+        message: "Google Sheets credentials not configured",
       });
     }
 
     try {
-      const response = await sheets.spreadsheets.values.get({
+      const metaResponse = await sheets.spreadsheets.get({
         spreadsheetId: SPREADSHEET_ID,
-        range: 'Agenda!A:A',
       });
+
+      const sheetsList = metaResponse.data.sheets?.map((sheet: any) => ({
+        name: sheet.properties?.title,
+        rowCount: sheet.properties?.gridProperties?.rowCount,
+        columnCount: sheet.properties?.gridProperties?.columnCount,
+      })) || [];
 
       return NextResponse.json({
         configured: true,
         connected: true,
-        rowCount: (response.data.values?.length || 1) - 1, // Minus header
+        spreadsheetId: SPREADSHEET_ID,
         spreadsheetUrl: `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/edit`,
+        sheets: sheetsList,
       });
-    } catch (apiError: any) {
-      if (apiError.code === 404) {
+    } catch (error: any) {
+      if (error.code === 404) {
         return NextResponse.json({
           configured: true,
           connected: false,
-          message: "Sheet 'Agenda' not found. Please create a sheet named 'Agenda' in the spreadsheet.",
-          spreadsheetUrl: `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/edit`,
+          error: "Spreadsheet not found. Check if spreadsheet ID is correct and spreadsheet is shared with service account.",
         });
       }
-      throw apiError;
+      throw error;
     }
   } catch (error) {
-    console.error("GET /api/sheets error:", error);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    return NextResponse.json({ error: sanitizeError(error) }, { status: 500 });
   }
 }
 
 /**
  * POST /api/sheets
- * Sync all agendas to Google Sheets
+ * Sync all data to Google Sheets
+ *
+ * Query params:
+ * - sheet: "agenda" | "usulan" | "all" (default: "all")
  */
 export async function POST(request: NextRequest) {
   try {
@@ -176,158 +246,96 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: false,
         message: "Google Sheets credentials not configured",
-        setupGuide: {
-          step1: "Go to Google Cloud Console",
-          step2: "Create a project or select existing",
-          step3: "Enable Google Sheets API",
-          step4: "Create Service Account",
-          step5: "Download JSON key",
-          step6: "Share spreadsheet with service account email",
-          step7: "Set environment variables",
-        },
-        requiredEnvVars: [
-          "GOOGLE_SERVICE_ACCOUNT_EMAIL=service account email",
-          "GOOGLE_SERVICE_ACCOUNT_KEY=full JSON key content",
-        ],
       }, { status: 400 });
     }
 
-    // Fetch all agendas from database
-    const { data: agendas, error } = await supabaseAdmin
-      .from("agenda")
-      .select(`
-        *,
-        creator:profiles!agenda_created_by_fkey(id, name)
-      `)
-      .is("deleted_at", null)
-      .order("created_at", { ascending: false });
+    const searchParams = request.nextUrl.searchParams;
+    const targetSheet = searchParams.get("sheet") || "all";
 
-    if (error) {
-      console.error("Error fetching agendas:", error);
-      return NextResponse.json({ error: "Database error" }, { status: 500 });
+    const results: Record<string, any> = {};
+
+    // Sync Agenda
+    if (targetSheet === "agenda" || targetSheet === "all") {
+      const { data: agendas, error: agendaError } = await supabaseAdmin
+        .from("agenda")
+        .select(`
+          *,
+          creator:profiles!agenda_created_by_fkey(id, name)
+        `)
+        .is("deleted_at", null)
+        .order("created_at", { ascending: false });
+
+      if (agendaError) {
+        results.agenda = { success: false, error: sanitizeError(agendaError) };
+      } else {
+        const agendaHeader = [
+          "ID", "Jenis", "Sub Jenis", "Judul Agenda", "Tanggal",
+          "Waktu Mulai", "Waktu Selesai", "Lokasi", "Penanggung Jawab",
+          "No. PIC", "Deskripsi", "Status", "Dibuat Oleh", "Dibuat Pada", "Diperbarui Pada"
+        ];
+        const agendaRows = (agendas || []).map(formatAgendaForSheet);
+
+        results.agenda = await syncSheet(sheets, "Agenda", agendaHeader, agendaRows);
+        results.agenda.message = results.agenda.success
+          ? `Berhasil sinkron ${results.agenda.rowsWritten} agenda`
+          : `Gagal sinkron agenda: ${results.agenda.error}`;
+      }
     }
 
-    // Prepare header row
-    const headerRow = [
-      "ID",
-      "Jenis",
-      "Sub Jenis",
-      "Judul Agenda",
-      "Tanggal",
-      "Waktu Mulai",
-      "Waktu Selesai",
-      "Lokasi",
-      "Penanggung Jawab",
-      "No. PIC",
-      "Deskripsi",
-      "Status",
-      "Dibuat Oleh",
-      "Dibuat Pada",
-      "Diperbarui Pada",
-    ];
+    // Sync Usulan
+    if (targetSheet === "usulan" || targetSheet === "all") {
+      const { data: usulans, error: usulanError } = await supabaseAdmin
+        .from("usulan")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-    // Prepare data rows
-    const dataRows = (agendas || []).map(formatAgendaForSheet);
+      if (usulanError) {
+        results.usulan = { success: false, error: sanitizeError(usulanError) };
+      } else {
+        const usulanHeader = [
+          "ID", "Nama", "Email", "No. HP", "Instansi",
+          "Kategori", "Judul Usulan", "Deskripsi", "Status", "Dibuat Pada", "Diperbarui Pada"
+        ];
+        const usulanRows = (usulans || []).map(formatUsulanForSheet);
 
-    // Combine header and data
-    const allRows = [headerRow, ...dataRows];
-    const range = `Agenda!A1:O${allRows.length}`;
-
-    // Clear the sheet first
-    try {
-      await sheets.spreadsheets.values.clear({
-        spreadsheetId: SPREADSHEET_ID,
-        range: 'Agenda!A:O',
-      });
-    } catch (clearError) {
-      console.warn("Clear sheet warning:", clearError);
-      // Continue anyway - might be empty sheet
+        results.usulan = await syncSheet(sheets, "Usulan", usulanHeader, usulanRows);
+        results.usulan.message = results.usulan.success
+          ? `Berhasil sinkron ${results.usulan.rowsWritten} usulan`
+          : `Gagal sinkron usulan: ${results.usulan.error}`;
+      }
     }
 
-    // Write new data
-    const response = await sheets.spreadsheets.values.update({
-      spreadsheetId: SPREADSHEET_ID,
-      range: range,
-      valueInputOption: 'RAW',
-      requestBody: {
-        values: allRows,
-      },
-    });
-
-    // Format the header row
-    try {
-      await sheets.spreadsheets.values.batchUpdate({
-        spreadsheetId: SPREADSHEET_ID,
-        requests: [
-          {
-            repeatCell: {
-              range: {
-                sheetId: 0,
-                startRowIndex: 0,
-                endRowIndex: 1,
-                startColumnIndex: 0,
-                endColumnIndex: 15,
-              },
-              cell: {
-                userEnteredFormat: {
-                  backgroundColor: { red: 0.12, green: 0.24, blue: 0.47 },
-                  textFormat: {
-                    bold: true,
-                    foregroundColor: { red: 1, green: 1, blue: 1 },
-                  },
-                  borders: {
-                    top: { style: "SOLID", width: 1, color: { red: 0.1, green: 0.1, blue: 0.1 } },
-                    bottom: { style: "SOLID", width: 1, color: { red: 0.1, green: 0.1, blue: 0.1 } },
-                    left: { style: "SOLID", width: 1, color: { red: 0.1, green: 0.1, blue: 0.1 } },
-                    right: { style: "SOLID", width: 1, color: { red: 0.1, green: 0.1, blue: 0.1 } },
-                  },
-                },
-              },
-              fields: "userEnteredFormat",
-            },
-          },
-          {
-            autoResizeDimensions: {
-              dimensions: {
-                sheetId: 0,
-                dimension: "COLUMNS",
-                startIndex: 0,
-                endIndex: 15,
-              },
-            },
-          },
-        ],
-      });
-    } catch (formatError) {
-      console.warn("Format header warning:", formatError);
-      // Non-critical, continue
-    }
-
-    // Log the sync activity
+    // Log activity
     const profile = (session.user as any)?.profile;
-    if (profile) {
+    if (profile && Object.values(results).some((r: any) => r.success)) {
+      const syncedItems = Object.entries(results)
+        .filter(([_, r]: [string, any]) => r.success)
+        .map(([name, r]: [string, any]) => `${r.rowsWritten} ${name}`)
+        .join(", ");
+
       await supabaseAdmin.from("activity_logs").insert({
         user_id: profile.id,
         user_name: profile.name || session.user.name,
         action: "sync",
-        entity_type: "agenda",
-        entity_id: "google_sheets",
-        description: `${profile.name} menyinkronkan ${agendas?.length || 0} agenda ke Google Sheets`,
+        entity_type: "google_sheets",
+        entity_id: "multi",
+        description: `${profile.name} menyinkronkan ${syncedItems} ke Google Sheets`,
       });
     }
 
+    const overallSuccess = Object.values(results).every((r: any) => r.success);
+
     return NextResponse.json({
-      success: true,
-      message: `Berhasil menyinkronkan ${agendas?.length || 0} agenda ke Google Sheets`,
-      syncedCount: agendas?.length || 0,
+      success: overallSuccess,
       spreadsheetUrl: `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/edit`,
-    });
+      results,
+    }, { status: overallSuccess ? 200 : 500 });
+
   } catch (error) {
     console.error("POST /api/sheets error:", error);
     return NextResponse.json({
       success: false,
-      error: "Server error",
-      message: error instanceof Error ? error.message : "Unknown error occurred"
+      error: sanitizeError(error),
     }, { status: 500 });
   }
 }

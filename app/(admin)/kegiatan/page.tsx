@@ -93,11 +93,54 @@ function KegiatanContent() {
   const [submitting, setSubmitting] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const [syncMessage, setSyncMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
+  const [showSyncMenu, setShowSyncMenu] = useState(false);
+  const [syncingType, setSyncingType] = useState<'agenda' | 'usulan' | null>(null);
+
+  // Close sync menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (showSyncMenu) {
+        const target = e.target as HTMLElement;
+        if (!target.closest('.sync-menu')) {
+          setShowSyncMenu(false);
+        }
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [showSyncMenu]);
 
   const profile = (session?.user as any)?.profile;
   const isSuperadmin = profile?.role === "superadmin";
 
   const subJenisOptions = activeTab === "kegiatan" ? SUB_JENIS_KEGIATAN : SUB_JENIS_AUDIENSI;
+
+  // Sync handler
+  const handleSync = async (type: 'agenda' | 'usulan') => {
+    setSyncingType(type);
+    setShowSyncMenu(false);
+    setSyncMessage(null);
+
+    try {
+      const res = await fetch(`/api/sheets?sheet=${type}`, { method: "POST" });
+      const data = await res.json();
+
+      if (data.success) {
+        const results = Object.entries(data.results || {})
+          .map(([name, r]: [string, any]) => r.message || `${name}: OK`)
+          .join(". ");
+        setSyncMessage({ type: "success", text: results || "Sinkronisasi berhasil" });
+      } else {
+        const errorMsg = data.results?.[type]?.error || data.error || "Gagal sinkronisasi";
+        setSyncMessage({ type: "error", text: errorMsg });
+      }
+    } catch (error) {
+      setSyncMessage({ type: "error", text: "Terjadi kesalahan saat sinkronisasi" });
+    } finally {
+      setSyncingType(null);
+      setTimeout(() => setSyncMessage(null), 6000);
+    }
+  };
 
   // Auto-determine status based on date/time
   const getComputedStatus = (agenda: Agenda): "today" | "upcoming" | "finished" | "cancelled" => {
@@ -240,33 +283,6 @@ function KegiatanContent() {
     } catch { alert("Error"); }
   };
 
-  const handleSyncToSheets = async () => {
-    setSyncing(true);
-    setSyncMessage(null);
-    try {
-      const res = await fetch("/api/sheets", { method: "POST" });
-      const data = await res.json();
-      if (data.success) {
-        setSyncMessage({ type: "success", text: data.message });
-      } else {
-        // Check if it's a configuration issue
-        if (data.requiredEnvVars) {
-          setSyncMessage({
-            type: "error",
-            text: "Google Sheets belum dikonfigurasi. Hubungi admin untuk setup."
-          });
-        } else {
-          setSyncMessage({ type: "error", text: data.message || "Gagal sinkronisasi" });
-        }
-      }
-    } catch (error) {
-      setSyncMessage({ type: "error", text: "Terjadi kesalahan saat sinkronisasi" });
-    } finally {
-      setSyncing(false);
-      setTimeout(() => setSyncMessage(null), 5000);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Page Container - matching app max-width */}
@@ -297,27 +313,67 @@ function KegiatanContent() {
             <h1 className="text-white text-xl font-bold">Agenda</h1>
             <p className="text-white/60 text-xs">Kelola jadwal kegiatan & audiensi</p>
           </div>
-          <button
-            onClick={handleSyncToSheets}
-            disabled={syncing}
-            className="ml-auto w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-95 disabled:opacity-50"
-            style={{
-              background: "rgba(255,255,255,0.2)",
-              backdropFilter: "blur(10px)",
-            }}
-            title="Sync ke Google Sheets"
-          >
-            {syncing ? (
-              <svg className="w-5 h-5 text-white animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-              </svg>
-            ) : (
-              <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
-              </svg>
+
+          {/* Sync Button with Dropdown */}
+          <div className="ml-auto relative">
+            <button
+              onClick={() => setShowSyncMenu(!showSyncMenu)}
+              disabled={syncingType !== null}
+              className="w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-95 disabled:opacity-50"
+              style={{
+                background: "rgba(255,255,255,0.2)",
+                backdropFilter: "blur(10px)",
+              }}
+              title="Sync ke Google Sheets"
+            >
+              {syncingType ? (
+                <svg className="w-5 h-5 text-white animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
+                </svg>
+              )}
+            </button>
+
+            {/* Dropdown Menu */}
+            {showSyncMenu && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg py-2 z-50 sync-menu">
+                <button
+                  onClick={() => handleSync('agenda')}
+                  className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                >
+                  <svg className="w-4 h-4 text-blue-500" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                  </svg>
+                  Sinkron Agenda
+                </button>
+                <button
+                  onClick={() => handleSync('usulan')}
+                  className="w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                >
+                  <svg className="w-4 h-4 text-green-500" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/>
+                  </svg>
+                  Sinkron Usulan
+                </button>
+                <div className="border-t border-gray-100 my-1"></div>
+                <a
+                  href="https://docs.google.com/spreadsheets/d/1QISdbLzLPwwErHk23db0uC2tTTYcFLCsF59ASSh5b5E/edit"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full px-4 py-2.5 text-left text-sm text-indigo-600 hover:bg-indigo-50 flex items-center gap-2"
+                >
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
+                  </svg>
+                  Buka Spreadsheet
+                </a>
+              </div>
             )}
-          </button>
+          </div>
         </div>
 
         {/* Sync Message Toast */}
