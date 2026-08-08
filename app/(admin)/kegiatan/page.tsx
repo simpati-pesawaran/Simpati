@@ -193,8 +193,11 @@ function KegiatanContent() {
   };
 
   return (
-    <div className="min-h-screen" style={{ background: "#f1f5f9" }}>
-      {/* Header Section - Gradient Theme */}
+    <div className="min-h-screen bg-gray-100">
+      {/* Page Container - matching app max-width */}
+      <div className="max-w-md mx-auto bg-gray-50 min-h-screen">
+
+        {/* Header Section - Gradient Theme */}
       <div
         className="px-5 pb-5"
         style={{
@@ -302,6 +305,7 @@ function KegiatanContent() {
           ))}
         </div>
       </div>
+    </div>
 
       <button onClick={() => handleOpenModal()}
         className="fixed bottom-24 right-5 w-14 h-14 bg-gradient-to-br from-indigo-600 to-blue-600 text-white rounded-full shadow-lg shadow-indigo-500/40 flex items-center justify-center active:scale-95 transition-transform z-20">
@@ -311,158 +315,67 @@ function KegiatanContent() {
       </button>
 
       {showDetail && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={() => setShowDetail(null)}>
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowDetail(null)}>
           <div
-            className="w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl animate-slideUp overflow-hidden"
-            style={{ maxHeight: "85vh" }}
+            className="w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden animate-scaleIn"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Premium Header with Gradient Accent */}
-            <div className="relative">
-              <div
-                className="h-1.5 w-full"
-                style={{
-                  background: showDetail.jenis === "kegiatan"
-                    ? "linear-gradient(90deg, #3b82f6, #6366f1)"
-                    : "linear-gradient(90deg, #8b5cf6, #ec4899)"
-                }}
-              />
-              <div className="flex justify-center pt-3 pb-2">
-                <div className="w-10 h-1 bg-gray-300 rounded-full" />
+            {/* Header */}
+            <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-slate-50 to-white border-b border-gray-100">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${showDetail.jenis === "kegiatan" ? "bg-gradient-to-br from-blue-500 to-indigo-600" : "bg-gradient-to-br from-purple-500 to-pink-500"}`}>
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
               </div>
-            </div>
-
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100/80">
-              <div>
-                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold mb-2 ${
-                  showDetail.jenis === "kegiatan"
-                    ? "bg-blue-50 text-blue-600"
-                    : "bg-purple-50 text-purple-600"
-                }`}>
-                  <span className={`w-1.5 h-1.5 rounded-full ${
-                    showDetail.jenis === "kegiatan" ? "bg-blue-500" : "bg-purple-500"
-                  }`} />
+              <div className="flex-1 min-w-0">
+                <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${showDetail.jenis === "kegiatan" ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700"}`}>
                   {showDetail.jenis === "kegiatan" ? "Kegiatan" : "Audiensi"}
                 </span>
-                <h2 className="text-lg font-bold text-gray-900 leading-tight">{showDetail.title}</h2>
+                <p className="text-sm font-semibold text-gray-900 truncate">{showDetail.title}</p>
               </div>
-              <button
-                onClick={() => setShowDetail(null)}
-                className="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-gray-100 active:bg-gray-200 transition-all"
-              >
+              <button onClick={() => setShowDetail(null)} className="w-9 h-9 rounded-xl flex items-center justify-center hover:bg-gray-100 active:scale-90 transition-all">
                 <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto px-5 py-5 space-y-4">
-              <div className="flex items-start gap-4 p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl border border-gray-100">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-sm ${
-                  showDetail.jenis === "kegiatan"
-                    ? "bg-gradient-to-br from-blue-500 to-indigo-500"
-                    : "bg-gradient-to-br from-purple-500 to-pink-500"
-                }`}>
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 font-medium">Tanggal & Waktu</p>
-                  <p className="font-semibold text-gray-900">{formatDate(showDetail.date)}</p>
-                  <p className="text-sm text-gray-600 mt-0.5">{formatTime(showDetail.time_start)} - {formatTime(showDetail.time_end)}</p>
-                </div>
-              </div>
-              {showDetail.location && (
-                <div className="flex items-start gap-4 p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl border border-gray-100">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-sm">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 font-medium">Lokasi</p>
-                    <p className="font-semibold text-gray-900">{showDetail.location}</p>
-                  </div>
-                </div>
-              )}
-              {showDetail.pic_name && (
-                <div className="flex items-start gap-4 p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl border border-gray-100">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center shadow-sm">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 font-medium">Penanggung Jawab</p>
-                    <p className="font-semibold text-gray-900">{showDetail.pic_name}</p>
-                    {showDetail.pic_phone && (
-                      <a href={`tel:${showDetail.pic_phone}`} className="text-sm text-indigo-600 hover:text-indigo-700">{showDetail.pic_phone}</a>
-                    )}
-                  </div>
-                </div>
-              )}
-              {showDetail.description && (
-                <div className="p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl border border-gray-100">
-                  <p className="text-xs text-gray-500 font-medium mb-2">Deskripsi</p>
-                  <p className="text-sm text-gray-700 leading-relaxed">{showDetail.description}</p>
-                </div>
-              )}
-              {showDetail.participants_count && (
-                <div className="flex items-center gap-3 p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl border border-gray-100">
-                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <span className="text-sm text-gray-500">Peserta:</span>
-                  <span className="text-sm font-semibold text-gray-900">{showDetail.participants_count} orang</span>
-                </div>
-              )}
-              {showDetail.dresscode && (
-                <div className="flex items-center gap-3 p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl border border-gray-100">
-                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-                  </svg>
-                  <span className="text-sm text-gray-500">Dresscode:</span>
-                  <span className="text-sm font-semibold text-gray-900">{showDetail.dresscode}</span>
-                </div>
-              )}
-              <div className="flex items-center gap-3 p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-2xl border border-gray-100">
-                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+
+            {/* Content */}
+            <div className="p-4 space-y-2">
+              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                <svg className="w-4 h-4 text-indigo-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                <span className="text-sm text-gray-500">Status:</span>
-                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                  showDetail.status === "published"
-                    ? "bg-emerald-50 text-emerald-600"
-                    : "bg-amber-50 text-amber-600"
-                }`}>
-                  {showDetail.status === "published" ? "Published" : "Draft"}
-                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-gray-500">{formatDate(showDetail.date)}</p>
+                  <p className="text-sm font-medium text-gray-800">{formatTime(showDetail.time_start)} - {formatTime(showDetail.time_end)}</p>
+                </div>
               </div>
-              {showDetail.creator && (
-                <p className="text-xs text-gray-400 text-center">Dibuat oleh {showDetail.creator.name}</p>
+
+              {showDetail.location && (
+                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                  <svg className="w-4 h-4 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  </svg>
+                  <p className="text-sm font-medium text-gray-800 truncate">{showDetail.location}</p>
+                </div>
               )}
-              <div className="flex gap-3 pt-4">
-                <button
-                  onClick={() => handleOpenModal(showDetail)}
-                  className="flex-1 py-4 rounded-2xl font-semibold text-sm text-white shadow-lg active:scale-[0.98] transition-all"
-                  style={{
-                    background: "linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #7c3aed 100%)",
-                    boxShadow: "0 4px 16px rgba(37, 99, 235, 0.35)"
-                  }}
-                >
-                  Edit Agenda
-                </button>
-                {(isSuperadmin || profile?.id === showDetail.created_by) && (
-                  <button
-                    onClick={() => setShowDeleteConfirm(showDetail.id)}
-                    className="px-4 py-4 bg-red-50 border border-red-200 text-red-600 font-semibold rounded-2xl hover:bg-red-100 active:scale-[0.98] transition-all"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                  </button>
-                )}
-              </div>
+
+              {showDetail.pic_name && (
+                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                  <svg className="w-4 h-4 text-purple-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  <p className="text-sm font-medium text-gray-800">{showDetail.pic_name}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="px-4 pb-4">
+              <Link href={`/agenda/${showDetail.id}`} className="block w-full py-3 text-center bg-gradient-to-r from-indigo-600 to-blue-600 text-white text-sm font-semibold rounded-xl shadow-lg shadow-indigo-500/30 active:scale-[0.98] transition-all">
+                Lihat Detail
+              </Link>
             </div>
           </div>
         </div>
@@ -514,7 +427,7 @@ function KegiatanContent() {
             </div>
 
             {/* Form Content - Scrollable */}
-            <div className="flex-1 overflow-y-auto px-4 py-4 space-y-5 overscroll-contain" style={{ WebkitOverflowScrolling: "touch" }}>
+            <div className="flex-1 overflow-y-auto px-4 py-4 pb-24 space-y-5 overscroll-contain" style={{ WebkitOverflowScrolling: "touch" }}>
 
               {/* Section: INFORMASI */}
               <section>
@@ -794,8 +707,21 @@ function KegiatanContent() {
             transform: translateY(0) scale(1);
           }
         }
+        @keyframes scaleIn {
+          from {
+            transform: scale(0.9);
+            opacity: 0;
+          }
+          to {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
         .animate-slideUp {
           animation: slideUp 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        .animate-scaleIn {
+          animation: scaleIn 0.25s cubic-bezier(0.32, 0.72, 0, 1);
         }
         @media (min-width: 640px) {
           .animate-slideUp {

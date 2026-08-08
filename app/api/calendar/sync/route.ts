@@ -8,6 +8,53 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { supabaseAdmin } from "@/app/lib/supabase";
 
 /**
+ * Log activity helper
+ */
+async function logActivity(
+  userId: string,
+  userName: string,
+  action: string,
+  entityType: string,
+  entityId: string,
+  description: string,
+  oldData: any = null,
+  newData: any = null
+) {
+  const { error } = await supabaseAdmin.from("activity_logs").insert({
+    user_id: userId,
+    user_name: userName,
+    action: action,
+    entity_type: entityType,
+    entity_id: entityId,
+    description: description,
+    old_data: oldData,
+    new_data: newData,
+  });
+
+  if (error) {
+    console.error("Error logging calendar activity:", error);
+  }
+
+  return !error;
+}
+
+/**
+ * Log sync failure
+ */
+async function logSyncFailure(profile: any, agendaId: string, agendaTitle: string, errorMessage: string) {
+  await logActivity(
+    profile.id,
+    profile.name,
+    "sync_failure",
+    "agenda",
+    agendaId,
+    `Gagal sinkron "${agendaTitle}" ke Google Calendar: ${errorMessage}`,
+    { sync_status: "attempted" },
+    { sync_status: "failed", error: errorMessage }
+  );
+}
+
+/**
  * POST /api/calendar/sync
  * Sync agenda to Google Calendar
  */
@@ -130,6 +177,10 @@ async function pushToGoogleCalendar(accessToken: string, agenda: any, profile: a
   if (!response.ok) {
     const error = await response.json();
     console.error("Google Calendar push error:", error);
+
+    // Log sync failure
+    await logSyncFailure(profile, agenda.id, agenda.title, error.message || "Unknown error");
+
     return NextResponse.json({ error: "Gagal push ke Google Calendar" }, { status: 500 });
   }
 

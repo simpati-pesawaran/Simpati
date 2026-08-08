@@ -203,7 +203,7 @@ export async function POST(request: NextRequest) {
         time_start,
         time_end,
         location: location || null,
-        target_audience: location || null,
+        target_audience: body.target_audience || null,
         status,
         created_by: profile.id,
       })

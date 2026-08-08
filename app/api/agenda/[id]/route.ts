@@ -190,16 +190,17 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: "Update failed: " + updateError.message }, { status: 500 });
     }
 
-    // Log activity
+    // Log activity with detailed change tracking
+    const changeDetails = getChangeDetails(existing, updated);
     await logActivity(
       profile.id,
       profile.name || session.user.name,
-      "update",
-      "agenda",
+      getActionFromStatus(status, existing.status),
+      existing.jenis === "audiensi" ? "audiensi" : "agenda",
       id,
       existing,
       updated,
-      `${profile.name} mengedit ${existing.jenis}: ${existing.title}`
+      `${profile.name} ${getActionVerb(status, existing.status)} ${existing.jenis}: ${existing.title}${changeDetails}`
     );
 
     // Create notification for superadmin if published
@@ -307,4 +308,56 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     console.error("DELETE /api/agenda/[id] error:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
+}
+
+/**
+ * Helper function to determine action type from status change
+ */
+function getActionFromStatus(newStatus: string, oldStatus: string): string {
+  if (newStatus === "published" && oldStatus === "draft") return "publish";
+  if (newStatus === "published" && oldStatus === "cancelled") return "publish";
+  if (newStatus === "cancelled") return "cancel";
+  return "update";
+}
+
+/**
+ * Helper function to get action verb in Indonesian
+ */
+function getActionVerb(newStatus: string, oldStatus: string): string {
+  if (newStatus === "published" && oldStatus === "draft") return "mempublikasikan";
+  if (newStatus === "published" && oldStatus === "cancelled") return "mengaktifkan kembali";
+  if (newStatus === "cancelled") return "membatalkan";
+  return "mengedit";
+}
+
+/**
+ * Helper function to get detailed change description
+ */
+function getChangeDetails(oldData: any, newData: any): string {
+  const changes: string[] = [];
+
+  if (oldData.date !== newData.date) {
+    changes.push(`tanggal: ${oldData.date} → ${newData.date}`);
+  }
+  if (oldData.time_start !== newData.time_start) {
+    changes.push(`waktu mulai: ${oldData.time_start} → ${newData.time_start}`);
+  }
+  if (oldData.time_end !== newData.time_end) {
+    changes.push(`waktu selesai: ${oldData.time_end} → ${newData.time_end}`);
+  }
+  if (oldData.location !== newData.location) {
+    changes.push(`lokasi: ${oldData.location || '-'} → ${newData.location || '-'}`);
+  }
+  if (oldData.pic_name !== newData.pic_name) {
+    changes.push(`PIC: ${oldData.pic_name || '-'} → ${newData.pic_name || '-'}`);
+  }
+  if (oldData.pic_phone !== newData.pic_phone) {
+    changes.push(`no. PIC berubah`);
+  }
+  if (oldData.status !== newData.status) {
+    changes.push(`status: ${oldData.status} → ${newData.status}`);
+  }
+
+  if (changes.length === 0) return "";
+  return ` (${changes.join(", ")})`;
 }

@@ -269,85 +269,67 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Bottom Sheet Detail */}
+      {/* Centered Modal Detail */}
       {showDetail && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center" onClick={() => setShowDetail(null)}>
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowDetail(null)}>
           <div
-            className="relative w-full bg-white rounded-t-3xl p-6 animate-slideUp"
+            className="w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden animate-scaleIn"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Handle */}
-            <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-4" />
-
             {/* Header */}
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-semibold mb-2 ${
-                  showDetail.jenis === "agenda"
-                    ? "bg-blue-100 text-blue-700"
-                    : "bg-purple-100 text-purple-700"
-                }`}>
+            <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-slate-50 to-white border-b border-gray-100">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${showDetail.jenis === "agenda" ? "bg-gradient-to-br from-blue-500 to-indigo-600" : "bg-gradient-to-br from-purple-500 to-pink-500"}`}>
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div className="flex-1 min-w-0">
+                <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${showDetail.jenis === "agenda" ? "bg-blue-100 text-blue-700" : "bg-purple-100 text-purple-700"}`}>
                   {showDetail.jenis === "agenda" ? "Kegiatan" : "Audiensi"}
                 </span>
-                <h3 className="text-lg font-bold text-gray-900">{showDetail.title}</h3>
+                <p className="text-sm font-semibold text-gray-900 truncate">{showDetail.title}</p>
               </div>
               <button
                 onClick={() => setShowDetail(null)}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                className="w-9 h-9 rounded-xl flex items-center justify-center hover:bg-gray-100 active:scale-90 transition-all"
               >
-                <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
 
-            {/* Details */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
-                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500">Tanggal & Waktu</p>
-                  <p className="font-semibold text-gray-900">{formatDate(showDetail.date)}</p>
-                  <p className="text-sm text-gray-600">{showDetail.time_start} - {showDetail.time_end}</p>
+            {/* Content */}
+            <div className="p-4 space-y-2">
+              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                <svg className="w-4 h-4 text-indigo-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-gray-500">{formatDate(showDetail.date)}</p>
+                  <p className="text-sm font-medium text-gray-800">{showDetail.time_start} - {showDetail.time_end}</p>
                 </div>
               </div>
 
               {showDetail.location && (
-                <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Lokasi</p>
-                    <p className="font-semibold text-gray-900">{showDetail.location}</p>
-                  </div>
+                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                  <svg className="w-4 h-4 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  </svg>
+                  <p className="text-sm font-medium text-gray-800 truncate">{showDetail.location}</p>
                 </div>
               )}
-
-              <div className="flex gap-3 pt-2">
-                <Link
-                  href={`/kegiatan/${showDetail.id}`}
-                  className="flex-1 py-3 bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-semibold rounded-xl text-sm text-center shadow-lg shadow-indigo-500/30 active:scale-[0.98] transition-transform"
-                >
-                  Lihat Detail
-                </Link>
-                <button className="px-4 py-3 border-2 border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
-                  <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                  </svg>
-                </button>
-              </div>
             </div>
 
-            {/* Safe Area */}
-            <div style={{ paddingBottom: "env(safe-area-inset-bottom)" }} />
+            {/* Footer */}
+            <div className="px-4 pb-4">
+              <Link
+                href={`/agenda/${showDetail.id}`}
+                className="block w-full py-3 text-center bg-gradient-to-r from-indigo-600 to-blue-600 text-white text-sm font-semibold rounded-xl shadow-lg shadow-indigo-500/30 active:scale-[0.98] transition-all"
+              >
+                Lihat Detail
+              </Link>
+            </div>
           </div>
         </div>
       )}
@@ -363,8 +345,21 @@ export default function DashboardPage() {
             opacity: 1;
           }
         }
+        @keyframes scaleIn {
+          from {
+            transform: scale(0.9);
+            opacity: 0;
+          }
+          to {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
         .animate-slideUp {
           animation: slideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        .animate-scaleIn {
+          animation: scaleIn 0.25s cubic-bezier(0.32, 0.72, 0, 1);
         }
       `}</style>
     </div>

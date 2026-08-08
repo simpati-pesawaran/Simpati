@@ -36,12 +36,12 @@ EXCEPTION WHEN duplicate_object THEN null;
 END $$;
 
 DO $$ BEGIN
-    CREATE TYPE action_type AS ENUM ('create', 'update', 'delete', 'approve', 'reject', 'login', 'logout', 'submit', 'sync');
+    CREATE TYPE action_type AS ENUM ('create', 'update', 'delete', 'approve', 'reject', 'login', 'logout', 'submit', 'sync', 'view', 'publish', 'cancel', 'sync_failure');
 EXCEPTION WHEN duplicate_object THEN null;
 END $$;
 
 DO $$ BEGIN
-    CREATE TYPE entity_type AS ENUM ('profile', 'agenda', 'notification', 'gallery', 'usulan');
+    CREATE TYPE entity_type AS ENUM ('profile', 'agenda', 'notification', 'gallery', 'usulan', 'audiensi', 'auth', 'user');
 EXCEPTION WHEN duplicate_object THEN null;
 END $$;
 

@@ -5,6 +5,32 @@ import { supabaseAdmin } from "@/app/lib/supabase";
 // Superadmin constant
 const SUPERADMIN_EMAIL = "siagapesasakan@gmail.com";
 
+/**
+ * Log activity helper for auth events
+ */
+async function logAuthActivity(
+  userId: string,
+  userName: string,
+  action: string,
+  description: string,
+  entityId: string = userId
+) {
+  const { error } = await supabaseAdmin.from("activity_logs").insert({
+    user_id: userId,
+    user_name: userName,
+    action: action,
+    entity_type: "auth",
+    entity_id: entityId,
+    description: description,
+  });
+
+  if (error) {
+    console.error("Error logging auth activity:", error);
+  }
+
+  return !error;
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
@@ -43,6 +69,30 @@ export const authOptions: NextAuthOptions = {
                 approved_at: new Date().toISOString(),
                 approved_by: user.email,
               });
+          } else {
+            // Log login for superadmin
+            await logAuthActivity(
+              existingProfile.id,
+              user.name || 'Superadmin',
+              "login",
+              `Login ke sistem sebagai Superadmin`
+            );
+          }
+        } else {
+          // Log login for regular users
+          const { data: existingProfile } = await supabaseAdmin
+            .from('profiles')
+            .select('id, name')
+            .eq('email', user.email)
+            .single();
+
+          if (existingProfile) {
+            await logAuthActivity(
+              existingProfile.id,
+              existingProfile.name || user.name || 'Unknown',
+              "login",
+              `Login ke sistem`
+            );
           }
         }
         return true;

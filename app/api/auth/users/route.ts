@@ -4,6 +4,37 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../[...nextauth]/route";
 import { supabaseAdmin } from "@/app/lib/supabase";
 
+/**
+ * Log activity helper
+ */
+async function logActivity(
+  userId: string,
+  userName: string,
+  action: string,
+  entityType: string,
+  entityId: string,
+  description: string,
+  oldData: any = null,
+  newData: any = null
+) {
+  const { error } = await supabaseAdmin.from("activity_logs").insert({
+    user_id: userId,
+    user_name: userName,
+    action: action,
+    entity_type: entityType,
+    entity_id: entityId,
+    description: description,
+    old_data: oldData,
+    new_data: newData,
+  });
+
+  if (error) {
+    console.error("Error logging activity:", error);
+  }
+
+  return !error;
+}
+
 export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -22,18 +53,64 @@ export async function POST(request: NextRequest) {
   const body = await request.json();
   const { user_id, action } = body;
   if (!user_id || !action) return NextResponse.json({ error: "user_id and action required" }, { status: 400 });
+
+  // Get target user info for logging
+  const { data: targetUser } = await supabaseAdmin.from('profiles').select('id, name, email').eq('id', user_id).single();
+
   if (action === 'approve') {
     const { data: updated, error } = await supabaseAdmin.from('profiles').update({ status: 'approved', approved_by: adminProfile.id, approved_at: new Date().toISOString() }).eq('id', user_id).select().single();
     if (error) return NextResponse.json({ error: "Approval failed" }, { status: 500 });
+
+    // Log approval
+    if (targetUser) {
+      await logActivity(
+        adminProfile.id,
+        adminProfile.name || 'Superadmin',
+        "approve",
+        "user",
+        user_id,
+        `Menyetujui pendaftaran: ${targetUser.name} (${targetUser.email})`,
+        { status: 'pending' },
+        { status: 'approved' }
+      );
+    }
+
     await supabaseAdmin.from('notifications').insert({ user_id, type: 'approval', title: 'Pendaftaran Disetujui', message: 'Pendaftaran Anda disetujui.' });
     return NextResponse.json({ success: true, profile: updated });
   } else if (action === 'reject') {
     const { reason } = body;
     const { data: updated, error } = await supabaseAdmin.from('profiles').update({ status: 'rejected', rejected_by: adminProfile.id, rejected_at: new Date().toISOString(), rejection_reason: reason || null }).eq('id', user_id).select().single();
     if (error) return NextResponse.json({ error: "Rejection failed" }, { status: 500 });
+
+    // Log rejection
+    if (targetUser) {
+      await logActivity(
+        adminProfile.id,
+        adminProfile.name || 'Superadmin',
+        "reject",
+        "user",
+        user_id,
+        `Menolak pendaftaran: ${targetUser.name} (${targetUser.email})` + (reason ? ` - Alasan: ${reason}` : ''),
+        { status: 'pending' },
+        { status: 'rejected', reason }
+      );
+    }
+
     await supabaseAdmin.from('notifications').insert({ user_id, type: 'rejection', title: 'Pendaftaran Ditolak', message: reason ? 'Ditolak: ' + reason : 'Pendaftaran Anda ditolak.' });
     return NextResponse.json({ success: true, profile: updated });
   } else if (action === 'delete') {
+    // Log deletion
+    if (targetUser) {
+      await logActivity(
+        adminProfile.id,
+        adminProfile.name || 'Superadmin',
+        "delete",
+        "user",
+        user_id,
+        `Menghapus pengguna: ${targetUser.name} (${targetUser.email})`
+      );
+    }
+
     const { error } = await supabaseAdmin.from('profiles').delete().eq('id', user_id);
     if (error) return NextResponse.json({ error: "Delete failed" }, { status: 500 });
     return NextResponse.json({ success: true });

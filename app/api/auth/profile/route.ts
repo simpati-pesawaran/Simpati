@@ -12,6 +12,37 @@ import { supabaseAdmin } from "@/app/lib/supabase";
 const SUPERADMIN_EMAIL = "siagapesasakan@gmail.com";
 
 /**
+ * Log activity helper
+ */
+async function logActivity(
+  userId: string,
+  userName: string,
+  action: string,
+  entityType: string,
+  entityId: string,
+  description: string,
+  oldData: any = null,
+  newData: any = null
+) {
+  const { error } = await supabaseAdmin.from("activity_logs").insert({
+    user_id: userId,
+    user_name: userName,
+    action: action,
+    entity_type: entityType,
+    entity_id: entityId,
+    description: description,
+    old_data: oldData,
+    new_data: newData,
+  });
+
+  if (error) {
+    console.error("Error logging activity:", error);
+  }
+
+  return !error;
+}
+
+/**
  * GET /api/auth/profile
  * Get current user's profile status
  */
@@ -107,6 +138,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Update failed" }, { status: 500 });
     }
 
+    // Log profile update
+    await logActivity(
+      updated.id,
+      name,
+      "update",
+      "profile",
+      updated.id,
+      `Memperbarui profil: ${name} - Divisi ${division}`,
+      { name: existingProfile },
+      { name, division }
+    );
+
     return NextResponse.json({
       success: true,
       profile: updated,
@@ -131,6 +174,18 @@ export async function POST(request: NextRequest) {
   if (error) {
     return NextResponse.json({ error: "Creation failed" }, { status: 500 });
   }
+
+  // Log new user registration
+  await logActivity(
+    newProfile.id,
+    name,
+    isSuperadmin ? "create" : "submit",
+    "user",
+    newProfile.id,
+    isSuperadmin
+      ? `Mendaftar sebagai Superadmin: ${name}`
+      : `Mendaftar sebagai admin baru: ${name} - Divisi ${division}`
+  );
 
   // If not superadmin, notify superadmin
   if (!isSuperadmin) {
