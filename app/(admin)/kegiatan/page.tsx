@@ -1141,17 +1141,17 @@ function KegiatanContent() {
       {/* WhatsApp Share Modal */}
       {showShareModal && (
         <div
-          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center"
+          className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 pb-16 sm:pb-4"
           onClick={() => setShowShareModal(false)}
         >
           <div
-            className="w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-slideUp"
-            style={{ maxHeight: "70vh" }}
+            className="w-full max-w-sm bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-slideUp"
+            style={{ maxHeight: "60vh" }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Handle */}
-            <div className="flex justify-center pt-3 pb-2">
-              <div className="w-10 h-1 bg-gray-300 rounded-full" />
+            <div className="flex justify-center pt-2 pb-1">
+              <div className="w-8 h-1 bg-gray-300 rounded-full" />
             </div>
 
             {/* Header */}
@@ -1178,7 +1178,7 @@ function KegiatanContent() {
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4 overscroll-contain" style={{ WebkitOverflowScrolling: "touch", maxHeight: "calc(70vh - 100px)" }}>
+            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 overscroll-contain" style={{ WebkitOverflowScrolling: "touch", maxHeight: "calc(60vh - 80px)" }}>
 
               {/* Jenis Selection */}
               <div>
