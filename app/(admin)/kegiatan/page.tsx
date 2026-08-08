@@ -365,11 +365,18 @@ function KegiatanContent() {
 
   const handleShareWhatsApp = () => {
     if (!shareSuccess) return;
-    const message = `📅 *Jadwal Agenda SIMPATI*\n\n${previewAgendas.slice(0, 5).map((a, i) =>
-      `${i + 1}. ${a.title}\n   📆 ${new Date(a.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })} | 🕐 ${formatTime(a.time_start)} - ${formatTime(a.time_end)}\n   📍 ${a.location || '-'}`
-    ).join('\n\n')}${previewAgendas.length > 5 ? '\n\n...dan lainnya' : ''}\n\n🔗 Lihat selengkapnya: ${shareSuccess.url}`;
+    const greeting = `📅 *Jadwal Agenda SIMPATI*\n\nBerikut jadwal agenda yang bisa dilihat:\n\n`;
+    const agendaList = previewAgendas.slice(0, 5).map((a, i) =>
+      `${i + 1}. *${a.title}*\n   📆 ${new Date(a.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}\n   🕐 ${formatTime(a.time_start)} - ${formatTime(a.time_end)}\n   📍 ${a.location || '-'}`
+    ).join('\n\n');
+    const moreText = previewAgendas.length > 5 ? '\n\n...dan lainnya' : '';
+    const footer = `\n\n🔗 Lihat selengkapnya:\n${shareSuccess.url}\n\n_Semoga bermanfaat!_`;
 
-    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+    const message = greeting + agendaList + moreText + footer;
+
+    // Use WhatsApp API URL with pre-filled message
+    const waUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(waUrl, '_blank');
   };
 
   const handleCopyLink = () => {
