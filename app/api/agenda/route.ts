@@ -60,6 +60,8 @@ export async function GET(request: NextRequest) {
     const date = searchParams.get("date");
     const status = searchParams.get("status");
     const today = searchParams.get("today") === "true";
+    const startDate = searchParams.get("startDate");
+    const endDate = searchParams.get("endDate");
 
     let query = supabaseAdmin
       .from("agenda")
@@ -71,6 +73,13 @@ export async function GET(request: NextRequest) {
       .order("date", { ascending: true })
       .order("time_start", { ascending: true })
       .range(offset, offset + limit - 1);
+
+    // Filter by date range (for share feature)
+    if (startDate && endDate) {
+      query = query.gte("date", startDate).lte("date", endDate);
+    } else if (startDate) {
+      query = query.eq("date", startDate);
+    }
 
     // Filter by jenis (kegiatan/audiensi) - convert to DB enum
     if (jenis) {

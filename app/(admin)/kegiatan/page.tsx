@@ -298,7 +298,13 @@ function KegiatanContent() {
   // WhatsApp Share Functions
   const getDateRange = () => {
     const today = new Date();
-    const formatDateStr = (d: Date) => d.toISOString().split('T')[0];
+    // Use local timezone (WIB/UTC+7)
+    const formatDateStr = (d: Date) => {
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
 
     if (shareDateOption === 'today') {
       return { start: formatDateStr(today), end: formatDateStr(today) };
