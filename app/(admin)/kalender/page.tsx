@@ -464,7 +464,7 @@ export default function KalenderPage() {
               {/* Actions */}
               <div className="flex gap-2 pt-2">
                 <Link
-                  href={`/kegiatan?id=${showDetail.id}`}
+                  href={`/agenda/${showDetail.id}`}
                   className="flex-1 py-2.5 bg-indigo-500 text-white text-sm font-semibold rounded-xl text-center hover:bg-indigo-600 transition-all"
                 >
                   Lihat Detail
