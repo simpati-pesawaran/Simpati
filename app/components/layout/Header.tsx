@@ -175,7 +175,7 @@ export function Header() {
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto px-4 py-4">
+            <div className="flex-1 overflow-y-auto px-4 py-4" style={{ maxHeight: "50vh" }}>
               {notifications.length === 0 ? (
                 <div className="text-center py-12">
                   <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -235,20 +235,24 @@ export function Header() {
               )}
             </div>
 
-            {isSuperadmin && notifications.length > 0 && (
-              <div className="px-4 py-4 border-t border-gray-100 bg-gray-50/50">
-                <Link
-                  href="/akun"
-                  onClick={handleCloseNotifications}
-                  className="flex items-center justify-center gap-2 w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl font-semibold hover:shadow-lg transition-all text-sm"
-                >
-                  Lihat semua permintaan
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </Link>
-              </div>
-            )}
+            {/* Footer - View All Button */}
+            <div className="px-4 py-4 border-t border-gray-100 bg-gradient-to-r from-slate-50 to-indigo-50">
+              <Link
+                href="/notifikasi"
+                onClick={handleCloseNotifications}
+                className="flex items-center justify-center gap-2 w-full py-3.5 bg-white border-2 border-indigo-100 text-indigo-600 rounded-2xl font-semibold hover:bg-indigo-50 hover:border-indigo-200 active:scale-[0.98] transition-all shadow-sm"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+                Lihat Semua Notifikasi
+                {unreadCount > 0 && (
+                  <span className="ml-1 px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs font-bold rounded-full">
+                    {unreadCount}
+                  </span>
+                )}
+              </Link>
+            </div>
 
             {/* Safe Area */}
             <div style={{ paddingBottom: "env(safe-area-inset-bottom)" }} />
