@@ -715,7 +715,7 @@ function KegiatanContent() {
       </div>
 
       {showDetail && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowDetail(null)}>
+        <div className="fixed inset-0 z-[90] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowDetail(null)}>
           <div
             className="w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden animate-scaleIn"
             onClick={(e) => e.stopPropagation()}
@@ -828,52 +828,51 @@ function KegiatanContent() {
       )}
 
       {showModal && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={() => setShowModal(false)}>
+        <div className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={() => setShowModal(false)}>
           <div
-            className="w-full sm:max-w-[390px] bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden relative"
-            style={{ maxHeight: "92vh" }}
+            className="w-full sm:max-w-[390px] bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden"
+            style={{ maxHeight: "85vh" }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Handle */}
-            <div className="flex justify-center pt-3 pb-2 sm:pt-4 sm:pb-3">
-              <div className="w-10 h-1 bg-gray-300 rounded-full" />
-            </div>
-
-            {/* Header */}
-            <div className="flex items-center justify-between px-5 py-3 sm:py-4 border-b border-gray-100">
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center"
-                  style={{
-                    background: activeTab === "kegiatan"
-                      ? "linear-gradient(135deg, #3b82f6, #6366f1)"
-                      : "linear-gradient(135deg, #8b5cf6, #ec4899)",
-                    boxShadow: "0 4px 12px rgba(37, 99, 235, 0.25)"
-                  }}
-                >
-                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  </svg>
-                </div>
-                <div>
-                  <h2 className="text-lg font-bold text-gray-900">
-                    {editingId ? "Edit" : ""} Agenda
-                  </h2>
-                  <p className="text-xs text-gray-500">{activeTab === "kegiatan" ? "Kegiatan" : "Audiensi"}</p>
-                </div>
+            {/* Header - Fixed */}
+            <div className="flex-shrink-0">
+              <div className="flex justify-center pt-3 pb-2">
+                <div className="w-10 h-1 bg-gray-300 rounded-full" />
               </div>
-              <button
-                onClick={() => setShowModal(false)}
-                className="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-gray-100 active:bg-gray-200 transition-all"
-              >
-                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+              <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-9 h-9 rounded-xl flex items-center justify-center"
+                    style={{
+                      background: activeTab === "kegiatan"
+                        ? "linear-gradient(135deg, #3b82f6, #6366f1)"
+                        : "linear-gradient(135deg, #8b5cf6, #ec4899)",
+                    }}
+                  >
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 className="text-base font-bold text-gray-900">
+                      {editingId ? "Edit" : "Tambah"} Agenda
+                    </h2>
+                    <p className="text-xs text-gray-500">{activeTab === "kegiatan" ? "Kegiatan" : "Audiensi"}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-gray-100 transition-all"
+                >
+                  <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
             </div>
 
             {/* Form Content - Scrollable */}
-            <form id="agenda-form" onSubmit={(e) => handleSubmit(e)} className="flex-1 overflow-y-auto px-4 py-4 pb-24 space-y-5 overscroll-contain" style={{ WebkitOverflowScrolling: "touch" }}>
+            <form id="agenda-form" onSubmit={(e) => handleSubmit(e)} className="flex-1 overflow-y-auto px-4 py-4 space-y-4 overscroll-contain" style={{ WebkitOverflowScrolling: "touch", paddingBottom: "80px" }}>
 
               {/* Section: INFORMASI */}
               <section>
@@ -1053,11 +1052,11 @@ function KegiatanContent() {
               </section>
 
               {/* Bottom spacing for sticky button */}
-              <div className="h-24" />
+              <div className="h-20" />
             </form>
 
-            {/* Save Button - Fixed at bottom of modal */}
-            <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-4" style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}>
+            {/* Save Button - Fixed at bottom */}
+            <div className="flex-shrink-0 bg-white border-t border-gray-100 px-4 py-3 pb-safe">
               <button
                 type="button"
                 onClick={(e) => {
@@ -1068,14 +1067,11 @@ function KegiatanContent() {
                   }
                 }}
                 disabled={submitting || !formData.title || !formData.date}
-                className="w-full py-3.5 rounded-2xl font-semibold text-sm text-white shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+                className="w-full py-3.5 rounded-xl font-semibold text-sm text-white shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
                 style={{
                   background: submitting || !formData.title || !formData.date
                     ? '#94a3b8'
                     : 'linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #7c3aed 100%)',
-                  boxShadow: submitting || !formData.title || !formData.date
-                    ? 'none'
-                    : '0 4px 16px rgba(37, 99, 235, 0.35)'
                 }}
               >
                 {submitting ? (
@@ -1101,7 +1097,7 @@ function KegiatanContent() {
       )}
 
       {showDeleteConfirm && (
-        <div className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={() => setShowDeleteConfirm(null)}>
+        <div className="fixed inset-0 z-[110] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowDeleteConfirm(null)}>
           <div
             className="w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl animate-slideUp overflow-hidden"
             onClick={(e) => e.stopPropagation()}
@@ -1193,6 +1189,10 @@ function KegiatanContent() {
         }
         .overscroll-contain::-webkit-scrollbar-thumb:hover {
           background: rgba(0,0,0,0.25);
+        }
+        /* Safe area padding for mobile */
+        .pb-safe {
+          padding-bottom: max(1rem, env(safe-area-inset-bottom));
         }
       `}</style>
 
