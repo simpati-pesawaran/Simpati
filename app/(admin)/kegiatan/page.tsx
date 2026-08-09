@@ -7,19 +7,13 @@ import Link from "next/link";
 
 interface Agenda {
   id: string;
-  jenis: "kegiatan" | "audiensi";
-  sub_jenis: string | null;
+  jenis: string;
   title: string;
   description: string | null;
   date: string;
   time_start: string;
   time_end: string;
   location: string | null;
-  pic_name: string | null;
-  pic_phone: string | null;
-  participants_count: number | null;
-  dresscode: string | null;
-  notes: string | null;
   status: string;
   created_by?: string;
   creator?: { id: string; name: string; };
@@ -27,52 +21,23 @@ interface Agenda {
 
 interface FormData {
   jenis: "kegiatan" | "audiensi";
-  sub_jenis: string;
   title: string;
   description: string;
   date: string;
   time_start: string;
   time_end: string;
   location: string;
-  pic_name: string;
-  pic_phone: string;
-  participants_count: string;
-  dresscode: string;
-  notes: string;
   status: "draft" | "published";
 }
 
-const SUB_JENIS_KEGIATAN = [
-  { value: "rapat", label: "Rapat" },
-  { value: "meeting", label: "Meeting" },
-  { value: "kunjungan", label: "Kunjungan" },
-  { value: "monitoring", label: "Monitoring" },
-  { value: "event", label: "Event" },
-  { value: "lainnya", label: "Lainnya" },
-];
-
-const SUB_JENIS_AUDIENSI = [
-  { value: "dinas", label: "Dinas" },
-  { value: "tamu", label: "Tamu" },
-  { value: "delegasi", label: "Delegasi" },
-  { value: "masyarakat", label: "Masyarakat" },
-  { value: "lainnya", label: "Lainnya" },
-];
-
 const initialFormData: FormData = {
   jenis: "kegiatan",
-  sub_jenis: "",
   title: "",
   description: "",
   date: "",
   time_start: "09:00",
   time_end: "10:00",
   location: "",
-  pic_name: "",
-  pic_phone: "",
-  participants_count: "",
-  dresscode: "",
-  notes: "",
   status: "draft",
 };
 
@@ -183,7 +148,6 @@ function KegiatanContent() {
       filtered = filtered.filter(a =>
         a.title.toLowerCase().includes(query) ||
         (a.location?.toLowerCase() || "").includes(query) ||
-        (a.pic_name?.toLowerCase() || "").includes(query) ||
         (a.jenis.toLowerCase().includes(query))
       );
     }
@@ -235,18 +199,12 @@ function KegiatanContent() {
       setEditingId(agenda.id);
       setFormData({
         jenis: agenda.jenis,
-        sub_jenis: agenda.sub_jenis || "",
         title: agenda.title,
         description: agenda.description || "",
         date: agenda.date,
         time_start: agenda.time_start,
         time_end: agenda.time_end,
         location: agenda.location || "",
-        pic_name: agenda.pic_name || "",
-        pic_phone: agenda.pic_phone || "",
-        participants_count: agenda.participants_count?.toString() || "",
-        dresscode: agenda.dresscode || "",
-        notes: agenda.notes || "",
         status: agenda.status as "draft" | "published",
       });
     } else {
@@ -298,8 +256,14 @@ function KegiatanContent() {
     setSubmitting(true);
     try {
       const payload = {
-        ...formData,
-        participants_count: formData.participants_count ? parseInt(formData.participants_count) : null,
+        jenis: formData.jenis,
+        title: formData.title,
+        description: formData.description || null,
+        date: formData.date,
+        time_start: formData.time_start,
+        time_end: formData.time_end,
+        location: formData.location || null,
+        status: formData.status,
       };
 
       const url = editingId ? `/api/agenda/${editingId}` : "/api/agenda";
@@ -769,19 +733,7 @@ function KegiatanContent() {
                 </div>
               )}
 
-              {showDetail.pic_name && (
-                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                  <svg className="w-4 h-4 text-purple-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-800">{showDetail.pic_name}</p>
-                    {showDetail.pic_phone && (
-                      <p className="text-xs text-gray-500">{showDetail.pic_phone}</p>
-                    )}
-                  </div>
-                </div>
-              )}
+              {/* Footer */}
 
               {showDetail.description && (
                 <div className="p-3 bg-gray-50 rounded-xl">
@@ -898,33 +850,6 @@ function KegiatanContent() {
                     placeholder="Masukkan judul agenda"
                     className="w-full px-4 py-3.5 bg-gradient-to-br from-gray-50 to-slate-50 border border-gray-200/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 focus:bg-white transition-all placeholder:text-gray-400" />
                 </div>
-
-                {/* Sub Jenis - Select */}
-                <div className="space-y-2 mb-5">
-                  <label className="text-sm font-semibold text-gray-700">Sub Jenis</label>
-                  <div className="relative">
-                    <select value={formData.sub_jenis} onChange={(e) => setFormData({ ...formData, sub_jenis: e.target.value })}
-                      className="w-full px-4 py-3.5 bg-gradient-to-br from-gray-50 to-slate-50 border border-gray-200/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 focus:bg-white transition-all appearance-none cursor-pointer">
-                      <option value="">Pilih Sub Jenis</option>
-                      {subJenisOptions.map((opt) => (
-                        <option key={opt.value} value={opt.value}>{opt.label}</option>
-                      ))}
-                    </select>
-                    <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </div>
-                </div>
-
-                {/* Custom Sub Jenis - Conditional */}
-                {formData.sub_jenis === "lainnya" && (
-                  <div className="space-y-2 mb-5 animate-fadeIn">
-                    <label className="text-sm font-semibold text-gray-700">Nama Sub Jenis <span className="text-red-500">*</span></label>
-                    <input type="text" value={formData.notes} onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                      placeholder="Masukkan nama sub jenis"
-                      className="w-full px-4 py-3.5 bg-gradient-to-br from-gray-50 to-slate-50 border border-gray-200/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 focus:bg-white transition-all placeholder:text-gray-400" />
-                  </div>
-                )}
               </section>
 
               {/* Section: WAKTU */}
@@ -980,7 +905,7 @@ function KegiatanContent() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
-                  Lokasi & Kontak
+                  Lokasi
                 </h3>
 
                 <div className="space-y-2 mb-5">
@@ -988,21 +913,6 @@ function KegiatanContent() {
                   <input type="text" value={formData.location} onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                     placeholder="Masukkan lokasi kegiatan"
                     className="w-full px-4 py-3.5 bg-gradient-to-br from-gray-50 to-slate-50 border border-gray-200/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 focus:bg-white transition-all placeholder:text-gray-400" />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-semibold text-gray-700">Penanggung Jawab</label>
-                    <input type="text" value={formData.pic_name} onChange={(e) => setFormData({ ...formData, pic_name: e.target.value })}
-                      placeholder="Nama PIC"
-                      className="w-full px-4 py-3.5 bg-gradient-to-br from-gray-50 to-slate-50 border border-gray-200/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 focus:bg-white transition-all placeholder:text-gray-400" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-semibold text-gray-700">Nomor HP</label>
-                    <input type="tel" value={formData.pic_phone} onChange={(e) => setFormData({ ...formData, pic_phone: e.target.value })}
-                      placeholder="08xxxxxxxxxx"
-                      className="w-full px-4 py-3.5 bg-gradient-to-br from-gray-50 to-slate-50 border border-gray-200/80 rounded-2xl text-sm text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 focus:bg-white transition-all placeholder:text-gray-400" />
-                  </div>
                 </div>
               </section>
 
