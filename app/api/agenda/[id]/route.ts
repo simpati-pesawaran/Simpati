@@ -279,7 +279,6 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       .from("agenda")
       .update({
         deleted_at: new Date().toISOString(),
-        deleted_by: profile.id,
       })
       .eq("id", id);
 
