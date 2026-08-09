@@ -90,8 +90,6 @@ function KegiatanContent() {
   const profile = (session?.user as any)?.profile;
   const isSuperadmin = profile?.role === "superadmin";
 
-  const subJenisOptions = activeTab === "kegiatan" ? SUB_JENIS_KEGIATAN : SUB_JENIS_AUDIENSI;
-
   // Sync handler
   const handleSync = async (type: 'agenda' | 'usulan') => {
     setSyncingType(type);
