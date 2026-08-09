@@ -166,17 +166,12 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const {
       jenis,
-      sub_jenis,
       title,
       description,
       date,
       time_start,
       time_end,
       location,
-      pic_name,
-      pic_phone,
-      participants_count,
-      notes,
       status = "draft",
     } = body;
 

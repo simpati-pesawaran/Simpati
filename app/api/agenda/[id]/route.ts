@@ -136,34 +136,24 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const body = await request.json();
     const {
       jenis,
-      sub_jenis,
       title,
       description,
       date,
       time_start,
       time_end,
       location,
-      pic_name,
-      pic_phone,
-      participants_count,
-      notes,
       status,
     } = body;
 
     // Build update object
     const updateData: any = {};
     if (jenis !== undefined) updateData.jenis = jenis;
-    if (sub_jenis !== undefined) updateData.sub_jenis = sub_jenis;
     if (title !== undefined) updateData.title = title;
     if (description !== undefined) updateData.description = description;
     if (date !== undefined) updateData.date = date;
     if (time_start !== undefined) updateData.time_start = time_start;
     if (time_end !== undefined) updateData.time_end = time_end;
     if (location !== undefined) updateData.location = location;
-    if (pic_name !== undefined) updateData.pic_name = pic_name;
-    if (pic_phone !== undefined) updateData.pic_phone = pic_phone;
-    if (participants_count !== undefined) updateData.participants_count = participants_count;
-    if (notes !== undefined) updateData.notes = notes;
     if (status !== undefined) updateData.status = status;
 
     // Add updated_by and updated_at
