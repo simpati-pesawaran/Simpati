@@ -822,7 +822,7 @@ function KegiatanContent() {
       {showModal && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={() => setShowModal(false)}>
           <div
-            className="w-full sm:max-w-[390px] bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden"
+            className="w-full sm:max-w-[390px] bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden relative"
             style={{ maxHeight: "92vh" }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -865,7 +865,7 @@ function KegiatanContent() {
             </div>
 
             {/* Form Content - Scrollable */}
-            <form onSubmit={(e) => handleSubmit(e)} className="flex-1 overflow-y-auto px-4 py-4 pb-24 space-y-5 overscroll-contain" style={{ WebkitOverflowScrolling: "touch" }}>
+            <form id="agenda-form" onSubmit={(e) => handleSubmit(e)} className="flex-1 overflow-y-auto px-4 py-4 pb-24 space-y-5 overscroll-contain" style={{ WebkitOverflowScrolling: "touch" }}>
 
               {/* Section: INFORMASI */}
               <section>
@@ -1045,13 +1045,20 @@ function KegiatanContent() {
               </section>
 
               {/* Bottom spacing for sticky button */}
-              <div className="h-8" />
+              <div className="h-24" />
             </form>
 
-            {/* Save Button - Sticky */}
-            <div className="sticky bottom-0 bg-white border-t border-gray-100 px-4 py-4" style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}>
+            {/* Save Button - Fixed at bottom of modal */}
+            <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-4" style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}>
               <button
-                type="submit"
+                type="button"
+                onClick={(e) => {
+                  const form = document.getElementById('agenda-form');
+                  if (form) {
+                    const event = new Event('submit', { bubbles: true, cancelable: true });
+                    form.dispatchEvent(event);
+                  }
+                }}
                 disabled={submitting || !formData.title || !formData.date}
                 className="w-full py-3.5 rounded-2xl font-semibold text-sm text-white shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
                 style={{
