@@ -249,11 +249,42 @@ function KegiatanContent() {
     setShowDetail(null);
   };
 
+  // Time Conflict Check
+  const checkTimeConflict = (): Agenda | null => {
+    if (!formData.date || !formData.time_start || !formData.time_end) return null;
+
+    // Check against existing agendas
+    const conflicts = agendas.filter(agenda => {
+      if (editingId && agenda.id === editingId) return false; // Skip self when editing
+      if (agenda.date !== formData.date) return false;
+
+      const existStart = agenda.time_start;
+      const existEnd = agenda.time_end;
+      const newStart = formData.time_start;
+      const newEnd = formData.time_end;
+
+      // Check if times overlap
+      // (newStart < existEnd) AND (newEnd > existStart)
+      return (newStart < existEnd) && (newEnd > existStart);
+    });
+
+    return conflicts.length > 0 ? conflicts[0] : null;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title || !formData.date) {
       alert("Judul dan tanggal wajib diisi");
       return;
+    }
+
+    // Check for time conflict
+    const conflict = checkTimeConflict();
+    if (conflict) {
+      const confirmSave = confirm(
+        `⚠️ Jadwal tabrakan dengan:\n\n"${conflict.title}"\n🕐 ${conflict.time_start} - ${conflict.time_end}\n\nTetap simpan?`
+      );
+      if (!confirmSave) return;
     }
 
     setSubmitting(true);
@@ -834,7 +865,7 @@ function KegiatanContent() {
             </div>
 
             {/* Form Content - Scrollable */}
-            <div className="flex-1 overflow-y-auto px-4 py-4 pb-24 space-y-5 overscroll-contain" style={{ WebkitOverflowScrolling: "touch" }}>
+            <form onSubmit={(e) => handleSubmit(e)} className="flex-1 overflow-y-auto px-4 py-4 pb-24 space-y-5 overscroll-contain" style={{ WebkitOverflowScrolling: "touch" }}>
 
               {/* Section: INFORMASI */}
               <section>
@@ -1015,14 +1046,13 @@ function KegiatanContent() {
 
               {/* Bottom spacing for sticky button */}
               <div className="h-8" />
-            </div>
+            </form>
 
             {/* Save Button - Sticky */}
             <div className="sticky bottom-0 bg-white border-t border-gray-100 px-4 py-4" style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}>
               <button
                 type="submit"
                 disabled={submitting || !formData.title || !formData.date}
-                onClick={handleSubmit}
                 className="w-full py-3.5 rounded-2xl font-semibold text-sm text-white shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
                 style={{
                   background: submitting || !formData.title || !formData.date
