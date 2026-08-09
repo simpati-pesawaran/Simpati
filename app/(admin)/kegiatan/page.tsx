@@ -199,10 +199,18 @@ function KegiatanContent() {
     setFilteredAgendas(filtered);
   }, [agendas, searchQuery, statusFilter]);
 
-  // Open modal when ?action=new
+  // Open modal when ?action=new with jenis param
   useEffect(() => {
-    if (searchParams?.get("action") === "new") {
-      handleOpenModal();
+    const action = searchParams?.get("action");
+    const jenis = searchParams?.get("jenis") as "kegiatan" | "audiensi" | null;
+
+    if (action === "new") {
+      // Set active tab based on jenis param if provided
+      if (jenis === "kegiatan" || jenis === "audiensi") {
+        setActiveTab(jenis);
+      }
+      // Small delay to ensure tab is set first
+      setTimeout(() => handleOpenModal(), 100);
     }
   }, [searchParams]);
 
