@@ -126,11 +126,30 @@ export async function POST(request: NextRequest) {
     await supabaseAdmin.from("activity_logs").insert({
       user_id: profile.id,
       user_name: profile.name,
+      user_email: profile.email,
       action: "create",
       entity_type: "gallery",
       entity_id: data.id,
       description: `Menambahkan ${category === "arsip" ? "arsip digital" : "dokumentasi"}: "${title}"`,
     });
+
+    // Notify superadmins about new media
+    const { data: superadmins } = await supabaseAdmin
+      .from("profiles")
+      .select("id")
+      .eq("role", "superadmin");
+
+    if (superadmins && superadmins.length > 0) {
+      const notifications = superadmins.map((sa: any) => ({
+        user_id: sa.id,
+        type: "media_uploaded",
+        title: `${category === "arsip" ? "Arsip Digital" : "Dokumentasi"} Baru`,
+        message: `${profile.name} menambahkan ${category === "arsip" ? "arsip digital" : "dokumentasi"}: "${title}"`,
+        data: { gallery_id: data.id, category },
+      }));
+
+      await supabaseAdmin.from("notifications").insert(notifications);
+    }
 
     return NextResponse.json({ success: true, data: responseData });
   } catch (error) {
@@ -195,11 +214,30 @@ export async function DELETE(request: NextRequest) {
     await supabaseAdmin.from("activity_logs").insert({
       user_id: profile.id,
       user_name: profile.name,
+      user_email: profile.email,
       action: "delete",
       entity_type: "gallery",
       entity_id: id,
       description: `Menghapus ${item.category === "arsip" ? "arsip digital" : "dokumentasi"}: "${item.title}"`,
     });
+
+    // Notify superadmins about media deletion
+    const { data: superadmins } = await supabaseAdmin
+      .from("profiles")
+      .select("id")
+      .eq("role", "superadmin");
+
+    if (superadmins && superadmins.length > 0) {
+      const notifications = superadmins.map((sa: any) => ({
+        user_id: sa.id,
+        type: "media_deleted",
+        title: `${item.category === "arsip" ? "Arsip Digital" : "Dokumentasi"} Dihapus`,
+        message: `${profile.name} menghapus ${item.category === "arsip" ? "arsip digital" : "dokumentasi"}: "${item.title}"`,
+        data: { gallery_id: id, category: item.category },
+      }));
+
+      await supabaseAdmin.from("notifications").insert(notifications);
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {

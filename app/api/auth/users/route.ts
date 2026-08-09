@@ -10,6 +10,7 @@ import { supabaseAdmin } from "@/app/lib/supabase";
 async function logActivity(
   userId: string,
   userName: string,
+  userEmail: string,
   action: string,
   entityType: string,
   entityId: string,
@@ -20,6 +21,7 @@ async function logActivity(
   const { error } = await supabaseAdmin.from("activity_logs").insert({
     user_id: userId,
     user_name: userName,
+    user_email: userEmail,
     action: action,
     entity_type: entityType,
     entity_id: entityId,
@@ -65,9 +67,10 @@ export async function POST(request: NextRequest) {
     if (targetUser) {
       await logActivity(
         adminProfile.id,
-        adminProfile.name || 'Superadmin',
+        adminProfile.name,
+        adminProfile.email,
         "approve",
-        "user",
+        "profile",
         user_id,
         `Menyetujui pendaftaran: ${targetUser.name} (${targetUser.email})`,
         { status: 'pending' },
@@ -75,7 +78,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await supabaseAdmin.from('notifications').insert({ user_id, type: 'approval', title: 'Pendaftaran Disetujui', message: 'Pendaftaran Anda disetujui.' });
+    await supabaseAdmin.from('notifications').insert({ user_id, type: 'user_approved', title: 'Pendaftaran Disetujui', message: 'Pendaftaran Anda disetujui.' });
     return NextResponse.json({ success: true, profile: updated });
   } else if (action === 'reject') {
     const { reason } = body;
@@ -86,9 +89,10 @@ export async function POST(request: NextRequest) {
     if (targetUser) {
       await logActivity(
         adminProfile.id,
-        adminProfile.name || 'Superadmin',
+        adminProfile.name,
+        adminProfile.email,
         "reject",
-        "user",
+        "profile",
         user_id,
         `Menolak pendaftaran: ${targetUser.name} (${targetUser.email})` + (reason ? ` - Alasan: ${reason}` : ''),
         { status: 'pending' },
@@ -96,18 +100,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await supabaseAdmin.from('notifications').insert({ user_id, type: 'rejection', title: 'Pendaftaran Ditolak', message: reason ? 'Ditolak: ' + reason : 'Pendaftaran Anda ditolak.' });
+    await supabaseAdmin.from('notifications').insert({ user_id, type: 'user_rejected', title: 'Pendaftaran Ditolak', message: reason ? 'Ditolak: ' + reason : 'Pendaftaran Anda ditolak.' });
     return NextResponse.json({ success: true, profile: updated });
   } else if (action === 'delete') {
     // Log deletion
     if (targetUser) {
       await logActivity(
         adminProfile.id,
-        adminProfile.name || 'Superadmin',
+        adminProfile.name,
+        adminProfile.email,
         "delete",
-        "user",
+        "profile",
         user_id,
-        `Menghapus pengguna: ${targetUser.name} (${targetUser.email})`
+        `Menghapus pengguna: ${targetUser.name} (${targetUser.email})`,
+        { name: targetUser.name, email: targetUser.email },
+        null
       );
     }
 

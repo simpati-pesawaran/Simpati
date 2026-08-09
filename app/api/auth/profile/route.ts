@@ -17,6 +17,7 @@ const SUPERADMIN_EMAIL = "siagapesasakan@gmail.com";
 async function logActivity(
   userId: string,
   userName: string,
+  userEmail: string,
   action: string,
   entityType: string,
   entityId: string,
@@ -27,6 +28,7 @@ async function logActivity(
   const { error } = await supabaseAdmin.from("activity_logs").insert({
     user_id: userId,
     user_name: userName,
+    user_email: userEmail,
     action: action,
     entity_type: entityType,
     entity_id: entityId,
@@ -142,13 +144,39 @@ export async function POST(request: NextRequest) {
     await logActivity(
       updated.id,
       name,
+      email,
       "update",
       "profile",
       updated.id,
       `Memperbarui profil: ${name} - Divisi ${division}`,
-      { name: existingProfile },
+      { name: existingProfile?.name, division: existingProfile?.division },
       { name, division }
     );
+
+    // Notify superadmins about profile changes (for audit)
+    if (!isSuperadmin) {
+      const { data: superadmin } = await supabaseAdmin
+        .from('profiles')
+        .select('id')
+        .eq('role', 'superadmin')
+        .single();
+
+      if (superadmin) {
+        await supabaseAdmin
+          .from('notifications')
+          .insert({
+            user_id: superadmin.id,
+            type: 'profile_updated',
+            title: 'Profil Diperbarui',
+            message: `${name} memperbarui profilnya`,
+            data: {
+              user_email: email,
+              user_name: name,
+              division: division,
+            },
+          });
+      }
+    }
 
     return NextResponse.json({
       success: true,
@@ -179,12 +207,15 @@ export async function POST(request: NextRequest) {
   await logActivity(
     newProfile.id,
     name,
+    email,
     isSuperadmin ? "create" : "submit",
-    "user",
+    "profile",
     newProfile.id,
     isSuperadmin
       ? `Mendaftar sebagai Superadmin: ${name}`
-      : `Mendaftar sebagai admin baru: ${name} - Divisi ${division}`
+      : `Mendaftar sebagai admin baru: ${name} - Divisi ${division}`,
+    null,
+    { name, division }
   );
 
   // If not superadmin, notify superadmin

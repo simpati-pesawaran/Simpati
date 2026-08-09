@@ -11,6 +11,7 @@ const SUPERADMIN_EMAIL = "siagapesasakan@gmail.com";
 async function logAuthActivity(
   userId: string,
   userName: string,
+  userEmail: string,
   action: string,
   description: string,
   entityId: string = userId
@@ -18,6 +19,7 @@ async function logAuthActivity(
   const { error } = await supabaseAdmin.from("activity_logs").insert({
     user_id: userId,
     user_name: userName,
+    user_email: userEmail,
     action: action,
     entity_type: "auth",
     entity_id: entityId,
@@ -74,6 +76,7 @@ export const authOptions: NextAuthOptions = {
             await logAuthActivity(
               existingProfile.id,
               user.name || 'Superadmin',
+              user.email,
               "login",
               `Login ke sistem sebagai Superadmin`
             );
@@ -82,7 +85,7 @@ export const authOptions: NextAuthOptions = {
           // Log login for regular users
           const { data: existingProfile } = await supabaseAdmin
             .from('profiles')
-            .select('id, name')
+            .select('id, name, email')
             .eq('email', user.email)
             .single();
 
@@ -90,6 +93,7 @@ export const authOptions: NextAuthOptions = {
             await logAuthActivity(
               existingProfile.id,
               existingProfile.name || user.name || 'Unknown',
+              existingProfile.email,
               "login",
               `Login ke sistem`
             );

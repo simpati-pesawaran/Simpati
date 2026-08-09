@@ -17,22 +17,24 @@ interface RouteParams {
 async function logActivity(
   userId: string,
   userName: string,
+  userEmail: string,
   action: string,
   entityType: string,
   entityId: string,
+  description: string,
   oldData: any,
-  newData: any,
-  description: string
+  newData: any
 ) {
   const { error } = await supabaseAdmin.from("activity_logs").insert({
     user_id: userId,
     user_name: userName,
+    user_email: userEmail,
     action: action,
     entity_type: entityType,
     entity_id: entityId,
+    description: description,
     old_data: oldData,
     new_data: newData,
-    description: description,
   });
 
   if (error) {
@@ -75,12 +77,13 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     await logActivity(
       profile?.id || "unknown",
       profile?.name || session.user.name,
+      profile?.email || session.user.email,
       "view",
       "agenda",
       id,
+      `${profile?.name || session.user.name} melihat ${data.jenis}: ${data.title}`,
       null,
-      data,
-      `${profile?.name || session.user.name} melihat ${data.jenis}: ${data.title}`
+      data
     );
 
     return NextResponse.json({
@@ -180,13 +183,14 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const changeDetails = getChangeDetails(existing, updated);
     await logActivity(
       profile.id,
-      profile.name || session.user.name,
+      profile.name,
+      profile.email,
       getActionFromStatus(status, existing.status),
       existing.jenis === "audiensi" ? "audiensi" : "agenda",
       id,
+      `${profile.name} ${getActionVerb(status, existing.status)} ${existing.jenis}: ${existing.title}${changeDetails}`,
       existing,
-      updated,
-      `${profile.name} ${getActionVerb(status, existing.status)} ${existing.jenis}: ${existing.title}${changeDetails}`
+      updated
     );
 
     // Create notification for superadmin if published
@@ -276,14 +280,35 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     // Log activity
     await logActivity(
       profile.id,
-      profile.name || session.user.name,
+      profile.name,
+      profile.email,
       "delete",
       "agenda",
       id,
+      `${profile.name} menghapus ${existing.jenis}: ${existing.title}`,
       existing,
-      null,
-      `${profile.name} menghapus ${existing.jenis}: ${existing.title}`
+      null
     );
+
+    // Notify superadmins about agenda deletion
+    if (existing.status === "published") {
+      const { data: superadmins } = await supabaseAdmin
+        .from("profiles")
+        .select("id")
+        .eq("role", "superadmin");
+
+      if (superadmins && superadmins.length > 0) {
+        const notifications = superadmins.map((sa: any) => ({
+          user_id: sa.id,
+          type: "agenda_deleted",
+          title: `${existing.jenis === "kegiatan" ? "Kegiatan" : "Audiensi"} Dihapus`,
+          message: `${profile.name} menghapus "${existing.title}"`,
+          data: { agenda_id: id, jenis: existing.jenis },
+        }));
+
+        await supabaseAdmin.from("notifications").insert(notifications);
+      }
+    }
 
     return NextResponse.json({
       success: true,

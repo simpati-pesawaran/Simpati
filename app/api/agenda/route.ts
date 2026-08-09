@@ -13,22 +13,24 @@ import { supabaseAdmin } from "@/app/lib/supabase";
 async function logActivity(
   userId: string,
   userName: string,
+  userEmail: string,
   action: string,
   entityType: string,
   entityId: string,
+  description: string,
   oldData: any,
-  newData: any,
-  description: string
+  newData: any
 ) {
   const { error } = await supabaseAdmin.from("activity_logs").insert({
     user_id: userId,
     user_name: userName,
+    user_email: userEmail,
     action: action,
     entity_type: entityType,
     entity_id: entityId,
+    description: description,
     old_data: oldData,
     new_data: newData,
-    description: description,
   });
 
   if (error) {
@@ -223,13 +225,14 @@ export async function POST(request: NextRequest) {
     // Log activity
     await logActivity(
       profile.id,
-      profile.name || session.user.name,
+      profile.name,
+      profile.email,
       "create",
       "agenda",
       newAgenda.id,
+      `${profile.name} membuat ${jenis === "kegiatan" ? "kegiatan" : "audiensi"}: ${title}`,
       null,
-      newAgenda,
-      `${profile.name} membuat ${jenis === "kegiatan" ? "kegiatan" : "audiensi"}: ${title}`
+      newAgenda
     );
 
     // Create notification for superadmin if published

@@ -13,6 +13,7 @@ import { supabaseAdmin } from "@/app/lib/supabase";
 async function logActivity(
   userId: string,
   userName: string,
+  userEmail: string,
   action: string,
   entityType: string,
   entityId: string,
@@ -23,6 +24,7 @@ async function logActivity(
   const { error } = await supabaseAdmin.from("activity_logs").insert({
     user_id: userId,
     user_name: userName,
+    user_email: userEmail || '',
     action: action,
     entity_type: entityType,
     entity_id: entityId,
@@ -39,12 +41,13 @@ async function logActivity(
 }
 
 /**
- * Log sync failure
+ * Log sync failure and send notification
  */
 async function logSyncFailure(profile: any, agendaId: string, agendaTitle: string, errorMessage: string) {
   await logActivity(
     profile.id,
     profile.name,
+    profile.email,
     "sync_failure",
     "agenda",
     agendaId,
@@ -52,6 +55,25 @@ async function logSyncFailure(profile: any, agendaId: string, agendaTitle: strin
     { sync_status: "attempted" },
     { sync_status: "failed", error: errorMessage }
   );
+
+  // Notify superadmins about sync failure
+  const { data: superadmins } = await supabaseAdmin
+    .from("profiles")
+    .select("id")
+    .eq("role", "superadmin")
+    .eq("status", "approved");
+
+  if (superadmins && superadmins.length > 0) {
+    const notifications = superadmins.map((sa: any) => ({
+      user_id: sa.id,
+      type: "sync_failed",
+      title: "Sinkronisasi Google Calendar Gagal",
+      message: `${profile.name} gagal sinkron "${agendaTitle}" ke Google Calendar: ${errorMessage}`,
+      data: { agenda_id: agendaId, error: errorMessage },
+    }));
+
+    await supabaseAdmin.from("notifications").insert(notifications);
+  }
 }
 
 /**
@@ -200,6 +222,7 @@ async function pushToGoogleCalendar(accessToken: string, agenda: any, profile: a
   await supabaseAdmin.from("activity_logs").insert({
     user_id: profile.id,
     user_name: profile.name,
+    user_email: profile.email,
     action: "sync",
     entity_type: "agenda",
     entity_id: agenda.id,

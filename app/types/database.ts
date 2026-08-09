@@ -16,9 +16,14 @@ export type NotificationType =
   | 'agenda_updated'
   | 'agenda_deleted'
   | 'agenda_reminder'
-  | 'usulan_new';
-export type ActionType = 'create' | 'update' | 'delete' | 'approve' | 'reject' | 'login' | 'logout';
-export type EntityType = 'profile' | 'agenda' | 'notification' | 'gallery';
+  | 'usulan_new'
+  | 'sync_failed'
+  | 'profile_updated'
+  | 'share_created'
+  | 'media_uploaded'
+  | 'media_deleted';
+export type ActionType = 'create' | 'update' | 'delete' | 'approve' | 'reject' | 'login' | 'logout' | 'view' | 'sync' | 'submit' | 'publish' | 'cancel' | 'sync_failure' | 'share';
+export type EntityType = 'profile' | 'agenda' | 'notification' | 'gallery' | 'auth' | 'usulan' | 'google_sheets' | 'share' | 'share_link';
 export type FileType = 'image' | 'document';
 
 // Database Tables
@@ -98,10 +103,12 @@ export interface Gallery {
 export interface ActivityLog {
   id: string;
   user_id: string;
+  user_name: string;
   user_email: string;
   action: ActionType;
   entity_type: EntityType;
   entity_id: string;
+  description: string | null;
   old_data: Record<string, unknown> | null;
   new_data: Record<string, unknown> | null;
   ip_address: string | null;

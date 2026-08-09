@@ -148,6 +148,7 @@ export async function POST(request: NextRequest) {
     await supabaseAdmin.from("activity_logs").insert({
       user_id: profile.id,
       user_name: profile.name,
+      user_email: profile.email,
       action: "create",
       entity_type: "usulan",
       entity_id: data.id,

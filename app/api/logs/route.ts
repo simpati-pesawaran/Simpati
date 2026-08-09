@@ -58,9 +58,9 @@ export async function GET(request: NextRequest) {
       query = query.eq("user_id", userId);
     }
 
-    // Search in description
+    // Search in user_name, user_email, or description
     if (search) {
-      query = query.ilike("description", `%${search}%`);
+      query = query.or(`user_name.ilike.%${search}%,user_email.ilike.%${search}%,description.ilike.%${search}%`);
     }
 
     // Filter by date range

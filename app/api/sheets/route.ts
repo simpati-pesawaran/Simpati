@@ -305,22 +305,65 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Log activity
+    // Log activity and send notifications
     const profile = (session.user as any)?.profile;
-    if (profile && Object.values(results).some((r: any) => r.success)) {
-      const syncedItems = Object.entries(results)
-        .filter(([_, r]: [string, any]) => r.success)
-        .map(([name, r]: [string, any]) => `${r.rowsWritten} ${name}`)
-        .join(", ");
 
-      await supabaseAdmin.from("activity_logs").insert({
-        user_id: profile.id,
-        user_name: profile.name || session.user.name,
-        action: "sync",
-        entity_type: "google_sheets",
-        entity_id: "multi",
-        description: `${profile.name} menyinkronkan ${syncedItems} ke Google Sheets`,
-      });
+    if (profile) {
+      // Success notifications
+      if (Object.values(results).some((r: any) => r.success)) {
+        const syncedItems = Object.entries(results)
+          .filter(([_, r]: [string, any]) => r.success)
+          .map(([name, r]: [string, any]) => `${r.rowsWritten} ${name}`)
+          .join(", ");
+
+        await supabaseAdmin.from("activity_logs").insert({
+          user_id: profile.id,
+          user_name: profile.name || session.user.name,
+          user_email: profile.email || session.user.email,
+          action: "sync",
+          entity_type: "google_sheets",
+          entity_id: "multi",
+          description: `${profile.name} menyinkronkan ${syncedItems} ke Google Sheets`,
+        });
+      }
+
+      // Error notifications - notify superadmins
+      const failedItems = Object.entries(results)
+        .filter(([_, r]: [string, any]) => !r.success)
+        .map(([name, r]: [string, any]) => `${name}: ${r.error}`)
+        .join("; ");
+
+      if (failedItems) {
+        // Log failure
+        await supabaseAdmin.from("activity_logs").insert({
+          user_id: profile.id,
+          user_name: profile.name || session.user.name,
+          user_email: profile.email || session.user.email,
+          action: "sync_failure",
+          entity_type: "google_sheets",
+          entity_id: "multi",
+          description: `Gagal sinkron Google Sheets: ${failedItems}`,
+        });
+
+        // Notify superadmins about sync failure
+        const { data: superadmins } = await supabaseAdmin
+          .from("profiles")
+          .select("id")
+          .eq("role", "superadmin")
+          .eq("status", "approved");
+
+        if (superadmins && superadmins.length > 0) {
+          const notifications = superadmins.map((sa: any) => ({
+            user_id: sa.id,
+            type: "sync_failed",
+            title: "Sinkronisasi Google Sheets Gagal",
+            message: `${profile.name} mengalami gagal sinkron: ${failedItems}`,
+            data: { sync_type: "google_sheets", errors: failedItems },
+          }));
+
+          await supabaseAdmin.from("notifications").insert(notifications);
+        }
+      }
     }
 
     const overallSuccess = Object.values(results).every((r: any) => r.success);

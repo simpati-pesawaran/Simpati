@@ -165,6 +165,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     await supabaseAdmin.from("activity_logs").insert({
       user_id: profile.id,
       user_name: profile.name,
+      user_email: profile.email,
       action: action,
       entity_type: "usulan",
       entity_id: id,

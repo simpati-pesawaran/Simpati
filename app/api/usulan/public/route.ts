@@ -10,6 +10,7 @@ import { supabaseAdmin } from "@/app/lib/supabase";
  */
 async function logPublicActivity(
   userName: string,
+  userEmail: string,
   action: string,
   entityType: string,
   entityId: string,
@@ -20,6 +21,7 @@ async function logPublicActivity(
   const { error } = await supabaseAdmin.from("activity_logs").insert({
     user_id: "public",
     user_name: userName,
+    user_email: userEmail,
     action: action,
     entity_type: entityType,
     entity_id: entityId,
@@ -103,6 +105,7 @@ export async function POST(request: NextRequest) {
     // Log public submission
     await logPublicActivity(
       name,
+      phone,
       "submit",
       "usulan",
       data.id,
