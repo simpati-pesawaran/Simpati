@@ -176,8 +176,6 @@ export async function POST(request: NextRequest) {
       pic_name,
       pic_phone,
       participants_count,
-      dresscode,
-      attachments,
       notes,
       status = "draft",
     } = body;

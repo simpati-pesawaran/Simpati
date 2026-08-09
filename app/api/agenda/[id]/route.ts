@@ -146,8 +146,6 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       pic_name,
       pic_phone,
       participants_count,
-      dresscode,
-      attachments,
       notes,
       status,
     } = body;
@@ -165,8 +163,6 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (pic_name !== undefined) updateData.pic_name = pic_name;
     if (pic_phone !== undefined) updateData.pic_phone = pic_phone;
     if (participants_count !== undefined) updateData.participants_count = participants_count;
-    if (dresscode !== undefined) updateData.dresscode = dresscode;
-    if (attachments !== undefined) updateData.attachments = attachments;
     if (notes !== undefined) updateData.notes = notes;
     if (status !== undefined) updateData.status = status;
 
